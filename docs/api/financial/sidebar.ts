@@ -50,6 +50,54 @@ const sidebar: SidebarsConfig = {
     },
     {
       type: "category",
+      label: "Payment Intents",
+      items: [
+        {
+          type: "doc",
+          id: "api/financial/get-all-payment-intents",
+          label: "Get all payment intents",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/create-payment-intent",
+          label: "Create payment intent",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-payment-intent-by-id",
+          label: "Get payment intent by ID",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/update-payment-intent",
+          label: "Update payment intent",
+          className: "api-method put",
+        },
+        {
+          type: "doc",
+          id: "api/financial/confirm-payment-intent",
+          label: "Confirm payment intent",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "api/financial/capture-payment-intent",
+          label: "Capture payment intent",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "api/financial/cancel-payment-intent",
+          label: "Cancel payment intent",
+          className: "api-method post",
+        },
+      ],
+    },
+    {
+      type: "category",
       label: "Apple Pay",
       items: [
         {

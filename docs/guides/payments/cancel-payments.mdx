@@ -3,9 +3,9 @@ import GettingStartedSection from "@site/src/components/docs/_getting-started-se
 
 # Cancel Payments
 
-There may be scenarios in which you need to cancel a payment, such as an authorized payment that had a fraud decision of `review` or a customer placed a payment by mistake and you need to cancel it before it is settled.
+There may be scenarios in which you need to cancel a payment, such as a customer placing a payment by mistake or an authorized payment that needs to be voided before settlement.
 
-Credova API offers the ability to cancel a payment before it is settled or captured.
+Both Payment Intents and the direct Payments API support cancellation. A `succeeded` payment cannot be canceled — use the [refund](/guides/refunds/refund-payments) flow instead.
 
 ## Getting Started
 
@@ -17,7 +17,71 @@ Next you will need your `Secret Key`. [Go to your Developers section](https://po
 
 <Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
 
-## Cancel the Payment
+## Payment Intents
+
+A Payment Intent can be canceled from any non-terminal status: `requires_payment_method`, `requires_confirmation`, or `requires_capture`. It cannot be canceled once it has `succeeded`.
+
+### Cancel the Payment Intent
+
+Call the [Cancel Payment Intent](/api/financial/cancel-payment-intent) endpoint with the intent ID:
+
+```shell showLineNumbers title="Cancel a Payment Intent"
+curl 'https://api.publicsquare.com/payment_intents/pmt_int_2xNjK7abcdefghij/cancel' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'Content-Type: application/json'
+```
+
+You should see a response with `status: canceled`:
+
+```json showLineNumbers title="Canceled Payment Intent"
+{
+  "id": "pmt_int_2xNjK7abcdefghij",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "canceled",
+  "amount": 1000,
+  "currency": "USD",
+  // highlight-next-line
+  "cancellation_reason": "requested",
+  // highlight-next-line
+  "canceled_date": "2026-04-15T15:10:00Z",
+  "payment_id": null,
+  "created_date": "2026-04-15T14:22:10Z",
+  "modified_date": "2026-04-15T15:10:00Z"
+}
+```
+
+### Handling Cancellation Errors
+
+If you attempt to cancel an intent that is already canceled, you will receive a `409 Conflict`:
+
+```json showLineNumbers title="Already Canceled"
+{
+  "error": {
+    "code": "payment_intent_already_canceled",
+    "message": "This PaymentIntent has already been canceled."
+  }
+}
+```
+
+If a confirm is currently in progress, cancellation will be rejected until the confirm completes. Retry the cancel once the intent transitions out of `processing`:
+
+```json showLineNumbers title="Confirm In Progress"
+{
+  "error": {
+    "code": "payment_intent_confirm_in_progress",
+    "message": "A confirm is currently in progress. Please try again shortly."
+  }
+}
+```
+
+<Alert>If the intent has already `succeeded`, cancel is not available. Follow the [Issue a Refund](/guides/refunds/refund-payments) guide instead.</Alert>
+
+## Legacy
+
+The direct Payments API offers the ability to cancel a payment before it is settled or captured.
 
 In order to cancel a payment, we will need the ID of an authorized or recently captured payment. Assuming you have a payment similar to:
 
@@ -34,7 +98,7 @@ In order to cancel a payment, we will need the ID of an authorized or recently c
 
 We need to make a call to [Cancel Payment](/api/financial/cancels-a-payment) endpoint:
 
-```shell showLineNumbers title="Create a Payment"
+```shell showLineNumbers title="Cancel a Payment"
 curl 'https://api.publicsquare.com/payments/cancel' \
 -X 'POST' \
 -H 'X-API-KEY: <SECRET_API_KEY>' \
@@ -44,16 +108,16 @@ curl 'https://api.publicsquare.com/payments/cancel' \
 }'
 ```
 
-## Payment Response
+### Payment Response
 
-Given the above examples, you should see a cancelled payment result similar to:
+Given the above example, you should see a cancelled payment result similar to:
 
-```json showLineNumbers
+```json showLineNumbers title="Canceled Payment"
 {
   "id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
   "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
   "environment": "test",
-   // highlight-next-line
+  // highlight-next-line
   "status": "cancelled",
   "transaction_id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
   "amount": 1000,
@@ -77,11 +141,11 @@ Given the above examples, you should see a cancelled payment result similar to:
 }
 ```
 
-## Handling Cancellation Failures
+### Handling Cancellation Failures
 
 If a payment cannot be cancelled because the payment has already been settled, an error response will be returned:
 
-```shell showLineNumbers
+```shell showLineNumbers title="Cancellation Failed"
 {
   "title": "Error",
   "status": 400,

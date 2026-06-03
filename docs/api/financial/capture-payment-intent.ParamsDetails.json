@@ -1,0 +1,1 @@
+{"parameters":[{"name":"id","in":"path","required":true,"schema":{"maxLength":50,"pattern":"^[a-zA-Z]{2,6}_[1-9A-HJ-NP-Za-km-z]+$","type":"string"}}]}

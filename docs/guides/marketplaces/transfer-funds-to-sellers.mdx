@@ -238,7 +238,7 @@ Attempting to cancel while a confirm is already in flight returns `409 Conflict`
 | `400 Bad Request` | `cancel`                         | Intent is not in `pending` status.                                                                                      |
 | `202 Accepted`    | `confirm`                        | Transfer submitted but is not confirmed yet. The intent is `processing` and its terminal state will arrive via webhook. |
 
-See [Payment Transfer Intents](/concepts/payment-transfer-intents#concurrency-and-error-handling) for a deeper explanation of the concurrency model.
+See [Payment Transfer Intents](/concepts/payment-transfer-intents#concurrency) for a deeper explanation of the concurrency model.
 
 ## Conclusion
 

@@ -3,7 +3,9 @@ import GettingStartedSection from "@site/src/components/docs/_getting-started-se
 
 # Process Card Payments
 
-Now that you have completed the [Collect Cards](/guides/payment-methods/collect-cards) guide, let's process a card payment with the newly captured card.
+You can process card payments using either Payment Intents or the direct Payments API. Both approaches result in a `Payment` object. Payment Intents are recommended for new integrations — they provide a durable, stateful lifecycle with built-in support for async outcomes and safe retries.
+
+Now that you have completed the [Collect Cards](/guides/payment-methods/collect-cards) guide, let's process a card payment.
 
 ## Getting Started
 
@@ -15,13 +17,224 @@ Next you will need your `Secret Key`. [Go to your Developers section](https://po
 
 <Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
 
-## Process the Payment
+## Payment Intents
 
-We will need to use the information from the [previously collected card](/guides/payment-methods/collect-cards) to create a new payment.
+A Payment Intent represents your intent to collect funds from a customer. It tracks the full lifecycle of a charge — creation, confirmation, processing, and the final `succeeded` state — and creates a `Payment` record on success.
+
+### Create a Payment Intent
+
+Call the [Create Payment Intent](/api/financial/create-payment-intent) endpoint. Including a card at creation time starts the intent in `requires_confirmation` status and it is ready to confirm immediately:
+
+```shell showLineNumbers title="Create a Payment Intent"
+curl 'https://api.publicsquare.com/payment_intents' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "capture_method": "automatic",
+  "payment_method": {
+    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
+  },
+  "customer": {
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+<Alert>The amount is provided in cents. 1000 is the equivalent of $10.00</Alert>
+
+<Alert type="warning">The IDEMPOTENCY-KEY header can be passed to protect against duplicate payment intents being created.</Alert>
+
+```json showLineNumbers title="Create Response"
+{
+  // highlight-next-line
+  "id": "pmt_int_2xNjK7abcdefghij",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "requires_confirmation",
+  "amount": 1000,
+  "currency": "USD",
+  "capture_method": "automatic",
+  "payment_method": {
+    "card": {
+      "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
+      "last_four": "4242",
+      "brand": "visa",
+      "exp_month": "12",
+      "exp_year": "2025"
+    }
+  },
+  "payment_id": null,
+  "expires_date": "2026-04-16T14:22:10Z",
+  "created_date": "2026-04-15T14:22:10Z",
+  "modified_date": "2026-04-15T14:22:10Z"
+}
+```
+
+### Create Without a Payment Method
+
+For multi-step checkout flows where the payment method is collected separately, omit the `payment_method` field. The intent starts in `requires_payment_method` status and the amount and other details can still be updated before a card is attached:
+
+```shell showLineNumbers title="Create a Payment Intent without a Payment Method"
+curl 'https://api.publicsquare.com/payment_intents' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "capture_method": "automatic"
+}'
+```
+
+```json showLineNumbers title="Create Response"
+{
+  "id": "pmt_int_2xNjK7abcdefghij",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "requires_payment_method",
+  "amount": 1000,
+  "currency": "USD",
+  "capture_method": "automatic",
+  "payment_method": null,
+  "payment_id": null,
+  "expires_date": "2026-04-16T14:22:10Z",
+  "created_date": "2026-04-15T14:22:10Z",
+  "modified_date": "2026-04-15T14:22:10Z"
+}
+```
+
+Once you have a card, call the [Update Payment Intent](/api/financial/update-payment-intent) endpoint to attach it. The intent will transition to `requires_confirmation`:
+
+```shell showLineNumbers title="Attach a Payment Method"
+curl 'https://api.publicsquare.com/payment_intents/pmt_int_2xNjK7abcdefghij' \
+-X 'PUT' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'Content-Type: application/json' \
+-d '{
+  "payment_method": {
+    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
+  }
+}'
+```
+
+### Confirm the Payment Intent
+
+With the intent in `requires_confirmation`, call the [Confirm Payment Intent](/api/financial/confirm-payment-intent) endpoint to submit the charge to the processor:
+
+```shell showLineNumbers title="Confirm a Payment Intent"
+curl 'https://api.publicsquare.com/payment_intents/pmt_int_2xNjK7abcdefghij/confirm' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 3a9f1b72-cc4e-4f92-b7d3-1e5a9c8d2041' \
+-H 'Content-Type: application/json'
+```
+
+When the processor responds quickly, you will receive a `200` with `status: succeeded` and a populated `payment_id`:
+
+```json showLineNumbers title="Confirm Response — Succeeded (200)"
+{
+  "id": "pmt_int_2xNjK7abcdefghij",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "succeeded",
+  "amount": 1000,
+  "currency": "USD",
+  // highlight-next-line
+  "payment_id": "pmt_5mBpT2ghiklmnopq",
+  "next_action": null,
+  "expires_date": null,
+  "succeeded_date": "2026-04-15T14:22:45Z",
+  "created_date": "2026-04-15T14:22:10Z",
+  "modified_date": "2026-04-15T14:22:45Z"
+}
+```
+
+When the processor takes longer to respond, you will receive a `202` with `status: processing`:
+
+```json showLineNumbers title="Confirm Response — Processing (202)"
+{
+  "id": "pmt_int_2xNjK7abcdefghij",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "processing",
+  "amount": 1000,
+  "currency": "USD",
+  "payment_id": null,
+  "expires_date": "2026-04-15T14:52:10Z",
+  "created_date": "2026-04-15T14:22:10Z",
+  "modified_date": "2026-04-15T14:22:35Z"
+}
+```
+
+<Alert type="warning">When you receive a `202`, subscribe to the `payment-intents:update` webhook event. The final outcome is in `entity.status` on the Payment Intent in the notification payload. See the [Webhooks](/concepts/webhooks) guide for setup instructions.</Alert>
+
+```json showLineNumbers title="Webhook event: payment-intents:update"
+{
+  "id": "evnt_5jxWRFNLCAWeegrkCAG3a9DGc",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "production",
+  "event_type": "payment-intents:update",
+  "entity_type": "PaymentIntent",
+  "entity_id": "pmt_int_2xNjK7abcdefghij",
+  "entity": {
+    "id": "pmt_int_2xNjK7abcdefghij",
+    // highlight-next-line
+    "status": "succeeded",
+    "amount": 1000,
+    "currency": "USD",
+    // highlight-next-line
+    "payment_id": "pmt_5mBpT2ghiklmnopq",
+    "succeeded_date": "2026-04-15T14:22:45Z",
+    "created_date": "2026-04-15T14:22:10Z",
+    "modified_date": "2026-04-15T14:22:45Z"
+  },
+  "created_at": "2026-04-15T14:22:45Z"
+}
+```
+
+### Handling Declines
+
+If the card is hard-declined, the intent returns to `requires_confirmation` and the `last_payment_error` field is populated with the decline reason. You can attach a new payment method and re-confirm the same intent — no need to create a new one:
+
+```json showLineNumbers title="Declined Payment Intent"
+{
+  "id": "pmt_int_2xNjK7abcdefghij",
+  // highlight-next-line
+  "status": "requires_confirmation",
+  // highlight-next-line
+  "last_payment_error": {
+    "code": "card_declined",
+    "message": "Your card was declined."
+  },
+  ...
+}
+```
+
+## Legacy
+
+The direct Payments API provides a synchronous, single-request charge. The response contains the final payment result.
 
 For example, given you have a previously collected card:
 
-```json showLineNumbers title=card.json
+```json showLineNumbers title="card.json"
 {
   // highlight-next-line
   "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
@@ -45,7 +258,7 @@ We need to make a call to [Create Payment](/api/financial/create-payment) endpoi
 curl 'https://api.publicsquare.com/payments' \
 -X 'POST' \
 -H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPONTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'IDEMPONTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
 -H 'Content-Type: application/json' \
 -d '{
   "amount": 1000,
@@ -72,89 +285,16 @@ curl 'https://api.publicsquare.com/payments' \
 
 <Alert type="warning">The IDEMPONTENCY-KEY header can be passed to protect against duplicate payments being processed.</Alert>
 
-### Create with Existing Customer
+### Payment Response
 
-If you [created a customer](/api/accounts/create-customer), then you can pass the `customer_id` when processing the payment:
+Given the above example, you should see a payment result similar to:
 
-```shell showLineNumbers title="Create a Payment with Customer"
-curl 'https://api.publicsquare.com/payments' \
--X 'POST' \
--H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPONTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
--H 'Content-Type: application/json' \
--d '{
-  "amount": 1000,
-  "currency": "USD",
-  "payment_method": {
-    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
-  },
-  "customer": {
-    "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
-  },
-  "billing_details": {
-    "address_line_1": "111 Test St.",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  }
-}'
-```
-
-### Create with Customer's Payment Method
-
-If you [attached the card to a customer](/api/financial/attach-card-to-customer), then you can omit the `customer` section when processing the payment:
-
-```shell showLineNumbers title="Create a Payment with Payment Method"
-curl 'https://api.publicsquare.com/payments' \
--X 'POST' \
--H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPONTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
--H 'Content-Type: application/json' \
--d '{
-  "amount": 1000,
-  "currency": "USD",
-  "payment_method": {
-    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
-  },
-  "billing_details": {
-    "address_line_1": "111 Test St.",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  }
-}'
-```
-
-### Create with Payment Method's Billing Details
-
-If you supplied the `billing_details` or [updated the card](/api/financial/update-card), then you can omit the `billing_details` section when processing the payment:
-
-```shell showLineNumbers title="Create a Payment with Payment Method"
-curl 'https://api.publicsquare.com/payments' \
--X 'POST' \
--H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPONTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
--H 'Content-Type: application/json' \
--d '{
-  "amount": 1000,
-  "currency": "USD",
-  "payment_method": {
-    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
-  }
-}'
-```
-
-## Payment Response
-
-Given the above examples, you should see a payment result similar to:
-
-```json showLineNumbers
+```json showLineNumbers title="Payment Response"
 {
   "id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
   "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
   "environment": "test",
+  // highlight-next-line
   "status": "succeeded",
   "transaction_id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
   "amount": 1000,
@@ -180,7 +320,7 @@ Given the above examples, you should see a payment result similar to:
     "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
     "first_name": "John",
     "last_name": "Smith",
-    "email": "john.smith@email.com",
+    "email": "john.smith@email.com"
   },
   "billing_details": {
     "address_line_1": "111 Test St.",
@@ -188,17 +328,6 @@ Given the above examples, you should see a payment result similar to:
     "state": "IA",
     "postal_code": "51111",
     "country": "US"
-  },
-  "shipping_address": {
-    "address_line_1": "111 Colorado Ave.",
-    "address_line_2": "Apt 403",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  },
-  "fraud_decision": {
-    "decision": "accept"
   },
   "transaction": {
     "id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
@@ -226,6 +355,7 @@ Given the above examples, you should see a payment result similar to:
 Now that we have seen how to process payments with a collected card, we may need to manage the payment or view information about the payment.
 Follow these guides to learn more:
 
+- [Authorize and Capture Payments](/guides/payments/authorize-and-capture-payments)
 - [Issue a Refund](/guides/refunds/refund-payments)
 - [Cancel a Payment](/guides/payments/cancel-payments)
 - [Search and View Transactions](/guides/transactions/search-and-view-transactions)

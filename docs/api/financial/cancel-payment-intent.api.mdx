@@ -1,0 +1,75 @@
+---
+id: cancel-payment-intent
+title: "Cancel payment intent"
+description: "    Cancel a payment intent. Cannot cancel an intent that has already succeeded."
+sidebar_label: "Cancel payment intent"
+hide_title: true
+hide_table_of_contents: true
+api: eJztWG1v2zYQ/ivEpcBeKsVJ2g2YvnlpimXpUqNph7Wut9DiJWIjkQpJeXUE/vfhRNqxG7sIhuxDBn2xFfLIu3vuuXP0tOD4pYVsDCM+r1A5dqwcKmdhkoBAmxtZO6kVZMAYY4dc5VgyzupoLTvrXdpQ2rE87qu4wVzBHSu4Zbw0yMWc2SbPEQWK3Y/qo6I7z5q61sZZJgVWte6OhXtKTq7ZTHLmCmTnxy+Ofhu9fnt0evg+PTl6f84MXjdoHSuQCzTLG3d2dtgITSWtlVrZsPg9O49BZ38b6fAcEtA1ms7HsYAMYnLrqUECNTe8QoeGcGpB8QohAykgAUnA1NwVkAAFIw0KyJxpMAGbF1hxyFqo+OdXqC5dAdkPe3Sfc2jo5J9jnt4M0w+T9iD50f813k9/Gqa//JqejtIPPL2q0pvJ0yeQgJvX5NI6I9UleD8hb7bWyqIlBwd7z+lrvV6nmh3qkINP4Pne3l2Tn7lgbwKGkEAerbMWHH52g7rklF+7kkkMRE8/Yd5BYwhCJ0MYaIw2dpMdF0KST16O1k5EO24MnxOcDqvV9WXCCaimLPm0xICuX2DypekmQ+nK+1lax12z6p8ocIkGErjQpuIuLD072HRYoOOyvJcfqawjrt3D2G/F7jYz+J2XUnQ8Hhk9LbF60cViO+B4XZcy73YHn6zuC/rYC9r1Zl/JR19J303l/btT+Z3ijSu0kTcoHmIs9+VYluOB52OP7NeQ/VeDqod0O6RhYjy7OzFeajOVQqDqx0U/Lh4rsv24+E/GxcY3Q8de6kb1/1304+LRItuPiwcfF5QN5o2Rbt4pXcNaniA9wppyBhMSoCp0hSbZrNY2qGSkb8EgmqZBPrODVgo/CHoe0P1mthDSGlNCBoVztc0GA17L3bqZljK31w03uJvrCsjRIqQzqnEo4yKw27fUsPClZDmM71FBR5zO2XB0zE5wzqSyUuBCP/zGsj/S4eiYRMWoJRKoQedb7izkvmjgu5pc6C6KBaZd/Gdd/CwKqpacQgKUdohqtk+CHMFW8Y690dM2/XEtp/Z2Yv8fFdlYz5WfIp8EorSRYUsyLhgGCWSdGBtJNkmgIEpmY2jbKbf4zpTe0/J1g4boPElgxo0MHTNuQUhLzwKyC15a/Ari376JIu93bFuwC0YqouOMlw39BQlcEWFJNfYTnyxIRN7DxjDPsXYrR1ZvXW230euztyTbNATGagNcdQ0QH+jijZGs0jl4pk+fbDFv29Ba3i/tw9bWE8v+iQlT+N77fwAX6Xcu
+sidebar_class_name: "post api-method"
+info_path: api/financial/publicsquare-payments-api
+custom_edit_url: null
+show_extensions: true
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Cancel payment intent"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"post"}
+  path={"/payment-intents/{id}/cancel"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+    Cancel a payment intent. Cannot cancel an intent that has already succeeded.
+
+    Supports idempotent cancellation via the `IDEMPOTENCY-KEY` request header.
+
+    ### Permissions
+    * `payment:write`
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./cancel-payment-intent.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./cancel-payment-intent.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./cancel-payment-intent.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      

@@ -3,9 +3,9 @@ import GettingStartedSection from "@site/src/components/docs/_getting-started-se
 
 # Authorize and Capture Payments
 
-In some scenarios, your checkout process may collect and pre-authorize a purchase before the customer completes checkout. This is useful when you want to run a customer and card information against your fraud rules, enable pre-orders, or a multi-step checkout process.
+In some scenarios, your checkout process may collect and pre-authorize a purchase before the customer completes checkout. This is useful when you want to run a customer and card against your fraud rules, enable pre-orders, or adjust the final amount at fulfillment.
 
-Now that you have completed the [Collect Cards](/guides/payment-methods/collect-cards) guide, let's authorize and capture a card payment.
+Both Payment Intents and the direct Payments API support authorize-and-capture. Both approaches result in a `Payment` object on success.
 
 ## Getting Started
 
@@ -17,13 +17,179 @@ Next you will need your `Secret Key`. [Go to your Developers section](https://po
 
 <Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
 
-## Authorize the Payment
+## Payment Intents
 
-We will need to use the information from the previously collected card to create a new payment.
+Use `capture_method: manual` to authorize the card without immediately capturing funds. The intent moves to `requires_capture` after confirmation and waits up to 7 days for an explicit capture call.
+
+### Create a Payment Intent
+
+Call the [Create Payment Intent](/api/financial/create-payment-intent) endpoint with `capture_method: manual`. Including a card at creation time starts the intent in `requires_confirmation` status:
+
+```shell showLineNumbers title="Create a Payment Intent with Manual Capture"
+curl 'https://api.publicsquare.com/payment_intents' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  // highlight-next-line
+  "capture_method": "manual",
+  "payment_method": {
+    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
+  },
+  "customer": {
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+<Alert>The amount is provided in cents. 1000 is the equivalent of $10.00</Alert>
+
+```json showLineNumbers title="Create Response"
+{
+  // highlight-next-line
+  "id": "pmt_int_2xNjK7abcdefghij",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "requires_confirmation",
+  "amount": 1000,
+  "currency": "USD",
+  // highlight-next-line
+  "capture_method": "manual",
+  "payment_method": {
+    "card": {
+      "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
+      "last_four": "4242",
+      "brand": "visa",
+      "exp_month": "12",
+      "exp_year": "2025"
+    }
+  },
+  "payment_id": null,
+  "expires_date": "2026-04-16T14:22:10Z",
+  "created_date": "2026-04-15T14:22:10Z",
+  "modified_date": "2026-04-15T14:22:10Z"
+}
+```
+
+### Create Without a Payment Method
+
+For multi-step checkout flows where the payment method is collected separately, omit the `payment_method` field. The intent starts in `requires_payment_method` status and can be updated once the card is available:
+
+```shell showLineNumbers title="Create a Payment Intent without a Payment Method"
+curl 'https://api.publicsquare.com/payment_intents' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "capture_method": "manual"
+}'
+```
+
+Once you have a card, call the [Update Payment Intent](/api/financial/update-payment-intent) endpoint to attach it. The intent will transition to `requires_confirmation`:
+
+```shell showLineNumbers title="Attach a Payment Method"
+curl 'https://api.publicsquare.com/payment_intents/pmt_int_2xNjK7abcdefghij' \
+-X 'PUT' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'Content-Type: application/json' \
+-d '{
+  "payment_method": {
+    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
+  }
+}'
+```
+
+### Confirm the Payment Intent
+
+With the intent in `requires_confirmation`, call the [Confirm Payment Intent](/api/financial/confirm-payment-intent) endpoint to authorize the card. Because `capture_method` is `manual`, a successful authorization moves the intent to `requires_capture` rather than `succeeded`:
+
+```shell showLineNumbers title="Confirm a Payment Intent"
+curl 'https://api.publicsquare.com/payment_intents/pmt_int_2xNjK7abcdefghij/confirm' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 3a9f1b72-cc4e-4f92-b7d3-1e5a9c8d2041' \
+-H 'Content-Type: application/json'
+```
+
+```json showLineNumbers title="Confirm Response"
+{
+  "id": "pmt_int_2xNjK7abcdefghij",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "requires_capture",
+  "amount": 1000,
+  "currency": "USD",
+  "capture_method": "manual",
+  "payment_id": null,
+  // highlight-next-line
+  "expires_date": "2026-04-22T14:22:10Z",
+  "confirmed_date": "2026-04-15T14:22:45Z",
+  "created_date": "2026-04-15T14:22:10Z",
+  "modified_date": "2026-04-15T14:22:45Z"
+}
+```
+
+<Alert type="warning">The authorization expires after 7 days. The intent will automatically move to `canceled` status if not captured before the `expires_date`.</Alert>
+
+### Capture the Payment
+
+Using the authorized intent, call the [Capture Payment Intent](/api/financial/capture-payment-intent) endpoint:
+
+```shell showLineNumbers title="Capture a Payment Intent"
+curl 'https://api.publicsquare.com/payment_intents/pmt_int_2xNjK7abcdefghij/capture' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 7c2e9a41-fd83-4b1e-a5d9-2f6c8b3e1047' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000
+}'
+```
+
+You can capture up to, but not exceeding, the original authorized amount. If no `amount` is passed, the full authorized amount will be captured.
+
+```json showLineNumbers title="Capture Response"
+{
+  "id": "pmt_int_2xNjK7abcdefghij",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "succeeded",
+  "amount": 1000,
+  "currency": "USD",
+  // highlight-next-line
+  "payment_id": "pmt_5mBpT2ghiklmnopq",
+  "expires_date": null,
+  "succeeded_date": "2026-04-17T09:14:22Z",
+  "created_date": "2026-04-15T14:22:10Z",
+  "modified_date": "2026-04-17T09:14:22Z"
+}
+```
+
+## Legacy
+
+The direct Payments API supports authorize-and-capture by passing `"capture": false` when creating the payment.
 
 For example, given you have a previously collected card:
 
-```json showLineNumbers title=card.json
+```json showLineNumbers title="card.json"
 {
   // highlight-next-line
   "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
@@ -47,7 +213,7 @@ We need to make a call to [Create Payment](/api/financial/create-payment) endpoi
 curl 'https://api.publicsquare.com/payments' \
 -X 'POST' \
 -H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPONTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'IDEMPONTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
 -H 'Content-Type: application/json' \
 -d '{
   "amount": 1000,
@@ -110,7 +276,7 @@ You should see a payment response with a `requires_capture` status similar to:
     "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
     "first_name": "John",
     "last_name": "Smith",
-    "email": "john.smith@email.com",
+    "email": "john.smith@email.com"
   },
   "billing_details": {
     "address_line_1": "111 Test St.",
@@ -118,17 +284,6 @@ You should see a payment response with a `requires_capture` status similar to:
     "state": "IA",
     "postal_code": "51111",
     "country": "US"
-  },
-  "shipping_address": {
-    "address_line_1": "111 Colorado Ave.",
-    "address_line_2": "Apt 403",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  },
-  "fraud_decision": {
-    "decision": "accept"
   },
   "transaction": {
     "id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
@@ -153,7 +308,7 @@ You should see a payment response with a `requires_capture` status similar to:
 
 If the payment authorization was declined by the processor or rejected because of fraud decisioning rules, you will see a payment `status` of `rejected` or `declined`. These payments cannot be captured.
 
-## Capture the Payment
+### Capture the Payment
 
 Using the authorized payment from the previous step, we now need to make a call to [Capture Payment](/api/financial/captures-a-payment) endpoint:
 
@@ -196,7 +351,7 @@ You should see a payment response with a `succeeded` status similar to:
     "fee_amount": 0,
     "net_amount": 1000,
     "processor": "nuvei",
-    "processor_id": "7110000000010554769"
+    "processor_id": "7110000000010554769",
     ...
   },
   ...
@@ -212,4 +367,5 @@ Now that we have seen how to authorize and capture payments with a collected car
 Follow these guides to learn more:
 
 - [Issue a Refund](/guides/refunds/refund-payments)
+- [Cancel a Payment](/guides/payments/cancel-payments)
 - [Search and View Transactions](/guides/transactions/search-and-view-transactions)
