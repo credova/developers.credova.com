@@ -108,6 +108,7 @@ const sidebars: SidebarsConfig = {
         "concepts/accounts",
         "concepts/api-keys",
         "concepts/transactions",
+        "concepts/payment-intents",
         "concepts/payment-transfer-intents",
         "concepts/dispute-cases",
         "concepts/fraud-details-and-prevention",
