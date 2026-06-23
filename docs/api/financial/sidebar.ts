@@ -78,8 +78,20 @@ const sidebar: SidebarsConfig = {
         },
         {
           type: "doc",
+          id: "api/financial/get-payment-intent-attempts",
+          label: "Get payment intent attempts",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
           id: "api/financial/confirm-payment-intent",
           label: "Confirm payment intent",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "api/financial/complete-payment-intent-3-ds-challenge",
+          label: "Complete payment intent 3DS challenge",
           className: "api-method post",
         },
         {
@@ -710,6 +722,18 @@ const sidebar: SidebarsConfig = {
           type: "doc",
           id: "api/financial/get-pdf-statement-by-id",
           label: "Get PDF Statement by ID",
+          className: "api-method get",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "3D Secure",
+      items: [
+        {
+          type: "doc",
+          id: "api/financial/three-ds-get-by-id",
+          label: "ThreeDs_GetById",
           className: "api-method get",
         },
       ],
