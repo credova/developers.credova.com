@@ -9,7 +9,9 @@ type Props = WrapperProps<typeof ContentType>;
 
 export default function ContentWrapper(props: Props): JSX.Element {
   const { pathname } = useLocation();
-  const show = /^\/(guides|concepts)(\/|$)/.test(pathname);
+  // Show on actual guide/concept pages, but not the section index/landing pages
+  // (/guides, /concepts) — those are just card grids with nothing to copy.
+  const show = /^\/(guides|concepts)\/.+/.test(pathname);
   return (
     <>
       {show && (
