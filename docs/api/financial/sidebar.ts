@@ -733,7 +733,7 @@ const sidebar: SidebarsConfig = {
         {
           type: "doc",
           id: "api/financial/three-ds-get-by-id",
-          label: "ThreeDs_GetById",
+          label: "Get 3DS session",
           className: "api-method get",
         },
       ],

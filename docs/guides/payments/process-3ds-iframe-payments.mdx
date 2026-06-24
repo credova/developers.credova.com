@@ -23,7 +23,7 @@ Your backend needs your `Secret Key`. [Go to your Developers section](https://po
 
 This guide assumes you have:
 
-- 3DS enabled on your account. 3DS is off by default — contact PublicSquare to enable it.
+- 3DS enabled on your account. 3DS is off by default — contact Credova to enable it.
 - The Elements SDK initialized with your `Publishable Key`. See the [JavaScript](/sdks/web/javascript) or [React](/sdks/web/react) SDK docs.
 
 ## Step 1 — Tokenize the card
@@ -43,7 +43,7 @@ const card = await publicsquare.cards.create({
   </TabItem>
   <TabItem value="react" label="React">
 
-```jsx showLineNumbers title="Tokenize the card"
+``jsx showLineNumbers title="Tokenize the card"
 const { publicsquare } = usePublicSquare();
 
 const card = await publicsquare.cards.create({
@@ -85,9 +85,9 @@ curl 'https://api.publicsquare.com/payment-intents' \
 
 ## Step 3 — Create a 3DS session
 
-In the browser, create the 3DS session from the card `token` and the Payment Intent `id`. The SDK collects the device fingerprint, registers the session with PublicSquare, and returns:
+In the browser, create the 3DS session from the card `token` and the Payment Intent `id`. The SDK collects the device fingerprint, registers the session with Credova, and returns:
 
-- `id` — the PublicSquare session id. Pass this to **confirm** and **complete**.
+- `id` — the Credova session id. Pass this to **confirm** and **complete**.
 - `bt_session_id` — the session id used to render the challenge iframe in Step 5.
 
 <Tabs className="publicsquare-tabs">
@@ -172,7 +172,7 @@ Return `next_action.three_d_secure` to the browser to render the challenge.
 
 When the intent is `requires_action`, present the ACS challenge using the values from `next_action.three_d_secure`.
 
-<Alert type="warning">Use the session's <code>bt_session_id</code> (from Step 3) as the challenge <code>sessionId</code>, not the PublicSquare session id. Keep the PublicSquare <code>session_id</code> for the <code>complete</code> call in Step 6.</Alert>
+<Alert type="warning">Use the session's <code>bt_session_id</code> (from Step 3) as the challenge <code>sessionId</code>, not the Credova session id. Keep the Credova <code>session_id</code> for the <code>complete</code> call in Step 6.</Alert>
 
 <Tabs className="publicsquare-tabs">
   <TabItem value="react" label="React">
@@ -216,7 +216,7 @@ await completePayment(nextAction.session_id);
 
 ## Step 6 — Complete the Payment Intent
 
-After the challenge resolves, call [Complete Payment Intent 3DS Challenge](/api/financial/complete-payment-intent-3-ds-challenge) from your backend with the PublicSquare `session_id` (from `next_action.three_d_secure.session_id`). PublicSquare retrieves the authentication result and submits the payment to the processor.
+After the challenge resolves, call [Complete Payment Intent 3DS Challenge](/api/financial/complete-payment-intent-3-ds-challenge) from your backend with the Credova `session_id` (from `next_action.three_d_secure.session_id`). Credova retrieves the authentication result and submits the payment to the processor.
 
 ```shell showLineNumbers title="Complete the 3DS challenge"
 curl 'https://api.publicsquare.com/payment-intents/pi_2YKewBonG4tgk12MheY3PiHDy/three_d_secure/complete' \

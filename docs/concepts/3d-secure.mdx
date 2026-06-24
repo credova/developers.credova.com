@@ -4,11 +4,11 @@ import { Alert } from "@site/src/components/shared/Alert";
 
 3D Secure (3DS) is an authentication step that runs before a card payment is authorized. The cardholder's issuing bank verifies that the person making the purchase is the legitimate cardholder—either silently (**frictionless**) or by presenting a **challenge** such as a one-time passcode or a banking-app push.
 
-PublicSquare implements 3DS 2.x using [Basis Theory](https://basistheory.com) as the 3DS Server and passes the resulting authentication values to the processor on a single payment submission. 3DS layers onto the existing [Payment Intents](/api/financial/create-payment-intent) flow and provides you the flexibility to opt in per intent at `confirm` time.
+Credova implements 3DS 2.x using [Basis Theory](https://basistheory.com) as the 3DS Server and passes the resulting authentication values to the processor on a single payment submission. 3DS layers onto the existing [Payment Intents](/api/financial/create-payment-intent) flow and provides you the flexibility to opt in per intent at `confirm` time.
 
 **Why use it:** a successful 3DS authentication shifts chargeback liability from you to the issuer and is mandatory for Strong Customer Authentication (SCA) on in-scope EU/UK transactions.
 
-<Alert type="warning">3DS is gated per account and is off by default. Contact PublicSquare to enable 3DS on your account before integrating.</Alert>
+<Alert type="warning">3DS is gated per account and is off by default. Contact Credova to enable 3DS on your account before integrating.</Alert>
 
 ## Transports
 
@@ -16,7 +16,7 @@ There are two ways to present 3DS to the cardholder. Both share the same `confir
 
 | Factor                       | Iframe                                                     | Redirect                                          |
 |------------------------------|------------------------------------------------------------|---------------------------------------------------|
-| Session created              | In the browser, via the Elements SDK                       | Server-side, by PublicSquare at `confirm`         |
+| Session created              | In the browser, via the Elements SDK                       | Server-side, by Credova at `confirm`         |
 | Device fingerprint quality   | Real (browser-collected) — higher frictionless rate        | Approximated — lower frictionless rate            |
 | Challenge presentation       | ACS iframe embedded in your page (state preserved)         | Full-page navigation to a hosted page             |
 | Merchant routes required     | None                                                       | Two callback routes (success + failure)           |
@@ -46,7 +46,7 @@ Send the `three_d_secure` field as part of the `confirm` call. See [Confirm Paym
 | Field                      | Description                                                                                                       |
 |----------------------------|-------------------------------------------------------------------------------------------------------------------|
 | `transport`                | **Required.** `iframe` or `redirect`.                                                                             |
-| `session_id`               | Iframe only. The PublicSquare 3DS session id (`id`) returned by the Elements SDK `createSession`.                 |
+| `session_id`               | Iframe only. The Credova 3DS session id (`id`) returned by the Elements SDK `createSession`.                 |
 | `success_url`              | Redirect only. Where the cardholder is returned after a successful challenge.                                     |
 | `failure_url`              | Redirect only. Where the cardholder is returned on a failed/cancelled challenge.                                  |
 | `challenge_preference`     | Optional. See [Challenge preference](#challenge-preference).                                                      |
@@ -67,11 +67,11 @@ When a challenge is required, `confirm` returns the intent in `requires_action` 
 
 ### 3DS session
 
-Created in the browser by the Elements SDK `createSession` (which also registers it with PublicSquare) and retrievable via [Get 3DS Session](/api/financial/three-ds-get-by-id).
+Created in the browser by the Elements SDK `createSession` (which also registers it with Credova) and retrievable via [Get 3DS Session](/api/financial/three-ds-get-by-id).
 
 | Field                    | Description                                                                                    |
 |--------------------------|------------------------------------------------------------------------------------------------|
-| `id`                     | The **PublicSquare** session id. Pass this to `confirm` and `complete`.                        |
+| `id`                     | The **Credova** session id. Pass this to `confirm` and `complete`.                        |
 | `bt_session_id`          | The underlying session id used to render the challenge iframe (the SDK challenge `sessionId`). |
 | `card_brand`             | Detected card brand.                                                                           |
 | `additional_card_brands` | Any co-badged brands.                                                                          |
@@ -87,7 +87,7 @@ Created in the browser by the Elements SDK `createSession` (which also registers
 }
 ```
 
-<Alert>Two ids are in play: the PublicSquare `id` drives the `confirm`/`complete` API calls, and `bt_session_id` drives the in-page challenge.</Alert>
+<Alert>Two ids are in play: the Credova `id` drives the `confirm`/`complete` API calls, and `bt_session_id` drives the in-page challenge.</Alert>
 
 ## Lifecycle
 

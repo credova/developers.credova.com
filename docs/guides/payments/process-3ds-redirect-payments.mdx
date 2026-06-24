@@ -3,7 +3,7 @@ import GettingStartedSection from "@site/src/components/docs/_getting-started-se
 
 # Process 3DS Payments (Redirect)
 
-This guide walks through authenticating a card payment with 3D Secure using the **redirect** transport: PublicSquare creates the 3DS session server-side, and any challenge is presented by navigating the cardholder to a hosted page. When the challenge finishes, the cardholder is returned to a callback route you host. For a conceptual overview and the comparison with the iframe transport, see [3D Secure](/concepts/3d-secure).
+This guide walks through authenticating a card payment with 3D Secure using the **redirect** transport: Credova creates the 3DS session server-side, and any challenge is presented by navigating the cardholder to a hosted page. When the challenge finishes, the cardholder is returned to a callback route you host. For a conceptual overview and the comparison with the iframe transport, see [3D Secure](/concepts/3d-secure).
 
 The redirect transport requires **no JavaScript SDK** on your checkout page, which makes it a good fit for native mobile webviews and server-rendered checkouts.
 
@@ -22,7 +22,7 @@ Your backend will need your `Secret Key`. [Go to your Developers section](https:
 This guide assumes you have:
 
 - A collected card. Follow [Collect Cards](/guides/payment-methods/collect-cards) to obtain a `card_…` payment method.
-- 3DS enabled on your account. 3DS is off by default — contact PublicSquare to enable it.
+- 3DS enabled on your account. 3DS is off by default — contact Credova to enable it.
 - Two callback routes you control — a success URL and a failure URL — that Basis Theory will return the cardholder to after the challenge.
 
 <Alert type="warning">Basis Theory strips query strings when it returns the cardholder. Carry any state you need (such as the payment intent id) in the URL **path**, not the query string — e.g. `https://merchant.example.com/3ds/success/pi_2YKewBonG4tgk12MheY3PiHDy`.</Alert>
@@ -87,7 +87,7 @@ window.location.href = nextAction.redirect_url;
 
 ## Step 3 — Handle the callback and complete
 
-When the cardholder lands on your callback route, read the session id (from your stored state or the path) and call [Complete Payment Intent 3DS Challenge](/api/financial/complete-payment-intent-3-ds-challenge) from your backend. PublicSquare retrieves the authentication result and submits the payment to the processor.
+When the cardholder lands on your callback route, read the session id (from your stored state or the path) and call [Complete Payment Intent 3DS Challenge](/api/financial/complete-payment-intent-3-ds-challenge) from your backend. Credova retrieves the authentication result and submits the payment to the processor.
 
 ```shell showLineNumbers title="Complete the 3DS challenge"
 curl 'https://api.publicsquare.com/payment-intents/pi_2YKewBonG4tgk12MheY3PiHDy/three_d_secure/complete' \
