@@ -1,11 +1,11 @@
-import { themes as prismThemes } from "prism-react-renderer";
-import type { Config } from "@docusaurus/types";
+import {themes as prismThemes} from "prism-react-renderer";
+import type {Config} from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 import type * as Plugin from "@docusaurus/types/src/plugin";
 import type * as OpenApiPlugin from "docusaurus-plugin-openapi-docs";
 
 const config: Config = {
-  title: "PublicSquare Developer Documentation",
+  title: "Credova Developer Documentation",
   favicon: "img/favicon.ico",
   url: "https://developers.publicsquare.com",
   baseUrl: "/",
@@ -63,7 +63,7 @@ const config: Config = {
     image: "img/docusaurus-social-card.jpg",
     navbar: {
       logo: {
-        alt: "PublicSquare",
+        alt: "Credova",
         href: "/",
         target: "_self",
         src: "-",
@@ -168,6 +168,34 @@ const config: Config = {
       "@docusaurus/plugin-ideal-image",
       {
         disableInDev: false,
+      },
+    ],
+    [
+      'docusaurus-plugin-llms',
+      {
+        generateLLMsTxt: true,
+        generateLLMsFullTxt: true,
+        docsDir: 'docs',
+        ignoreFiles: ['advanced/*', 'private/*', 'api/accounts/**', 'api/financial/**'],
+        title: 'Credova Developer Documentation',
+        description: 'Guides, concepts, and API reference for the Credova payments platform.',
+        excludeImports: true,
+        removeDuplicateHeadings: true,
+        generateMarkdownFiles: true,
+        preserveDirectoryStructure: false,
+        includeOrder: [
+          'getting-started/*',
+          'guides/*',
+          'api/*',
+        ],
+        includeUnmatchedLast: true,
+      },
+    ],
+    [
+      "docusaurus-plugin-copy-page-button",
+      {
+        injectButton: false,
+        markdownUrl: true,
       },
     ],
   ],

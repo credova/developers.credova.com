@@ -13,6 +13,8 @@ import ApiKeysImage from "@site/static/img/icons/key-gradient.svg";
 import WebhooksImage from "@site/static/img/icons/webhook-gradient.svg";
 import AccountsImage from "@site/static/img/icons/file-invoice-dollar-gradient.svg";
 import OnboardingImage from "@site/static/img/icons/handshake-light-gradient.svg";
+import ThreeDSecureImage from "@site/static/img/icons/shield-check-gradient.svg";
+import PaymentIntentsImage from "@site/static/img/icons/light-credit-card-circle-arrow-right-gradient.svg";
 
 <Intro
   title="Concepts"
@@ -66,4 +68,16 @@ Explore the knowledge base about the core concepts, terminology, and FAQ's relat
     heading="Onboarding"
     img={<div className="card-img-container"><OnboardingImage /></div>}
   >Learn how to onboard to our platform.</Card>
+
+  <Card
+    href="/concepts/payment-intents"
+    heading="Payment intents"
+    img={<div className="card-img-container"><PaymentIntentsImage /></div>}
+  >Track a payment across its lifecycle with a durable, confirmable handle.</Card>
+
+  <Card
+    href="/concepts/3d-secure"
+    heading="3D Secure"
+    img={<div className="card-img-container"><ThreeDSecureImage /></div>}
+  >Authenticate cardholders and shift chargeback liability to the issuer.</Card>
 </Card.TwoColumnLayout>

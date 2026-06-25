@@ -1,0 +1,1 @@
+{"title":"Body","body":{"content":{"application/json":{"schema":{"type":"object","properties":{"three_d_secure":{"type":"object","properties":{"session_id":{"type":"string","nullable":true}},"additionalProperties":false,"title":"CompleteThreeDsSessionRequest"}},"additionalProperties":false,"title":"CompletePaymentIntentRequest"}}}}}
