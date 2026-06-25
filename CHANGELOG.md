@@ -1,3 +1,10 @@
+# [1.49.0](https://github.com/publicsq/developers.publicsquare.com/compare/v1.48.1...v1.49.0) (2026-06-25)
+
+
+### Features
+
+* add 3DS guides and concepts pages ([#227](https://github.com/publicsq/developers.publicsquare.com/issues/227)) ([e6d3282](https://github.com/publicsq/developers.publicsquare.com/commit/e6d3282ad5139291c3a739ec01ccb0a357a345df))
+
 ## [1.48.1](https://github.com/publicsq/developers.publicsquare.com/compare/v1.48.0...v1.48.1) (2026-05-04)
 
 
