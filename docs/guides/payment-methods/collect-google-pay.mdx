@@ -135,7 +135,7 @@ Adding the code above will render a `Google Pay` button on your site with a `onP
 
 ## Tokenization and Storing Google Pay
 
-After the customer has authorized the payment, your application will need to call our `create` method from the SDK with the encrypted Google Pay token to create a Google Pay payment method in your account.
+After the customer has authorized the payment, your application will need to call our `create` method from the SDK with the Google Pay payment method data to create a Google Pay payment method in your account.
 
 To do this, we will handle the `onPaymentDataLoaded` event to call Public Square, passing the Google Pay payment data:
 
@@ -164,7 +164,7 @@ async function init() {
     googlePayButtonRef.current?.setDisabled(true);
 
       try {
-        // Create a Google Pay payment method from the encrypted payment token
+        // Create a Google Pay payment method from the payment method data
         const paymentMethod = await createGooglePayPaymentMethod(event)
         
         // Send the payment method to the backend for payment processing
@@ -182,9 +182,8 @@ async function init() {
   async function createGooglePayPaymentMethod(event: any) {
     if (publicsquare) {
       try {
-        const tokenObj = JSON.parse(event.paymentMethodData.tokenizationData.token)
         const response = await publicsquare.googlePay.create({
-          google_payment_data: tokenObj
+          google_payment_method_data: event.paymentMethodData
         })
         if (response) {
           return response
@@ -214,7 +213,7 @@ async function onPaymentAuthorized(event: any) {
   setLoading(true)
 
   try {
-    // Create a Google Pay payment method from the encrypted payment token
+    // Create a Google Pay payment method from the payment method data
     const paymentMethod = await createGooglePayPaymentMethod(event)
 
     // Send the payment method to the backend for payment processing
@@ -233,9 +232,8 @@ async function createGooglePayPaymentMethod(event: any) {
   const psq = publicsquareRef.current;
   if (psq) {
     try {
-      const tokenObj = JSON.parse(event.paymentMethodData.tokenizationData.token)
       const response = await psq.googlePay.create({
-        google_payment_data: tokenObj
+        google_payment_method_data: event.paymentMethodData
       })
       if (response) {
         return response
