@@ -1,3 +1,10 @@
+# [1.51.0](https://github.com/publicsq/developers.publicsquare.com/compare/v1.50.0...v1.51.0) (2026-07-09)
+
+
+### Features
+
+* add bin field to card object documentation (sc-87094) ([#228](https://github.com/publicsq/developers.publicsquare.com/issues/228)) ([4d88d48](https://github.com/publicsq/developers.publicsquare.com/commit/4d88d48ac8adb852823f73503c0d0755f99d0ea7))
+
 # [1.50.0](https://github.com/publicsq/developers.publicsquare.com/compare/v1.49.0...v1.50.0) (2026-07-08)
 
 
