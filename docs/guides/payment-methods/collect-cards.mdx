@@ -249,7 +249,7 @@ curl -L 'https://collect.publicsquare.com' \
   </TabItem>
 </Tabs>
 
-The created `card` object contains the non-sensitive information about the card:
+The created `card` object contains the non-sensitive information about the card, including the `bin`:
 
 ```json showLineNumbers title="card.json"
 {
@@ -258,6 +258,7 @@ The created `card` object contains the non-sensitive information about the card:
   "environment": "test",
   "cardholder_name": "John Smith",
   "last4": "4242",
+  "bin": "424242",
   "exp_month": "12",
   "exp_year": "2025",
   "brand": "visa",
@@ -266,6 +267,8 @@ The created `card` object contains the non-sensitive information about the card:
   "modified_at": "2024-06-30T01:02:29.212Z"
 }
 ```
+
+<Alert>Displaying the card's first 6 digits (`bin`) alongside the last 4 (`last4`) is PCI compliant per PCI DSS Requirement 3.3.</Alert>
 
 You can safely store the card's `id` value in your database to link it with the appropriate payment or customer association.
 

@@ -72,6 +72,7 @@ curl 'https://api.publicsquare.com/payment_intents' \
     "card": {
       "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
       "last_four": "4242",
+      "bin": "424242",
       "brand": "visa",
       "exp_month": "12",
       "exp_year": "2025"
@@ -242,6 +243,7 @@ For example, given you have a previously collected card:
   "environment": "test",
   "cardholder_name": "John Smith",
   "last4": "4242",
+  "bin": "424242",
   "exp_month": "12",
   "exp_year": "2025",
   "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL",
@@ -308,6 +310,7 @@ Given the above example, you should see a payment result similar to:
       "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
       "cardholder_name": "John Smith",
       "last4": "4242",
+      "bin": "424242",
       "exp_month": "12",
       "exp_year": "2025",
       "brand": "visa",
