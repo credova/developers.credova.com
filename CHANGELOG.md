@@ -1,3 +1,10 @@
+# [1.52.0](https://github.com/publicsq/developers.publicsquare.com/compare/v1.51.0...v1.52.0) (2026-07-15)
+
+
+### Features
+
+* update GooglePay mandatory billing changes and shipping options ([#230](https://github.com/publicsq/developers.publicsquare.com/issues/230)) ([34bccfe](https://github.com/publicsq/developers.publicsquare.com/commit/34bccfe427b684d13114a9a14c9c472dd4eb20ea))
+
 # [1.51.0](https://github.com/publicsq/developers.publicsquare.com/compare/v1.50.0...v1.51.0) (2026-07-09)
 
 
