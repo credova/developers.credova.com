@@ -24,11 +24,35 @@ Next you will need your `Publishable Key`. [Go to your Developers section](https
 
 Domain verification is a key step in getting Apple Pay up and running on your site. It is a required step for development and production servers, to confirm that you own the domain where Apple Pay will be implemented, preventing unauthorized use and maintaining the integrity of the payment system.
 
-1. Download and serve the [domain association file](https://portal.publicsquare.com/.well-known/apple-developer-merchantid-domain-association) (CSR) on your server at `https://<YOUR_DOMAIN>/.well-known/apple-developer-merchantid-domain-association`.
+1. Serve the domain association file on your server at `https://<YOUR_DOMAIN>/.well-known/apple-developer-merchantid-domain-association` by proxying that path to the [domain association endpoint](#retrieve-the-domain-association-file) and returning the response as-is.
 2. Add the public domain to your tenant using the [merchant portal](https://portal.publicsquare.com/settings/apple-pay) or the [API](/api/financial/register-apple-pay-domain)
 
 <Alert>
   Apple requires the website to be served via HTTPS, which can be tricky during the development phase. Tunneling may represent a good option to preview local projects through a working HTTPS connection. [Cloudflare tunnel](https://developers.cloudflare.com/pages/how-to/preview-with-cloudflare-tunnel/) may be worth checking out.
+</Alert>
+
+#### Retrieve the domain association file
+
+The API serves the Apple-issued domain association file for your account, so you no longer need to download and host a static copy yourself. Instead, have your server fetch it and return it at the well-known path Apple expects:
+
+`GET https://api.publicsquare.com/.well-known/apple-developer-merchantid-domain-association`
+
+**Authentication**: Requires an API key with the `payment-method:capture` permission, sent in the `X-API-KEY` header. Your [Publishable Key](#get-your-publishable-key) already has this permission, so no additional key is needed.
+
+```shell showLineNumbers title="Retrieve the domain association file"
+curl "https://api.publicsquare.com/.well-known/apple-developer-merchantid-domain-association" \
+  -H "X-API-KEY: <PUBLISHABLE_API_KEY>"
+```
+
+The returned file is processor-specific: the API automatically returns the domain association file matching whichever processor is currently set as your account's default processor, so you don't need to specify one.
+
+| Status | Description |
+| --- | --- |
+| `200` | Returns the domain association file contents (`Content-Type: text/plain`) for your account's default processor. |
+| `404` | No domain association file is configured for your account's default processor. Contact support if you believe this is unexpected. |
+
+<Alert>
+  Proxy this request rather than caching a static copy of the file. If your account's default processor ever changes, the file this endpoint returns updates automatically, so proxying keeps the file Apple verifies against always current.
 </Alert>
 
 ## Configuring Credova Elements
