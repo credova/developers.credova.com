@@ -133,6 +133,100 @@ export default function App() {
 
 Adding the code above will render a `Google Pay` button on your site with a `onPaymentDataLoaded` event which will be called when the user successfully authorizes a payment.
 
+## Billing and Shipping Addresses
+
+<Alert>This behavior requires Credova Elements SDKs v1.15.1 or later.</Alert>
+
+The Google Pay sheet always collects a billing address from the customer &mdash; this is not configurable. The billing address is returned in `onPaymentDataLoaded` as `paymentData.paymentMethodData.info.billingAddress`, and is automatically stored as the payment method's `billing_details` when you [create the payment method](#tokenization-and-storing-google-pay). There's nothing you need to configure to collect billing.
+
+Google Pay collects the billing address in its `FULL` format, meaning customers see and enter a complete street address (not just a postal code), along with a billing phone number. As of Credova Elements v1.15.1 the phone number is always requested with the billing address on the Google Pay sheet, and is stored on the payment method.
+
+Shipping address collection is optional and off by default. Enable it with the `shippingAddressRequired` option, and optionally restrict which countries are allowed or require a phone number with `shippingAddressParameters`:
+
+| Option | Type | Default | Description |
+|--------|------|---------|--------------|
+| `shippingAddressRequired` | `boolean` | `false` | When `true`, the Google Pay sheet also collects a shipping address. |
+| `shippingAddressParameters` | `{ allowedCountryCodes?: string[], phoneNumberRequired?: boolean }` | `undefined` | Restricts the shipping address collected to the given country codes, and/or requires a phone number. Only used when `shippingAddressRequired` is `true`. |
+
+<Tabs className="publicsquare-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+```javascript showLineNumbers title="index.js"
+  googlePayButtonRef = publicsquare.googlePay.renderButton(buttonContainerRef.current!, {
+    id: 'google-pay-btn',
+    environment: 'TEST',
+    merchantName: 'Merchant Name',
+    transactionInfo: {
+      totalPriceStatus: 'FINAL',
+      totalPrice: '1.00',
+      currencyCode: 'USD',
+      countryCode: 'US'
+    },
+    // highlight-start
+    shippingAddressRequired: true,
+    shippingAddressParameters: {
+      allowedCountryCodes: ['US', 'CA'],
+      phoneNumberRequired: true
+    },
+    // highlight-end
+    onPaymentDataLoaded: async (paymentData) => {
+      onPaymentAuthorized(paymentData)
+    }
+  });
+```
+  </TabItem>
+
+  <TabItem value="react" label="React">
+```jsx showLineNumbers title="App.jsx"
+        <GooglePayButtonElement
+          id="google-pay-element"
+          environment= 'TEST'
+          merchantName="Merchant Name"
+          transactionInfo={{
+            totalPriceStatus: 'FINAL',
+            totalPrice: '1.00',
+            currencyCode: 'USD',
+            countryCode: 'US'
+          }}
+          // highlight-start
+          shippingAddressRequired={true}
+          shippingAddressParameters={{
+            allowedCountryCodes: ['US', 'CA'],
+            phoneNumberRequired: true
+          }}
+          // highlight-end
+          onPaymentDataLoaded={async (paymentData) => {
+            onPaymentAuthorized(paymentData)
+          }}
+        />
+```
+  </TabItem>
+</Tabs>
+
+When `shippingAddressRequired` is enabled, the shipping address is returned at the root of the `onPaymentDataLoaded` payload as `paymentData.shippingAddress`. We don't store the shipping address on the payment method &mdash; pass it along as `shipping_address` when you [create the payment](/guides/payments/process-google-pay-payments). The billing address is already stored on the payment method from the earlier tokenization step, so you don't need to read it again here.
+
+```javascript showLineNumbers title="index.js"
+async function onPaymentAuthorized(paymentData) {
+  const shippingAddress = paymentData.shippingAddress;
+
+  const paymentMethod = await createGooglePayPaymentMethod(paymentData);
+
+  // highlight-start
+  const shippingAddressPayload = shippingAddress && {
+    address_line_1: shippingAddress.address1,
+    address_line_2: shippingAddress.address2,
+    city: shippingAddress.locality,
+    state: shippingAddress.administrativeArea,
+    postal_code: shippingAddress.postalCode,
+    country: shippingAddress.countryCode
+  };
+
+  await chargePayment(paymentMethod.id, {
+    shipping_address: shippingAddressPayload
+  });
+  // highlight-end
+}
+```
+
 ## Tokenization and Storing Google Pay
 
 After the customer has authorized the payment, your application will need to call our `create` method from the SDK with the Google Pay payment method data to create a Google Pay payment method in your account.
@@ -296,7 +390,7 @@ The created `Google Pay` object contains the non-sensitive information about the
 
 You can safely store the Google Pay payment method `id` value in your database to use it to process a payment or associate it with a customer.
 
-You can optionally pass in a `customer_id` to associate with an existing [Created Customer](/api/accounts/create-customer) and `billing_details` to remove the requirement to pass them when [Creating a Payment](/api/financial/create-payment).
+You can optionally pass in a `customer_id` to associate with an existing [Created Customer](/api/accounts/create-customer). The `billing_details` shown above always comes from the Google Pay sheet (see [Billing and Shipping Addresses](#billing-and-shipping-addresses)) &mdash; there's no need to pass them yourself, and doing so has no effect.
 
 ## Testing 
 
