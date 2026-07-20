@@ -1662,7 +1662,7 @@
     webpack "^5.95.0"
     webpackbar "^7.0.0"
 
-"@docusaurus/core@3.10.1", "@docusaurus/core@^3.10.0":
+"@docusaurus/core@3.10.1":
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/@docusaurus/core/-/core-3.10.1.tgz#3f8bdb97451b4df14f2a3b39ab0186366fbf8fbe"
   integrity sha512-3pf2fXXw0eVk8WnC3T4LIigRDupcpvngpKo9Vy7mYyBhuddc0klDUuZAIfzMoK6z05pdlk6EFC/vBSX43+1O5w==
@@ -1710,7 +1710,7 @@
     webpack-dev-server "^5.2.2"
     webpack-merge "^6.0.1"
 
-"@docusaurus/core@3.10.2":
+"@docusaurus/core@3.10.2", "@docusaurus/core@^3.10.0":
   version "3.10.2"
   resolved "https://registry.yarnpkg.com/@docusaurus/core/-/core-3.10.2.tgz#349cae728fc3769b3f8aef4cf538ccb79aace8d0"
   integrity sha512-EYByj6nk+aD9KeVxV6Hmo2/nAAT79P21Y82ycTBOBtrmqilloIbIEhgL2/8Xpt2Jz/pgNqHAwyusOGwmbKeJmA==
@@ -1794,12 +1794,12 @@
     chalk "^4.1.2"
     tslib "^2.6.0"
 
-"@docusaurus/lqip-loader@3.10.1":
-  version "3.10.1"
-  resolved "https://registry.yarnpkg.com/@docusaurus/lqip-loader/-/lqip-loader-3.10.1.tgz#1bc30fbd7a4429274ae0000d0b1bda604d324c53"
-  integrity sha512-ushByv88FWxsh3BS9QccWcEbKsW0QnNvWnl0+NCLe7weL5AkHS4HnSDszGMSzn2v5jidT4QjOVHacNVsU5I9Lw==
+"@docusaurus/lqip-loader@3.10.2":
+  version "3.10.2"
+  resolved "https://registry.yarnpkg.com/@docusaurus/lqip-loader/-/lqip-loader-3.10.2.tgz#6cfe52091e4df3832acfec4001910d0e0889158b"
+  integrity sha512-U9ON9YXhfQcF7s4JUrcw02Nxez9ctI5nu/+6XGGmLJ+yx36ALT1fFCHzHfd7+TvSB1H7aoT/6T5BdfZvRp++Wg==
   dependencies:
-    "@docusaurus/logger" "3.10.1"
+    "@docusaurus/logger" "3.10.2"
     file-loader "^6.2.0"
     lodash "^4.17.21"
     sharp "^0.32.3"
@@ -2023,17 +2023,17 @@
     "@docusaurus/utils-validation" "3.10.1"
     tslib "^2.6.0"
 
-"@docusaurus/plugin-ideal-image@^3.10.0":
-  version "3.10.1"
-  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-ideal-image/-/plugin-ideal-image-3.10.1.tgz#807437a80e8fff875284129620b0d8447e61c4b3"
-  integrity sha512-zIjQ/BtFS6YwEgnk9ypZxuSnA/Z011Z9cuaawKVfgyT7T+vuGx6T6ZgKur0IFnOkpI7EfI1DhbfdABCtfEzWFA==
+"@docusaurus/plugin-ideal-image@^3.10.2":
+  version "3.10.2"
+  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-ideal-image/-/plugin-ideal-image-3.10.2.tgz#51fa3048328ce403b2f153aee1fa676827d49106"
+  integrity sha512-M1uRffUaE5hqbo7368jSclYSU6oOOFdJ3/fq644kwaoComeG+jjBJ9piFrHkExtiU2Q7zcm1dWaqtfJVrR9wSQ==
   dependencies:
-    "@docusaurus/core" "3.10.1"
-    "@docusaurus/lqip-loader" "3.10.1"
+    "@docusaurus/core" "3.10.2"
+    "@docusaurus/lqip-loader" "3.10.2"
     "@docusaurus/responsive-loader" "^1.7.0"
-    "@docusaurus/theme-translations" "3.10.1"
-    "@docusaurus/types" "3.10.1"
-    "@docusaurus/utils-validation" "3.10.1"
+    "@docusaurus/theme-translations" "3.10.2"
+    "@docusaurus/types" "3.10.2"
+    "@docusaurus/utils-validation" "3.10.2"
     sharp "^0.32.3"
     tslib "^2.6.0"
     webpack "^5.88.1"
@@ -2189,12 +2189,20 @@
     fs-extra "^11.1.1"
     tslib "^2.6.0"
 
+"@docusaurus/theme-translations@3.10.2":
+  version "3.10.2"
+  resolved "https://registry.yarnpkg.com/@docusaurus/theme-translations/-/theme-translations-3.10.2.tgz#cd649083babd12df324e7129008aaccacd4cfb13"
+  integrity sha512-iv20wrxnyXkY89LM3TzRlzGlt5fIGO5UnaR6UL1ZVfB9RRFjxQFQ6awDrwAc6Km8Y5gD8pInuwYPF+6/TiCxXA==
+  dependencies:
+    fs-extra "^11.1.1"
+    tslib "^2.6.0"
+
 "@docusaurus/tsconfig@^3.10.0":
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/@docusaurus/tsconfig/-/tsconfig-3.10.1.tgz#1db31b4a4a5c914bdffa80070a35b6365d34f2e8"
   integrity sha512-rYvB7yqkdqWIpAbDzQljGfM4cDBkLTbhmagZBEcsyj6oPUsz47lmW2pYdN1j+7sGFgltbAmQH62xfbrij4Eh6Q==
 
-"@docusaurus/types@3.10.1", "@docusaurus/types@^3.10.0":
+"@docusaurus/types@3.10.1":
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/@docusaurus/types/-/types-3.10.1.tgz#d42837938ae43ca2be0ca47e63e00476b5eb94be"
   integrity sha512-XYMK8k1szDCFMw2V+Xyen0g7Kee1sP3dtFnl7vkGkZOkeAJ/oPDQPL8iz4HBKOo/cwU8QeV6onVjMqtP+tFzsw==
@@ -2210,7 +2218,7 @@
     webpack "^5.95.0"
     webpack-merge "^5.9.0"
 
-"@docusaurus/types@3.10.2":
+"@docusaurus/types@3.10.2", "@docusaurus/types@^3.10.0":
   version "3.10.2"
   resolved "https://registry.yarnpkg.com/@docusaurus/types/-/types-3.10.2.tgz#9ffe35adfb4587e49158ee9e10d94b86419a5932"
   integrity sha512-B6rvfwIFSapUqUJjMriZswX13K8l5Z7AcmVE6uTEJpYddQieSTR12DsGaFtcZAIDsQd4p+0WTl0Vc6jmZK0Trw==
