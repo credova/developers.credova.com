@@ -1,3 +1,10 @@
+# [1.53.0](https://github.com/publicsq/developers.publicsquare.com/compare/v1.52.0...v1.53.0) (2026-07-21)
+
+
+### Features
+
+* update Apple Pay guide for billing/shipping changes ([#234](https://github.com/publicsq/developers.publicsquare.com/issues/234)) ([37d10ba](https://github.com/publicsq/developers.publicsquare.com/commit/37d10ba2bd4eb5b24297e3f91e9c69f9a580a89a))
+
 # [1.52.0](https://github.com/publicsq/developers.publicsquare.com/compare/v1.51.0...v1.52.0) (2026-07-15)
 
 
