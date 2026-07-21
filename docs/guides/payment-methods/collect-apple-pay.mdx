@@ -116,10 +116,14 @@ async function init() {
       currencyCode: 'USD',
       merchantCapabilities: ['supports3DS'],
       supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
+      // highlight-start
+      requiredBillingContactFields: ['postalAddress', 'phone'],
+      // highlight-end
       total: {
         label: 'Demo (Card is not charged)',
         type: 'final',
         amount: '1.99',
+      },
     });
   }
 
@@ -176,6 +180,9 @@ function createApplePaySession() {
     currencyCode: 'USD',
     merchantCapabilities: ['supports3DS'],
     supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
+    // highlight-start
+    requiredBillingContactFields: ['postalAddress', 'phone'],
+    // highlight-end
     total: {
       label: 'Demo (Card is not charged)',
       type: 'final',
@@ -222,6 +229,99 @@ Adding the code above will render an `Apple Pay` button on your site with an `on
 The `createApplePaySession` function creates a new Apple Pay session with information about the payment.
 
 The `validateMerchant` function calls Public Square to initiate the Apple Pay session by checking the presence of the Apple Pay CSR configured during the [Domain Verification](#domain-verification) step. This returns an Apple Pay session instance which is valid for 30 seconds.
+
+## Billing and Shipping Addresses
+
+<Alert>This behavior requires Credova Elements SDKs v1.15.2 or later.</Alert>
+
+Apple Pay should always collect a billing address and phone number from the customer &mdash; this is required to create the payment method. 
+
+Set `requiredBillingContactFields: ['postalAddress', 'phone']` on the Apple Pay payment request passed to `ApplePaySession`, as shown in the [Configure Apple Pay](#configure-apple-pay) step above.  
+When the customer authorizes the payment, Apple returns this information as `event.payment.billingContact`, and is automatically stored as the payment method's billing_details when you create the payment method. 
+
+Apple Pay collects the billing address in its FULL format, meaning customers see and enter a complete street address (not just a postal code), along with a billing phone number, and is stored on the payment method.
+
+Shipping address collection is optional and off by default. Enable it with the `requiredShippingContactFields` option on the same payment request:
+
+| Option | Type | Default | Description |
+|--------|------|---------|--------------|
+| `requiredBillingContactFields` | `ApplePayContactField[]` | *(required)* | Must include `'postalAddress'` and `'phone'`. Apple Pay always collects a billing address and phone number. Optionally `'phone'`, `'name'` and/or `'email'`. |
+| `requiredShippingContactFields` | `ApplePayContactField[]` | `undefined` | When set, the Apple Pay sheet also collects a shipping address. Include `'postalAddress'` to collect the address, and optionally `'phone'`, `'name'` and/or `'email'`. |
+
+<Tabs className="publicsquare-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+```javascript showLineNumbers title="index.js"
+  function createApplePaySession() {
+    return new ApplePaySession(3, {
+      countryCode: 'US',
+      currencyCode: 'USD',
+      merchantCapabilities: ['supports3DS'],
+      supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
+      requiredBillingContactFields: ['postalAddress', 'phone'],
+      // highlight-start
+      requiredShippingContactFields: ['postalAddress'],
+      // highlight-end
+      total: {
+        label: 'Demo (Card is not charged)',
+        type: 'final',
+        amount: '1.99',
+      },
+    });
+  }
+```
+  </TabItem>
+
+  <TabItem value="react" label="React">
+```jsx showLineNumbers title="App.jsx"
+function createApplePaySession() {
+  return new window.ApplePaySession(3, {
+    countryCode: 'US',
+    currencyCode: 'USD',
+    merchantCapabilities: ['supports3DS'],
+    supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
+    requiredBillingContactFields: ['postalAddress', 'phone'],
+    // highlight-start
+    requiredShippingContactFields: ['postalAddress'],
+    // highlight-end
+    total: {
+      label: 'Demo (Card is not charged)',
+      type: 'final',
+      amount: '1.99',
+    },
+  });
+}
+```
+  </TabItem>
+</Tabs>
+
+When `requiredShippingContactFields` is set, the shipping address is returned as `event.payment.shippingContact`. 
+We don't store the shipping address on the payment method, pass it along as `shipping_address` when you [create the payment](/guides/payments/process-apple-pay-payments). The billing address is already stored on the payment method from the earlier tokenization step, so you don't need to read it again here.
+
+```javascript showLineNumbers title="index.js"
+session.onpaymentauthorized = async (event: any) => {
+  // highlight-start
+  const shippingContact = event.payment.shippingContact;
+
+  const shippingAddressPayload = shippingContact && {
+    address_line_1: shippingContact.addressLines?.[0],
+    address_line_2: shippingContact.addressLines?.[1],
+    city: shippingContact.locality,
+    state: shippingContact.administrativeArea,
+    postal_code: shippingContact.postalCode,
+    country: shippingContact.countryCode
+  };
+  // highlight-end
+
+  const paymentMethod = await createApplePayPaymentMethod(event);
+  session.completePayment(ApplePaySession.STATUS_SUCCESS);
+
+  await chargePayment(paymentMethod.id, {
+    // highlight-start
+    shipping_address: shippingAddressPayload
+    // highlight-end
+  });
+};
+```
 
 ## Tokenization and Storing Apple Pay
 
@@ -287,7 +387,7 @@ async function init() {
     if (publicsquare) {
       try {
         const response = await publicsquare.applePay.create({
-          apple_payment_data: event.payment.token,
+          apple_payment_data: event.payment,
         });
         if (response) {
           return response;
@@ -356,7 +456,7 @@ async function createApplePayPaymentMethod(event: any) {
   if (publicsquare) {
     try {
       const response = await publicsquare.applePay.create({
-        apple_payment_data: event.payment.token,
+        apple_payment_data: event.payment,
       });
       if (response) {
         return response;
@@ -415,7 +515,9 @@ The created `Apple Pay` object contains the non-sensitive information about the 
 
 You can safely store the Apple Pay payment method `id` value in your database to use it to process a payment or associate it with a customer.
 
-You can optionally pass in a `customer_id` to associate with an existing [Created Customer](/api/accounts/create-customer) and `billing_details` to remove the requirement to pass them when [Creating a Payment](/api/financial/create-payment).
+You can optionally pass in a `customer_id` to associate with an existing [Created Customer](/api/accounts/create-customer). The `billing_details` shown above always comes from the Apple Pay sheet (see [Billing and Shipping Addresses](#billing-and-shipping-addresses)) &mdash; there's no need to pass them yourself, and doing so has no effect.
+
+<Alert type="warning">Set `requiredBillingContactFields: ['postalAddress', 'phone']` on the Apple Pay create session is required when creating an Apple Pay payment method. Requests without it will fail validation.</Alert>
 
 ## Conclusion
 
