@@ -32,7 +32,7 @@
     "@docusaurus/plugin-client-redirects": "^3.10.1",
     "@docusaurus/plugin-ideal-image": "^3.10.0",
     "@docusaurus/preset-classic": "^3.10.0",
-    "@docusaurus/theme-mermaid": "^3.10.0",
+    "@docusaurus/theme-mermaid": "^3.10.2",
     "@mdx-js/react": "^3.1.0",
     "@mermaid-js/layout-elk": "^0.2.1",
     "add": "^2.0.6",
