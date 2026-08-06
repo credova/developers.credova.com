@@ -1,0 +1,22 @@
+# Task runner for the developers docs site (Docusaurus).
+# Run tasks with `mise run <task>`, e.g. `mise run build`.
+[tools]
+node = "22"
+
+[tasks.build]
+description = "Install deps (+ sharp for image processing) and build the Docusaurus site"
+run = [
+  "yarn install --frozen-lockfile --no-progress --ignore-scripts",
+  "yarn add sharp",
+  "yarn build",
+]
+
+[tasks.typecheck]
+run = "yarn typecheck"
+
+[tasks.release]
+description = "semantic-release: version, changelog, GitHub release (site deploy is handled by Vercel)"
+run = [
+  "yarn install --frozen-lockfile --no-progress --ignore-scripts",
+  "yarn release",
+]
