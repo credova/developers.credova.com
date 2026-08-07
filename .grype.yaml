@@ -1,0 +1,13 @@
+# Security-scan ignore rules (honored by credova/platform-workflows' security action).
+#
+# GHSA-5p4m-2wfm-xmqj (js-yaml 4.3.0): pulled only by `openapi-to-postmanv2`, a
+# dev-only OpenAPI->Postman docs-codegen tool run via `regenerate-docs` — it is NOT
+# part of the built site or any runtime. Every published openapi-to-postmanv2 version
+# pins a vulnerable js-yaml (<4.3.1), so there is no upstream fix to upgrade to, and
+# bun only honors GLOBAL dependency overrides (a global js-yaml override would break
+# @redocly/openapi-core's required js-yaml ^5.2.2). Scoped-fixable under yarn, not bun.
+# Revisit if openapi-to-postmanv2 ships js-yaml >=4.3.1 or bun gains scoped overrides.
+ignore:
+  - vulnerability: GHSA-5p4m-2wfm-xmqj
+    package:
+      name: js-yaml

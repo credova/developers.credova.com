@@ -1,0 +1,23 @@
+# Task runner for the developers docs site (Docusaurus).
+# Run tasks with `mise run <task>`, e.g. `mise run build`.
+[tools]
+node = "22"
+bun = "latest"
+
+[tasks.build]
+description = "Install deps (+ sharp for image processing) and build the Docusaurus site"
+run = [
+  "bun install",
+  "bun add sharp",
+  "bun run build",
+]
+
+[tasks.typecheck]
+run = "bun run typecheck"
+
+[tasks.release]
+description = "semantic-release: version, changelog, GitHub release (site deploy is handled by Vercel)"
+run = [
+  "bun install",
+  "bun run release",
+]

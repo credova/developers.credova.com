@@ -1,44 +1,41 @@
+---
 name: Deploy
 
 on:
   push:
-    branches: ["master"]
+    branches: [master]
+
+permissions:
+  contents: write
+  id-token: write
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: write
-
     steps:
-      - name: Generate token
-        id: generate-token
-        uses: actions/create-github-app-token@v3
+      # credova-standard release token (RELEASE_DOWNLOADER GitHub App), replacing the
+      # bespoke cross-repo create-github-app-token (publicsq/developers.publicsquare.com).
+      - id: release-token
+        name: Generate release token
+        uses: credova/platform-workflows/actions/auth-release-token@master
         with:
-          app-id: ${{ secrets.RELEASE_APP_ID }}
-          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
-          owner: publicsq
-          repositories: "developers.publicsquare.com"
+          client-id: ${{ secrets.RELEASE_DOWNLOADER_APP_ID }}
+          private-key: ${{ secrets.RELEASE_DOWNLOADER_APP_PRIVATE_KEY }}
 
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          token: ${{ steps.generate-token.outputs.token }}
+          token: ${{ steps.release-token.outputs.token }}
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup mise
+        uses: jdx/mise-action@v4
         with:
-          node-version: "22"
-          cache: "yarn"
+          install: true
 
-      - name: Install deps (with cache)
-        uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --frozen-lockfile --no-progress --ignore-scripts
-
+      # semantic-release: versioning, changelog, and GitHub release. The actual site
+      # deploy to developers.credova.com is handled by Vercel's GitHub integration.
       - name: Release
-        run: yarn release
+        run: mise run release
         env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          GITHUB_TOKEN: ${{ steps.release-token.outputs.token }}
