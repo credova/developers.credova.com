@@ -362,6 +362,8 @@ You should see a payment response with a `succeeded` status similar to:
 
 Instead of capturing the full authorized amount in a single call, you can capture an authorization in multiple, smaller captures. This is useful when the final amount is not known up front, such as shipment-based fulfillment or usage-based billing.
 
+<Alert type="warning">Not all payment processors support multiple partial captures. If your account's processor does not support it, a second capture on the same authorization is rejected.</Alert>
+
 ### Interim captures
 
 Call the capture endpoint with `is_final: false` (the default) and an `amount` less than the remaining capturable amount. The authorization stays open so you can capture again later.

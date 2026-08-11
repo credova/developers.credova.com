@@ -9,6 +9,10 @@ const sidebar: SidebarsConfig = {
     {
       type: "category",
       label: "Accounts",
+      link: {
+        type: "doc",
+        id: "api/accounts/accounts",
+      },
       items: [
         {
           type: "doc",
@@ -114,6 +118,18 @@ const sidebar: SidebarsConfig = {
         },
         {
           type: "doc",
+          id: "api/accounts/get-account-branding",
+          label: "Get account branding",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/update-account-branding",
+          label: "Update account branding",
+          className: "api-method put",
+        },
+        {
+          type: "doc",
           id: "api/accounts/get-all-account-settings",
           label: "Get all account settings",
           className: "api-method get",
@@ -129,6 +145,320 @@ const sidebar: SidebarsConfig = {
           id: "api/accounts/get-all-account-types",
           label: "Get all account types",
           className: "api-method get",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Business",
+      link: {
+        type: "doc",
+        id: "api/accounts/business",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/accounts/get-business",
+          label: "Get business",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/save-business",
+          label: "Save business",
+          className: "api-method put",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/get-business-ach-information",
+          label: "Get business ACH information",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/save-business-ach-information",
+          label: "Save business ACH information",
+          className: "api-method put",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/get-business-card-information",
+          label: "Get business card information",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/save-business-card-information",
+          label: "Save business card information",
+          className: "api-method put",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/get-business-fulfillment-information",
+          label: "Get business fulfillment information",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/save-business-fulfillment-information",
+          label: "Save business fulfillment information",
+          className: "api-method put",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/get-all-business-structures",
+          label: "Get all business structures",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/get-all-business-types",
+          label: "Get all business types",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/get-all-countries",
+          label: "Get all countries",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/get-business-firearms-questionnaire",
+          label: "Get business firearms questionnaire",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/save-business-firearms-questionnaire",
+          label: "Save business firearms questionnaire",
+          className: "api-method put",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/get-business-pharmaceutical-questionnaire",
+          label: "Get business pharmaceutical questionnaire",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/save-business-pharmaceutical-questionnaire",
+          label: "Save business pharmaceutical questionnaire",
+          className: "api-method put",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Contracts",
+      link: {
+        type: "doc",
+        id: "api/accounts/contracts",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/accounts/get-latest-product-contract",
+          label: "Get latest product contract",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/get-contract-by-id",
+          label: "Get contract by ID",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/create-contract",
+          label: "Create contract",
+          className: "api-method post",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Customers",
+      link: {
+        type: "doc",
+        id: "api/accounts/customers",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/accounts/get-all-customers",
+          label: "Get all customers",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/create-customer",
+          label: "Create customer",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/get-customer-by-id",
+          label: "Get customer by ID",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/update-customer",
+          label: "Update customer",
+          className: "api-method put",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/delete-customer",
+          label: "Delete customer",
+          className: "api-method delete",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Events",
+      link: {
+        type: "doc",
+        id: "api/accounts/events",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/accounts/get-all-events",
+          label: "Get all events",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/get-event-by-id",
+          label: "Get event by ID",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/get-all-event-types",
+          label: "Get all event types",
+          className: "api-method get",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Onboarding",
+      link: {
+        type: "doc",
+        id: "api/accounts/onboarding",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/accounts/review-onboarding",
+          label: "Review onboarding",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/onboard",
+          label: "Onboard",
+          className: "api-method post",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Products",
+      link: {
+        type: "doc",
+        id: "api/accounts/products",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/accounts/get-all-credit-product-lines",
+          label: "Get all credit product lines",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/get-all-products",
+          label: "Get all products",
+          className: "api-method get",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Roles",
+      link: {
+        type: "doc",
+        id: "api/accounts/roles",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/accounts/get-all-account-roles",
+          label: "Get all account roles",
+          className: "api-method get",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Webhooks",
+      link: {
+        type: "doc",
+        id: "api/accounts/webhooks",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/accounts/get-all-webhook-events",
+          label: "Get all webhook events",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/get-webhook-event-by-id",
+          label: "Get webhook event by ID",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/requeue-a-webhook-event-by-id",
+          label: "Requeue a webhook event by ID",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/get-all-webhooks",
+          label: "Get all webhooks",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/create-webhook",
+          label: "Create webhook",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/get-webhook-by-id",
+          label: "Get webhook by ID",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/update-webhook",
+          label: "Update webhook",
+          className: "api-method put",
+        },
+        {
+          type: "doc",
+          id: "api/accounts/delete-webhook",
+          label: "Delete webhook",
+          className: "api-method delete",
         },
       ],
     },
@@ -237,102 +567,6 @@ const sidebar: SidebarsConfig = {
           id: "api/accounts/save-bank-verification",
           label: "Save bank verification",
           className: "api-method post",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Business",
-      items: [
-        {
-          type: "doc",
-          id: "api/accounts/get-business",
-          label: "Get business",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/save-business",
-          label: "Save business",
-          className: "api-method put",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/get-business-ach-information",
-          label: "Get business ACH information",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/save-business-ach-information",
-          label: "Save business ACH information",
-          className: "api-method put",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/get-business-card-information",
-          label: "Get business card information",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/save-business-card-information",
-          label: "Save business card information",
-          className: "api-method put",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/get-business-fulfillment-information",
-          label: "Get business fulfillment information",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/save-business-fulfillment-information",
-          label: "Save business fulfillment information",
-          className: "api-method put",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/get-all-business-structures",
-          label: "Get all business structures",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/get-all-business-types",
-          label: "Get all business types",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/get-all-countries",
-          label: "Get all countries",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/get-business-firearms-questionnaire",
-          label: "Get business firearms questionnaire",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/save-business-firearms-questionnaire",
-          label: "Save business firearms questionnaire",
-          className: "api-method put",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/get-business-pharmaceutical-questionnaire",
-          label: "Get business pharmaceutical questionnaire",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/save-business-pharmaceutical-questionnaire",
-          label: "Save business pharmaceutical questionnaire",
-          className: "api-method put",
         },
       ],
     },
@@ -548,108 +782,6 @@ const sidebar: SidebarsConfig = {
     },
     {
       type: "category",
-      label: "Contracts",
-      items: [
-        {
-          type: "doc",
-          id: "api/accounts/get-latest-product-contract",
-          label: "Get latest product contract",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/get-contract-by-id",
-          label: "Get contract by ID",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/create-contract",
-          label: "Create contract",
-          className: "api-method post",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Products",
-      items: [
-        {
-          type: "doc",
-          id: "api/accounts/get-all-credit-product-lines",
-          label: "Get all credit product lines",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/get-all-products",
-          label: "Get all products",
-          className: "api-method get",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Customers",
-      items: [
-        {
-          type: "doc",
-          id: "api/accounts/get-all-customers",
-          label: "Get all customers",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/create-customer",
-          label: "Create customer",
-          className: "api-method post",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/get-customer-by-id",
-          label: "Get customer by ID",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/update-customer",
-          label: "Update customer",
-          className: "api-method put",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/delete-customer",
-          label: "Delete customer",
-          className: "api-method delete",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Events",
-      items: [
-        {
-          type: "doc",
-          id: "api/accounts/get-all-events",
-          label: "Get all events",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/get-event-by-id",
-          label: "Get event by ID",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/get-all-event-types",
-          label: "Get all event types",
-          className: "api-method get",
-        },
-      ],
-    },
-    {
-      type: "category",
       label: "Holding Accounts",
       items: [
         {
@@ -669,24 +801,6 @@ const sidebar: SidebarsConfig = {
           id: "api/accounts/get-holding-account-balance-by-id",
           label: "Get holding account balance by ID",
           className: "api-method get",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Onboarding",
-      items: [
-        {
-          type: "doc",
-          id: "api/accounts/review-onboarding",
-          label: "Review onboarding",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/onboard",
-          label: "Onboard",
-          className: "api-method post",
         },
       ],
     },
@@ -722,72 +836,6 @@ const sidebar: SidebarsConfig = {
           type: "doc",
           id: "api/accounts/delete-onboarding-invitation",
           label: "Delete onboarding invitation",
-          className: "api-method delete",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Roles",
-      items: [
-        {
-          type: "doc",
-          id: "api/accounts/get-all-account-roles",
-          label: "Get all account roles",
-          className: "api-method get",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Webhooks",
-      items: [
-        {
-          type: "doc",
-          id: "api/accounts/get-all-webhook-events",
-          label: "Get all webhook events",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/get-webhook-event-by-id",
-          label: "Get webhook event by ID",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/requeue-a-webhook-event-by-id",
-          label: "Requeue a webhook event by ID",
-          className: "api-method post",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/get-all-webhooks",
-          label: "Get all webhooks",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/create-webhook",
-          label: "Create webhook",
-          className: "api-method post",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/get-webhook-by-id",
-          label: "Get webhook by ID",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/update-webhook",
-          label: "Update webhook",
-          className: "api-method put",
-        },
-        {
-          type: "doc",
-          id: "api/accounts/delete-webhook",
-          label: "Delete webhook",
           className: "api-method delete",
         },
       ],
