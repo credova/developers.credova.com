@@ -92,6 +92,7 @@ flowchart TB
     PROCESSING -- "processor accepted" --> SUCCEEDED
     PROCESSING -- "processor declined" --> RC
     RCAP -- "capture" --> SUCCEEDED
+    RCAP -- "partial capture (is_final: false)" --> RCAP
     RCAP -- "auth expires (7 days)" --> CANCELED["CANCELED"]
     RC -- "expires (24h)" --> CANCELED
     SUCCEEDED --> End(["End"])
@@ -116,7 +117,7 @@ flowchart TB
 | `requires_payment_method` | The intent was created without a payment method. Call [Update Payment Intent](/api/financial/update-payment-intent) to attach a card or bank account. |
 | `requires_confirmation` | A payment method is attached and the intent is ready to confirm. This is also the state the intent returns to after a decline — attach a new payment method and re-confirm the same intent. |
 | `processing` | The charge was submitted to the processor and the response is pending. Subscribe to the `payment_intent:update` webhook to receive the final outcome. |
-| `requires_capture` | The card was authorized with `capture_method: manual`. The authorization holds funds for up to 7 days. Call [Capture Payment Intent](/api/financial/capture-payment-intent) to complete the charge. |
+| `requires_capture` | The card was authorized with `capture_method: manual`. The authorization holds funds for up to 7 days. Call [Capture Payment Intent](/api/financial/capture-payment-intent) to complete the charge. With partial captures, the intent stays `requires_capture` while the underlying payment reports `partially_captured`, until a final capture or a release closes the authorization. See [Multiple partial captures](/guides/payments/authorize-and-capture-payments#multiple-partial-captures). |
 | `succeeded` | The charge was accepted. `payment_id` is populated with the resulting `Payment` record. Terminal state. |
 | `canceled` | The intent was not confirmed within 24 hours, or a `requires_capture` authorization was not captured within 7 days. Terminal state. |
 

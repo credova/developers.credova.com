@@ -358,6 +358,175 @@ You should see a payment response with a `succeeded` status similar to:
 }
 ```
 
+## Multiple partial captures
+
+Instead of capturing the full authorized amount in a single call, you can capture an authorization in multiple, smaller captures. This is useful when the final amount is not known up front, such as shipment-based fulfillment or usage-based billing.
+
+### Interim captures
+
+Call the capture endpoint with `is_final: false` (the default) and an `amount` less than the remaining capturable amount. The authorization stays open so you can capture again later.
+
+Using a payment intent:
+
+```shell showLineNumbers title="Capture a Payment Intent (interim)"
+curl 'https://api.publicsquare.com/payment-intents/pmt_int_2xNjK7abcdefghij/capture' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 7c2e9a41-fd83-4b1e-a5d9-2f6c8b3e1047' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 400,
+  "is_final": false
+}'
+```
+
+Using the legacy endpoint:
+
+```shell showLineNumbers title="Capture a Payment (interim)"
+curl 'https://api.publicsquare.com/payments/capture' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "payment_id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+  "amount": 400,
+  "is_final": false
+}'
+```
+
+<Alert>Send a unique `IDEMPOTENCY-KEY` header on every capture request, including interim ones, so a retried request cannot create a duplicate capture.</Alert>
+
+While an authorization has open interim captures, the payment `status` is `partially_captured`. The payment intent's own `status` stays `requires_capture` — only the nested payment reports `partially_captured`.
+
+### Final capture
+
+A capture is final when any of the following is true:
+
+- You pass `is_final: true`.
+- You omit `amount`, which captures the full remaining capturable amount.
+- The `amount` you send equals the full remaining capturable amount.
+
+A final capture completes the payment: `status` moves to `succeeded` and the remaining authorization is released.
+
+```shell showLineNumbers title="Final Capture Payment Intent"
+curl 'https://api.publicsquare.com/payment-intents/pmt_int_2xNjK7abcdefghij/capture' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 3a9f1b72-cc4e-4f92-b7d3-1e5a9c8d2041' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 600,
+  "is_final": true
+}'
+```
+
+### Releasing the remaining authorization
+
+To release the remaining authorization without capturing more funds, send `amount: 0` with `is_final: true`. This is supported where the account/processor supports it.
+
+```shell showLineNumbers title="Release Remaining Authorization"
+curl 'https://api.publicsquare.com/payments/capture' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 5b6e1c93-2a7d-4f8e-9c1b-3d7a8f2e6b10' \
+-H 'Content-Type: application/json' \
+-d '{
+  "payment_id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+  "amount": 0,
+  "is_final": true
+}'
+```
+
+<Alert type="warning">Sending `amount: 0` without `is_final: true` is rejected: `'amount' must be greater than 0; omit it to capture the full capturable amount, or send 0 with 'is_final' true to release the remaining authorization.`</Alert>
+
+Capturing more than the remaining capturable amount is also rejected: `'amount' exceeds capturable payment amount.`
+
+### The `payment_captures` array
+
+Every payment response, including the payment nested in a payment-intent response, includes a `payment_captures` array. Entries are ordered oldest first. Payments with no captures yet have an empty array, and payments captured before this feature shipped show a single entry.
+
+```json showLineNumbers title="Payment with Multiple Captures"
+{
+  "id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "partially_captured",
+  "transaction_id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
+  // highlight-next-line
+  "amount_charged": 400,
+  // highlight-next-line
+  "amount_capturable": 600,
+  "amount_refunded": 0,
+  "refunded": false,
+  "currency": "USD",
+  // highlight-next-line
+  "payment_captures": [
+    {
+      "id": "cpt_3fRkT8bcdefghijklmnop",
+      "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+      "environment": "test",
+      "external_id": null,
+      "amount": 400,
+      // highlight-next-line
+      "status": "succeeded",
+      "payment_id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+      "transaction_id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
+      "currency": "USD",
+      // highlight-next-line
+      "is_final": false,
+      "declined_reason": null,
+      "created_at": "2024-06-30T01:02:29.212Z",
+      "modified_at": "2024-06-30T01:02:29.212Z"
+    },
+    {
+      "id": "cpt_7hQmV1defghijklmnopqr",
+      "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+      "environment": "test",
+      "external_id": null,
+      "amount": 200,
+      "status": "pending",
+      "payment_id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+      "transaction_id": "trx_51xzQKvBWfH79Y5OuMegfP4MH",
+      "currency": "USD",
+      "is_final": false,
+      "declined_reason": null,
+      "created_at": "2024-06-30T01:04:11.500Z",
+      "modified_at": "2024-06-30T01:04:11.500Z"
+    }
+  ],
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:04:11.500Z"
+}
+```
+
+Each `payment_captures` entry has the following fields:
+
+| Field | Description |
+|---|---|
+| `id` | Unique identifier for the capture. Prefix: `cpt_`. |
+| `account_id` | The merchant account that owns the capture. |
+| `environment` | `test` or `production`. |
+| `external_id` | Optional external identifier you passed on the capture request. |
+| `amount` | Amount captured, in cents. |
+| `status` | One of `pending`, `succeeded`, `declined`, `error`, `cancelled`. |
+| `payment_id` | ID of the parent payment. |
+| `transaction_id` | ID of the parent transaction. |
+| `currency` | Three-character ISO currency code. |
+| `is_final` | Whether this capture was final. |
+| `declined_reason` | Populated when `status` is `declined`. |
+| `created_at` | ISO 8601 timestamp. |
+| `modified_at` | ISO 8601 timestamp. |
+
+An optional `external_id` and `IDEMPOTENCY-KEY` header can both be passed on each capture request.
+
+### Maximum captures per authorization
+
+Each authorization allows a limited number of captures, controlled by the account setting `max_captures_per_authorization` (default `5`). A capture beyond the limit is rejected with a `400` error: `payment has reached the maximum of {n} captures.` Contact PublicSquare support if you need this limit adjusted for your account.
+
+<Alert type="warning">American Express does not support partial capture: `'american_express' does not support partial payment capture.` This error is returned unless the capture amount equals the full capturable amount.</Alert>
+
 ## Conclusion
 
 Authorize and capturing payments also works with ACH payments using a bank account payment method.
