@@ -1,3 +1,10 @@
+# [1.54.0](https://github.com/credova/developers.credova.com/compare/v1.53.1...v1.54.0) (2026-08-13)
+
+
+### Features
+
+* support multiple partial captures ([#10](https://github.com/credova/developers.credova.com/issues/10)) ([cb42906](https://github.com/credova/developers.credova.com/commit/cb42906067fbda69c9fd1a8bfc4babeb3838012e))
+
 ## [1.53.1](https://github.com/credova/developers.credova.com/compare/v1.53.0...v1.53.1) (2026-08-12)
 
 
