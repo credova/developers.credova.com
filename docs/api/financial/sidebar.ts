@@ -40,6 +40,12 @@ const sidebar: SidebarsConfig = {
         },
         {
           type: "doc",
+          id: "api/financial/get-capture-by-id",
+          label: "Get capture by ID",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
           id: "api/financial/get-all-payments-for-a-customer",
           label: "Get all payments for a customer",
           className: "api-method get",
