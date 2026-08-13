@@ -1,3 +1,10 @@
+## [1.53.1](https://github.com/credova/developers.credova.com/compare/v1.53.0...v1.53.1) (2026-08-12)
+
+
+### Bug Fixes
+
+* **ci:** use fxt-semantic-release app for the release token ([#8](https://github.com/credova/developers.credova.com/issues/8)) ([a083961](https://github.com/credova/developers.credova.com/commit/a083961d1f42a285649dca05a9f9cc503e309ade))
+
 # [1.53.0](https://github.com/publicsq/developers.publicsquare.com/compare/v1.52.0...v1.53.0) (2026-07-21)
 
 
