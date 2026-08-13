@@ -155,6 +155,49 @@ If a payment cannot be cancelled because the payment has already been settled, a
 
 If payment cancellation fails, you can follow the [refund payment](/guides/refunds/refund-payments) guide.
 
+### Cancelling a Specific Capture
+
+If a payment has [multiple partial captures](/guides/payments/authorize-and-capture-payments#multiple-partial-captures), pass `payment_capture_id` to cancel one capture instead of the whole payment.
+
+**Voiding a pending capture.** A capture that has not settled yet can be voided on its own. The capture moves to `cancelled`, `amount_charged` decreases, and the payment stays `partially_captured` if other captures remain — or reverts to `requires_capture` if it does not.
+
+```shell showLineNumbers title="Void a Pending Capture"
+curl 'https://api.publicsquare.com/payments/cancel' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'Content-Type: application/json' \
+-d '{
+  "payment_id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+  "payment_capture_id": "cpt_3fRkT8bcdefghijklmnop"
+}'
+```
+
+**Releasing the remaining authorization.** Omit `payment_capture_id` on a `partially_captured` payment to release the remaining authorized amount without cancelling any settled captures. The payment moves to `succeeded` if at least one capture settled, or `cancelled` if none did.
+
+```shell showLineNumbers title="Release the Remaining Authorization"
+curl 'https://api.publicsquare.com/payments/cancel' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'Content-Type: application/json' \
+-d '{
+  "payment_id": "pmt_2YKewBonG4tgk12MheY3PiHDy"
+}'
+```
+
+<Alert type="warning">A release is rejected with a `422` while any capture is still pending: `payment has a capture still processing; wait for it to settle before releasing the remainder.`</Alert>
+
+Voiding a capture that has already settled is rejected. Use a [refund](/guides/refunds/refund-payments#refunding-a-specific-capture) instead:
+
+```json showLineNumbers title="Capture Already Settled"
+{
+  "title": "Error",
+  "status": 400,
+  "detail": "this payment capture has already settled; use a refund to reverse it instead."
+}
+```
+
+A `payment_capture_id` that does not exist on the payment returns a `404`.
+
 ## Conclusion
 
 This guide showed you how to cancel a payment. You can also follow our [refund payment](/guides/refunds/refund-payments) guide which will attempt to cancel the payment and fallback to issuing a refund.
