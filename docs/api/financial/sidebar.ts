@@ -8,6 +8,276 @@ const sidebar: SidebarsConfig = {
     },
     {
       type: "category",
+      label: "Payments",
+      link: {
+        type: "doc",
+        id: "api/financial/payments",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/financial/get-all-payments",
+          label: "Get all payments",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/create-payment",
+          label: "Create payment",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-payment-by-id",
+          label: "Get payment by ID",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/update-payment",
+          label: "Update payment",
+          className: "api-method put",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-capture-by-id",
+          label: "Get capture by ID",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-all-payments-for-a-customer",
+          label: "Get all payments for a customer",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/captures-a-payment",
+          label: "Captures a payment",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "api/financial/cancels-a-payment",
+          label: "Cancels a payment",
+          className: "api-method post",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Payouts",
+      link: {
+        type: "doc",
+        id: "api/financial/payouts",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/financial/get-all-payouts",
+          label: "Get all payouts",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/create-payout",
+          label: "Create payout",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-payout-by-id",
+          label: "Get payout by ID",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/update-payout",
+          label: "Update payout",
+          className: "api-method put",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-all-payouts-for-a-customer",
+          label: "Get all payouts for a customer",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/cancels-a-payout",
+          label: "Cancels a payout",
+          className: "api-method post",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Refunds",
+      link: {
+        type: "doc",
+        id: "api/financial/refunds",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/financial/get-all-refunds",
+          label: "Get all refunds",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/create-refund",
+          label: "Create refund",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-refund-by-id",
+          label: "Get refund by ID",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/update-refund",
+          label: "Update refund",
+          className: "api-method put",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-all-refunds-for-payment",
+          label: "Get all refunds for payment",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/cancels-a-refund",
+          label: "Cancels a refund",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "api/financial/export-refunds",
+          label: "Export refunds",
+          className: "api-method get",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Settlements",
+      link: {
+        type: "doc",
+        id: "api/financial/settlements",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/financial/get-all-settlements",
+          label: "Get all settlements",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-all-settlements-by-account-id",
+          label: "Get all settlements by account ID",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-settlement-by-id",
+          label: "Get settlement by ID",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-settlement-by-id-and-account-id",
+          label: "Get settlement by ID and account ID",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-all-transactions-for-a-settlement",
+          label: "Get all transactions for a settlement",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-all-transactions-for-a-settlement-by-account-id",
+          label: "Get all transactions for a settlement by account ID",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-fees-for-a-settlement",
+          label: "Get fees for a settlement",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-fees-for-a-settlement-by-account-id",
+          label: "Get fees for a settlement by account ID",
+          className: "api-method get",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Statements",
+      link: {
+        type: "doc",
+        id: "api/financial/statements",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/financial/get-all-statements",
+          label: "Get all statements",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-pdf-statement-by-id",
+          label: "Get PDF Statement by ID",
+          className: "api-method get",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Transactions",
+      link: {
+        type: "doc",
+        id: "api/financial/transactions",
+      },
+      items: [
+        {
+          type: "doc",
+          id: "api/financial/get-all-processor-responses",
+          label: "Get all processor responses",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-all-transactions",
+          label: "Get all transactions",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-transaction-by-id",
+          label: "Get transaction by ID",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "api/financial/export-transactions",
+          label: "Export transactions",
+          className: "api-method get",
+        },
+      ],
+    },
+    {
+      type: "category",
       label: "Balance Transfers",
       items: [
         {
@@ -105,6 +375,24 @@ const sidebar: SidebarsConfig = {
           id: "api/financial/cancel-payment-intent",
           label: "Cancel payment intent",
           className: "api-method post",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Payment Links",
+      items: [
+        {
+          type: "doc",
+          id: "api/financial/create-payment-link-for-payment-intent",
+          label: "Create payment link for payment intent",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "api/financial/get-payment-links-for-payment-intent",
+          label: "Get payment links for payment intent",
+          className: "api-method get",
         },
       ],
     },
@@ -392,54 +680,6 @@ const sidebar: SidebarsConfig = {
     },
     {
       type: "category",
-      label: "Payments",
-      items: [
-        {
-          type: "doc",
-          id: "api/financial/get-all-payments",
-          label: "Get all payments",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/create-payment",
-          label: "Create payment",
-          className: "api-method post",
-        },
-        {
-          type: "doc",
-          id: "api/financial/get-payment-by-id",
-          label: "Get payment by ID",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/update-payment",
-          label: "Update payment",
-          className: "api-method put",
-        },
-        {
-          type: "doc",
-          id: "api/financial/get-all-payments-for-a-customer",
-          label: "Get all payments for a customer",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/captures-a-payment",
-          label: "Captures a payment",
-          className: "api-method post",
-        },
-        {
-          type: "doc",
-          id: "api/financial/cancels-a-payment",
-          label: "Cancels a payment",
-          className: "api-method post",
-        },
-      ],
-    },
-    {
-      type: "category",
       label: "Payment Transfer Intents",
       items: [
         {
@@ -506,126 +746,6 @@ const sidebar: SidebarsConfig = {
     },
     {
       type: "category",
-      label: "Payouts",
-      items: [
-        {
-          type: "doc",
-          id: "api/financial/get-all-payouts",
-          label: "Get all payouts",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/create-payout",
-          label: "Create payout",
-          className: "api-method post",
-        },
-        {
-          type: "doc",
-          id: "api/financial/get-payout-by-id",
-          label: "Get payout by ID",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/update-payout",
-          label: "Update payout",
-          className: "api-method put",
-        },
-        {
-          type: "doc",
-          id: "api/financial/get-all-payouts-for-a-customer",
-          label: "Get all payouts for a customer",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/cancels-a-payout",
-          label: "Cancels a payout",
-          className: "api-method post",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Transactions",
-      items: [
-        {
-          type: "doc",
-          id: "api/financial/get-all-processor-responses",
-          label: "Get all processor responses",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/get-all-transactions",
-          label: "Get all transactions",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/get-transaction-by-id",
-          label: "Get transaction by ID",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/export-transactions",
-          label: "Export transactions",
-          className: "api-method get",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Refunds",
-      items: [
-        {
-          type: "doc",
-          id: "api/financial/get-all-refunds",
-          label: "Get all refunds",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/create-refund",
-          label: "Create refund",
-          className: "api-method post",
-        },
-        {
-          type: "doc",
-          id: "api/financial/get-refund-by-id",
-          label: "Get refund by ID",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/update-refund",
-          label: "Update refund",
-          className: "api-method put",
-        },
-        {
-          type: "doc",
-          id: "api/financial/get-all-refunds-for-payment",
-          label: "Get all refunds for payment",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/cancels-a-refund",
-          label: "Cancels a refund",
-          className: "api-method post",
-        },
-        {
-          type: "doc",
-          id: "api/financial/export-refunds",
-          label: "Export refunds",
-          className: "api-method get",
-        },
-      ],
-    },
-    {
-      type: "category",
       label: "Refund Transfers",
       items: [
         {
@@ -650,78 +770,6 @@ const sidebar: SidebarsConfig = {
           type: "doc",
           id: "api/financial/get-refund-transfer-for-refund",
           label: "Get refund transfer for refund",
-          className: "api-method get",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Settlements",
-      items: [
-        {
-          type: "doc",
-          id: "api/financial/get-all-settlements",
-          label: "Get all settlements",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/get-all-settlements-by-account-id",
-          label: "Get all settlements by account ID",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/get-settlement-by-id",
-          label: "Get settlement by ID",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/get-settlement-by-id-and-account-id",
-          label: "Get settlement by ID and account ID",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/get-all-transactions-for-a-settlement",
-          label: "Get all transactions for a settlement",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/get-all-transactions-for-a-settlement-by-account-id",
-          label: "Get all transactions for a settlement by account ID",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/get-fees-for-a-settlement",
-          label: "Get fees for a settlement",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/get-fees-for-a-settlement-by-account-id",
-          label: "Get fees for a settlement by account ID",
-          className: "api-method get",
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Statements",
-      items: [
-        {
-          type: "doc",
-          id: "api/financial/get-all-statements",
-          label: "Get all statements",
-          className: "api-method get",
-        },
-        {
-          type: "doc",
-          id: "api/financial/get-pdf-statement-by-id",
-          label: "Get PDF Statement by ID",
           className: "api-method get",
         },
       ],

@@ -193,6 +193,48 @@ You should see a payment result similar to:
 }
 ```
 
+## Refunding a Specific Capture
+
+If a payment was captured using [multiple partial captures](/guides/payments/authorize-and-capture-payments#multiple-partial-captures), it has more than one entry in its `payment_captures` array. In that case, pass `payment_capture_id` on the refund request to specify which capture to refund:
+
+```shell showLineNumbers title="Refund a Specific Capture"
+curl 'https://api.publicsquare.com/refunds' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 400,
+  "currency": "USD",
+  "payment_id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+  // highlight-next-line
+  "payment_capture_id": "cpt_3fRkT8bcdefghijklmnop",
+  "reason": "Customer returned the item"
+}'
+```
+
+```json showLineNumbers title="Refund Response"
+{
+  "id": "rfd_2YKewBonG4tgk12MheY3PiHDy",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  "status": "succeeded",
+  "transaction_id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
+  "payment_id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+  // highlight-next-line
+  "payment_capture_id": "cpt_3fRkT8bcdefghijklmnop",
+  "amount": 400,
+  "currency": "USD",
+  "reason": "Customer returned the item",
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z"
+}
+```
+
+`payment_capture_id` is required when the payment has more than one capture: `payment_capture_id is required when the payment has multiple captures.` If the payment has a single capture, it is resolved automatically and can be omitted.
+
+The refund amount is validated against that capture's settled amount minus any prior refunds against it, rather than against the payment's total.
+
 ## Conclusion
 
 This guide showed you how to issue a refund for a payment.

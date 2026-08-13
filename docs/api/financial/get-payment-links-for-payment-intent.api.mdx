@@ -1,0 +1,73 @@
+---
+id: get-payment-links-for-payment-intent
+title: "Get payment links for payment intent"
+description: "    List payment links for a payment intent."
+sidebar_label: "Get payment links for payment intent"
+hide_title: true
+hide_table_of_contents: true
+api: eJztWG1z2zYM/is8dHd7k2LZSZtW37ymL1myzmvabm3q2bSI2GwkUSGpLI5P/30HUbKV2I7jXttP/WSLgoAHwAMS4AwsHxsIT6HHpwmmlh3L9NxA3wOBJtIys1KlEAJjjB1LY1lWycUkx86UZny+JlOLqd35mH5MSf7BgweshzqRxkiVGrf4CxtW4j6pCDVyMQQPVIaak7FDASG8wFWWbtoBDzKueYIWNbkwg5QnCCFIAR5IQp1xOwEPNF7kUqOA0OocPTDRBBMO4QwSfnWM6dhOIHwYkD5rUdOX/55y/7rrf+jPOt6jYnDa9p90/Ze/+696/gfunyf+df/XH8ADO83IpLFapmMoCm+OIuNjrHFc5KincDumPSdxA41M8gTCTntvf+/x7qO9fQ/wKopzIy/xj/rtGY8NepDI1D0HTaF60XlawaOAjVGvQ3CmdMKtk9vtgAdpHsd8FGOtBq94ktHj46aHRl7fw0NWia1wsx0EX9+/2v79newERdEn1phMpQYNYe4EAf3cVP/nEXgQKcfGcAY8y2IZlSxufTIkMmu4XWFVo08YleTVxHkrnYGMj2XKneJNslZZHg+kxcQ0hNcF4Q1JszRPRqiZOmMaI6WF2Sok7aATFF7J6YHTdA/DT3OtqVzpq8r+dnnYrU2WKdxs8M50N9PrVSEk5Z8TQvfdNr48bBeFB1wISSp53GsktOK7lZYkyYuaCYUHgtu6aA5dwsuqqQBzrTmV3W0urCGOFA2Zas9aDuJi22WHB3c5BVk82J8+P/7r7+5TvXvw/uDkun2VqWfdd2fiAsrklboGbsMebGPefbIRQFIqvxtFruPNdl8qY1HMj5iSs29fHzOrmJlwjew/aSfMTpBFubEqKVmyHtjE2syErVamtOXxTpaPYhmZi5xr3IlU0sr4tLUpesZym5stM+Y+Yj57ylM2QjbkkZWXOPTo3JWCfjVeqnMUQ6Y0G+JVRkfj8E5vnA7C5MTNgNvNuA64xTJizZOcVRqa1SO4Rd/KBJtlCp2gs+cHj/zd4E3QDoNO2Hmy02l3PsAWlVTapZaGsN/073O0VKWJglohKArSsbfqZPiNC/YaL3I09ssdEai10iurfLUfs027xKJruR2beoNZTvGyoAvTPSSX+LzYbjdspLQPouVyZR0vicrUWJ5G9wG1lgOzhWfwjsdSlCnraTWKMTkosZg5AdrLBHib8txOlJbXKL4cA74nZVGVq1Oxu5yK50qPpBCYfs/Dt8vD3nIeXinLnqs8/V4P3ygP5A1GuZZ2SuMxzTQJ2omiAXuMbn6myRda9UTumi7TmklRtMq5mwY31Jf1hF22UvPmhmdyqbMBMlObPaE8ulR1M3mE0+ah5BZuNw3datssCcFGU9btHbIjnDKZGimQaXeq/mjYP363d+gfPXvPJsiF68fcYDp/U0+nlUBRxv1MlSjquJX4T0r8rDrqDRkFD8hth+qyXbazytiElwytLN3znuKGi7MF+7/+tUoVbItXtpXFXKaNhthl/xRuZR88CMsrlLi+CpooY0lwNhtxg291XBS07GZ+ooWQhvgq5r3TWoerG4eVsM6JH/W9ySWPcxIBunDYTn89At5hpJJYGOnTg5au6rby6KfX1e3Sz2ydzZrx6bRps8YiBRT9wqtJStbdi24UYWYbnyxtlTdK+sWzN9QK5pTUeZWlqlzw6j/hab8oiv8BXX/cUw==
+sidebar_class_name: "get api-method"
+info_path: api/financial/publicsquare-payments-api
+custom_edit_url: null
+show_extensions: true
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Get payment links for payment intent"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/payment-intents/{id}/links"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+    List payment links for a payment intent.
+
+    ### Permissions
+    * `payment-link:read`
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./get-payment-links-for-payment-intent.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./get-payment-links-for-payment-intent.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./get-payment-links-for-payment-intent.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      
