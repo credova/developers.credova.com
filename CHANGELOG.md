@@ -1,3 +1,10 @@
+# [1.55.0](https://github.com/credova/developers.credova.com/compare/v1.54.0...v1.55.0) (2026-08-26)
+
+
+### Features
+
+* update IsFinal swagger description in capture endpoints ([#14](https://github.com/credova/developers.credova.com/issues/14)) ([967dff1](https://github.com/credova/developers.credova.com/commit/967dff1406049366427f779225184407775bd767))
+
 # [1.54.0](https://github.com/credova/developers.credova.com/compare/v1.53.1...v1.54.0) (2026-08-13)
 
 
