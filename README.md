@@ -5,13 +5,13 @@ The [Credova](https://credova.com/) developer documentation. This site is hosted
 ### Installation
 
 ```
-$ bun install
+bun install
 ```
 
 ### Local Development
 
 ```
-$ bun run start
+bun run start
 ```
 
 This command starts a local development server at http://localhost:3000/ and opens up a browser window.

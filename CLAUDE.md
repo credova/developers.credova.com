@@ -4,17 +4,23 @@ Docusaurus 3.9 static documentation site for https://developers.publicsquare.com
 
 ## Commands
 
-```bash
-yarn install          # Install dependencies (Node >= 20, Yarn 1.22.22)
-yarn start            # Dev server at http://localhost:3000/
-yarn build            # Generate static build to /build
-yarn serve            # Serve built site locally
-yarn clear            # Clear Docusaurus cache
-yarn typecheck        # TypeScript type checking
+Tool versions (Node 22, Bun 1.3.14) are pinned in `mise.toml` and installed via `mise install`.
 
-yarn regenerate-docs  # Clean + regenerate API docs from OpenAPI specs
-yarn clean-docs       # Remove generated API docs
-yarn generate-docs    # Generate API docs from OpenAPI specs
+```bash
+bun install            # Install dependencies (Node 22, Bun 1.3.14 — see mise.toml)
+bun run start          # Dev server at http://localhost:3000/
+bun run build          # Generate static build to /build
+bun run serve          # Serve built site locally
+bun run clear          # Clear Docusaurus cache
+bun run typecheck      # TypeScript type checking
+
+bun run regenerate-docs  # Clean + regenerate API docs from OpenAPI specs
+bun run clean-docs       # Remove generated API docs
+bun run generate-docs    # Generate API docs from OpenAPI specs
+
+mise run build          # Install deps (+ sharp) and build via mise task
+mise run typecheck      # Typecheck via mise task
+mise run release        # Install deps and run semantic-release
 ```
 
 ## Project Structure
@@ -36,7 +42,7 @@ API docs are auto-generated from live OpenAPI specs:
 - Accounts API: `https://api.publicsquare.com/swagger/accounts/swagger.yaml`
 - Financial API: `https://api.publicsquare.com/swagger/financial/swagger.yaml`
 
-Run `yarn regenerate-docs` after upstream API changes. Never manually edit files under `docs/api/`.
+Run `bun run regenerate-docs` after upstream API changes. Never manually edit files under `docs/api/`.
 
 ## Tech Stack
 
