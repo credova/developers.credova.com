@@ -5,13 +5,13 @@ The [Credova](https://credova.com/) developer documentation. This site is hosted
 ### Installation
 
 ```
-$ bun install
+bun install
 ```
 
 ### Local Development
 
 ```
-$ bun run start
+bun run start
 ```
 
 This command starts a local development server at http://localhost:3000/ and opens up a browser window.
@@ -28,7 +28,7 @@ This pulls the API reference from the **live** OpenAPI specs at `api.publicsquar
 ### Build
 
 ```
-$ bun run build
+bun run build
 ```
 
 This command generates static content into the `build` directory and can be served using any static contents hosting service.
