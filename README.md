@@ -28,7 +28,7 @@ This pulls the API reference from the **live** OpenAPI specs at `api.publicsquar
 ### Build
 
 ```
-$ bun run build
+bun run build
 ```
 
 This command generates static content into the `build` directory and can be served using any static contents hosting service.
