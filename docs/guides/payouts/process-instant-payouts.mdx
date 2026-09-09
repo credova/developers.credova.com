@@ -1,9 +1,9 @@
 import { Alert } from "@site/src/components/shared/Alert";
 import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
 
-# Process ACH Payouts
+# Process Instant Payouts
 
-Now that you have completed the [Collect Bank Accounts](/guides/payment-methods/collect-bank-accounts) guide, let's process an ACH payout with the newly captured bank account.
+Instant payouts send funds to a bank account over real-time payment rails and typically settle within minutes, instead of the multi-day timeline of a [standard ACH payout](/guides/payouts/process-ach-payouts). Instant payouts require the `payouts:instant` account setting to be enabled before you can use them.
 
 ## Getting Started
 
@@ -15,9 +15,18 @@ Next you will need your `Secret Key`. [Go to your Developers section](https://po
 
 <Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
 
+## Request Account Setting Access
+
+First, you will need to request access to the `payouts:instant` account setting type.
+
+To do this, go to the [merchant portal](https://portal.publicsquare.com/settings/features) and click on the `Request this feature` button next to the `Instant Payouts` setting.
+Alternatively, you can request access via the [API](/api/accounts/request-account-setting-access).
+
+This is required to enable instant payouts for your account.
+
 ## Process the Payout
 
-We will need to use the information from the previously collected bank account to create a new payout.
+We will need a bank account payment method to send the instant payout to. If you haven't already, complete the [Collect Verified Bank Accounts](/guides/payment-methods/collect-verified-bank-accounts) guide first — a verified bank account is the more reliable choice for a real-time transfer.
 
 For example, given you have a previously collected bank account:
 
@@ -48,9 +57,9 @@ For example, given you have a previously collected bank account:
 
 ### Create a Payout
 
-We need to make a call to [Create Payout](/api/financial/create-payout) endpoint:
+We need to make a call to [Create Payout](/api/financial/create-payout) endpoint with `payout_type` set to `instant`:
 
-```shell showLineNumbers title="Create a Payout"
+```shell showLineNumbers title="Create an Instant Payout"
 curl 'https://api.publicsquare.com/payouts' \
 -X 'POST' \
 -H 'X-API-KEY: <SECRET_API_KEY>' \
@@ -59,6 +68,8 @@ curl 'https://api.publicsquare.com/payouts' \
 -d '{
   "amount": 1000,
   "currency": "USD",
+  // highlight-next-line
+  "payout_type": "instant",
   "payment_method": {
     "bank_account": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
   },
@@ -81,83 +92,13 @@ curl 'https://api.publicsquare.com/payouts' \
 
 <Alert type="warning">The IDEMPONTENCY-KEY header can be passed to protect against duplicate payouts being processed.</Alert>
 
-### Create with Existing Customer
+<Alert type="warning">If the `payouts:instant` account setting has not been enabled for your account, this request will fail. See [Request Account Setting Access](#request-account-setting-access) above.</Alert>
 
-If you [created a customer](/api/accounts/create-customer), then you can pass the `customer_id` when processing the payout:
-
-```shell showLineNumbers title="Create a Payout with Customer"
-curl 'https://api.publicsquare.com/payouts' \
--X 'POST' \
--H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPONTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
--H 'Content-Type: application/json' \
--d '{
-  "amount": 1000,
-  "currency": "USD",
-  "payment_method": {
-    "bank_account": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
-  },
-  "customer": {
-    "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
-  },
-  "billing_details": {
-    "address_line_1": "111 Test St.",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  }
-}'
-```
-
-### Create with Customer's Payment Method
-
-If you [attached the bank account to a customer](/api/financial/attach-bank-account-to-customer), then you can omit the `customer` section when processing the payout:
-
-```shell showLineNumbers title="Create a Payout with Payment Method"
-curl 'https://api.publicsquare.com/payouts' \
--X 'POST' \
--H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPONTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
--H 'Content-Type: application/json' \
--d '{
-  "amount": 1000,
-  "currency": "USD",
-  "payment_method": {
-    "bank_account": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
-  },
-  "billing_details": {
-    "address_line_1": "111 Test St.",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  }
-}'
-```
-
-### Create with Payment Method's Billing Details
-
-If you supplied the `billing_details` or [updated the bank account](/api/financial/update-bank-account), then you can omit the `billing_details` section when processing the payout:
-
-```shell showLineNumbers title="Create a Payout with Payment Method"
-curl 'https://api.publicsquare.com/payouts' \
--X 'POST' \
--H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPONTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
--H 'Content-Type: application/json' \
--d '{
-  "amount": 1000,
-  "currency": "USD",
-  "payment_method": {
-    "bank_account": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
-  }
-}'
-```
+For the `customer_id`, existing payment method, and existing billing details request variants, see the equivalent sections in [Process ACH Payouts](/guides/payouts/process-ach-payouts#create-with-existing-customer) — they work the same way for instant payouts, just add `"payout_type": "instant"` to the request body.
 
 ## Payout Response
 
-Given the above examples, you should see a payout result similar to:
+Given the above example, you should see a payout result similar to:
 
 ```json showLineNumbers
 {
@@ -165,12 +106,15 @@ Given the above examples, you should see a payout result similar to:
   "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
   "environment": "test",
   "status": "pending",
+  // highlight-next-line
+  "payout_type": "instant",
   "transaction_id": "trx_6QgmXzQzk3S5K5EsR3DfEiMRj",
   "amount": 1000,
   "currency": "USD",
   "payment_method": {
     "bank_account": {
       "id": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+      "status": "verified",
       "account_holder_name": "John Doe",
       "account_holder_type": "individual",
       "account_type": "individual",
@@ -212,13 +156,17 @@ Given the above examples, you should see a payout result similar to:
 }
 ```
 
+The payout's `status` is `pending` immediately after creation. Since this is an instant payout, the terminal `succeeded` or `declined` status typically arrives via the [`payout:update` webhook](/concepts/webhooks) much sooner than a standard ACH payout.
+
 ## Handling Declines
 
-If an ACH payout is declined, the response's `declined_reason` will contain the reason available at the time of the decline. The linked bank account's `status` may also change as a result of the decline. See [Bank Accounts](/concepts/bank-accounts#statuses).
+If an instant payout is declined, the response's `declined_reason` will contain the reason available at the time of the decline. The linked bank account's `status` may also change as a result of the decline. See [Bank Accounts](/concepts/bank-accounts#statuses).
+
 ## Conclusion
 
-Now that we have seen how to process payouts with a collected bank account, we may need to manage the payout or view information about the payout.
+Now that we have seen how to process instant payouts with a collected bank account, we may need to manage the payout or view information about the payout.
 Follow these guides to learn more:
 
+- [Collect Verified Bank Accounts](/guides/payment-methods/collect-verified-bank-accounts)
 - [Cancel a Payout](/guides/payouts/cancel-payouts)
 - [Search and View Transactions](/guides/transactions/search-and-view-transactions)

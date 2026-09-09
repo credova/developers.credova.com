@@ -67,7 +67,7 @@ const sidebars: SidebarsConfig = {
       customProps: {
         icon: "/img/icons/money-bill-wave.svg",
       },
-      items: ["guides/payouts/process-card-payouts", "guides/payouts/process-ach-payouts", "guides/payouts/cancel-payouts"],
+      items: ["guides/payouts/process-card-payouts", "guides/payouts/process-ach-payouts", "guides/payouts/process-instant-payouts", "guides/payouts/cancel-payouts"],
     },
     {
       type: "category",
@@ -108,6 +108,7 @@ const sidebars: SidebarsConfig = {
       },
       items: [
         "concepts/accounts",
+        "concepts/bank-accounts",
         "concepts/api-keys",
         "concepts/transactions",
         "concepts/payment-intents",

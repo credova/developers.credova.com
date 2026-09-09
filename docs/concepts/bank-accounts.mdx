@@ -1,0 +1,16 @@
+# Bank Accounts
+
+A bank account is a payment method used to collect funds from customers or send payouts to customers, merchants, and vendors via ACH or instant transfer rails.
+
+## Statuses
+
+Credova uses a `status` field on every bank account to specify whether it can currently be used for payments and payouts.
+
+| Status     | Description                                                                  |
+|------------|-------------------------------------------------------------------------------|
+| `pending`  | The bank account has not yet been verified.                                   |
+| `verified` | The bank account has been verified and can be used for payments and payouts.   |
+| `invalid`  | The bank account's details are no longer valid.                               |
+| `closed`   | The bank account has been closed and can no longer send or receive funds.      |
+
+When a payment or payout to a bank account is declined, the linked bank account's `status` may automatically update depending on the decline. Check the bank account's `status` after the decline before retrying to use the same bank account.
