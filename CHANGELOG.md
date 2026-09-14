@@ -1,3 +1,10 @@
+# [1.56.0](https://github.com/credova/developers.credova.com/compare/v1.55.0...v1.56.0) (2026-09-14)
+
+
+### Features
+
+* add instant payouts guide, document payout failure and bank account status ([#15](https://github.com/credova/developers.credova.com/issues/15)) ([5607f3c](https://github.com/credova/developers.credova.com/commit/5607f3cc9a83f0cfe592497ad5a325c960812296))
+
 # [1.55.0](https://github.com/credova/developers.credova.com/compare/v1.54.0...v1.55.0) (2026-08-26)
 
 
