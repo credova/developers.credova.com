@@ -226,7 +226,9 @@ The created `bank account` object contains the non-sensitive information about t
   "account_holder_type": "individual",
   "account_type": "checking",
   "routing_number": "110000000",
-  "account_number_last4": "1011"
+  "account_number_last4": "1011",
+  // highlight-next-line
+  "status": "verified"
 }
 ```
 <Alert>If Credova has not yet received a response back from Flinks, we will return `bank account verification result is still in progress.` validation message.</Alert>

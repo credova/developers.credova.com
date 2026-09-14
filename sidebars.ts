@@ -108,6 +108,7 @@ const sidebars: SidebarsConfig = {
       },
       items: [
         "concepts/accounts",
+        "concepts/bank-accounts",
         "concepts/api-keys",
         "concepts/transactions",
         "concepts/payment-intents",
