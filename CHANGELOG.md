@@ -1,3 +1,10 @@
+# [1.57.0](https://github.com/credova/developers.credova.com/compare/v1.56.0...v1.57.0) (2026-09-15)
+
+
+### Features
+
+* document Elements SDK version compatibility ([#17](https://github.com/credova/developers.credova.com/issues/17)) ([969cfe1](https://github.com/credova/developers.credova.com/commit/969cfe1e5dacb57c6337b4e8e07a1eea1e93c27c))
+
 # [1.56.0](https://github.com/credova/developers.credova.com/compare/v1.55.0...v1.56.0) (2026-09-14)
 
 
