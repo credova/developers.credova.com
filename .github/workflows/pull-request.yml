@@ -20,5 +20,7 @@ jobs:
     secrets: inherit
     with:
       container: false
+      # WarpBuild dependency cache for the lint/security/test jobs (warp runners).
+      cache: true
       # compliance + security run built-in; the Docusaurus build is validated here.
       test-command: mise run build
