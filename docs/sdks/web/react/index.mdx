@@ -15,8 +15,8 @@ import { SDK } from "@site/src/components/types";
 <GithubCard
   heading="React Elements SDK"
   icon={SDK.REACT}
-  organization="publicsquare-financial"
-  repository="publicsquare-elements"
+  organization="credova"
+  repository="elements"
 />
 
 ###
@@ -51,6 +51,46 @@ yarn add @publicsquare/elements-react
 </Tabs>
 
 <Alert>You don't need to install <code>@publicsquare/elements-js</code> separately when using our React package. Types are available via the <code>@publicsquare/elements-react/types</code> module.</Alert>
+
+## Versions
+
+`@publicsquare/elements-react` wraps `@publicsquare/elements-js` and is versioned in lockstep — each release of the React SDK pins the exact same version of the underlying JavaScript SDK, so the same production sandbox testing requirements apply.
+
+Recommended version: **1.16.1**.
+
+If you're testing against a production sandbox (test-mode transactions using a production account), you need to be on **1.16.1** specifically — older versions will not work for this scenario.
+
+<Alert type={Alerts.WARNING}>1.16.1 is the current fix, not the start of a version range. There is no confirmed compatibility beyond 1.16.1 yet — this section will be updated as new versions are released, rather than assumed to extend automatically.</Alert>
+
+### Version compatibility
+
+| Version   | Test mode against staging | Test mode against production                                                                                         |
+| --------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| < 1.16.0  | Works                       | Not supported                                                                                                            |
+| 1.16.0    | Works                       | Works, but requires an additional configuration parameter to route correctly. Not recommended — upgrade to 1.16.1 instead. |
+| 1.16.1    | Works                       | Works automatically, no extra configuration needed                                                                      |
+
+Starting in 1.16.1, Elements automatically detects your environment by inspecting your Publishable Key and routes accordingly. No additional setup is required beyond using the correct key for your environment.
+
+<Alert type={Alerts.NEUTRAL}>The CDN distribution described in the <a href="/sdks/web/javascript">JavaScript Elements SDK</a> docs applies only to <code>@publicsquare/elements-js</code>. There is no separate CDN build for <code>@publicsquare/elements-react</code> — install it via npm or yarn.</Alert>
+
+### If using npm
+
+Check your installed version:
+
+```shell showLineNumbers
+npm list @publicsquare/elements-react
+```
+
+Upgrade to the confirmed fix version:
+
+```shell showLineNumbers
+npm install --save @publicsquare/elements-react@1.16.1
+```
+
+<Alert type={Alerts.INFO}>Install the specific version above rather than <code>@latest</code> — 1.16.1 is the confirmed fix, not necessarily the newest published version. Always confirm the actual latest version before installing it.</Alert>
+
+See the [GitHub Releases page](https://github.com/credova/elements/releases) for the full version history and changelog.
 
 ## Initialization
 
