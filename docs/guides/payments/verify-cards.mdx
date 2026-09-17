@@ -156,7 +156,13 @@ You should see a payment response with a `succeeded` status:
   "currency": "USD",
   // highlight-start
   "verification": {
-    "type": "add_card"
+    "type": "add_card",
+    "result": {
+      "card_security_code": "matched",
+      "address_line_1": "matched",
+      "postal_code": "matched",
+      "cardholder_name": "not_checked"
+    }
   },
   // highlight-end
   "payment_method": {
@@ -211,6 +217,119 @@ You should see a payment response with a `succeeded` status:
 
 <Alert>Unlike standard authorizations that require capture, verification payments return a `succeeded` status immediately since there is no amount to capture.</Alert>
 
+## Read the Verification Result
+
+<Alert type="warning">
+  A `succeeded` status means the verification ran. It does not mean every check passed. Read `verification.result` to decide whether to store the card.
+</Alert>
+
+`verification.result` reports each check the issuer performed:
+
+| Field | Check |
+|-------|-------|
+| `card_security_code` | The CVV or CVC on the card |
+| `address_line_1` | The street address |
+| `postal_code` | The postal code |
+| `cardholder_name` | The name on the card |
+
+Each field returns one of five values:
+
+| Value | Meaning |
+|-------|---------|
+| `matched` | The issuer confirmed the value |
+| `not_matched` | The issuer says the value does not match |
+| `partially_matched` | The value partly matches. Name checks only |
+| `not_checked` | The issuer did not run this check |
+| `unavailable` | The issuer could not answer, or you did not send the value |
+
+`not_checked` and `unavailable` are not failures. They mean the issuer returned no answer, so you cannot treat them as a pass or a fail.
+
+The `avs_code` and `cvv2_reply` fields on the card carry the same information in raw network codes. Use `verification.result` for new integrations.
+
+### A Failed Check Still Succeeds
+
+This card returned a wrong postal code and a wrong security code. The payment status is still `succeeded`:
+
+```json showLineNumbers title="Failed Checks"
+{
+  "id": "pmt_3ZLfwCpnH5ukl23OifZ4QPNzk",
+  // highlight-next-line
+  "status": "succeeded",
+  "amount": 0,
+  "payment_method": {
+    "card": {
+      "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
+      // highlight-start
+      "avs_code": "N",
+      "cvv2_reply": "N"
+      // highlight-end
+    }
+  },
+  "verification": {
+    "type": "add_card",
+    // highlight-start
+    "result": {
+      "card_security_code": "not_matched",
+      "address_line_1": "unavailable",
+      "postal_code": "not_matched",
+      "cardholder_name": "matched"
+    }
+    // highlight-end
+  }
+}
+```
+
+### Verify With a Postal Code Only
+
+You can collect a postal code and no street address. Send `billing_details` with `postal_code` alone:
+
+```json showLineNumbers title="Postal Code Only"
+{
+  "amount": 0,
+  "capture": false,
+  "currency": "USD",
+  "payment_method": {
+    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
+  },
+  "verification": {
+    "type": "add_card"
+  },
+  // highlight-next-line
+  "billing_details": {
+    // highlight-next-line
+    "postal_code": "51111"
+    // highlight-next-line
+  }
+}
+```
+
+The issuer then has no street address to check, so `address_line_1` returns `unavailable`. This is expected and is not a failure:
+
+```json showLineNumbers title="Postal Code Only Result"
+{
+  "payment_method": {
+    "card": {
+      // highlight-next-line
+      "avs_code": "Z",
+      "cvv2_reply": "M"
+    }
+  },
+  "verification": {
+    "type": "add_card",
+    "result": {
+      "card_security_code": "matched",
+      // highlight-next-line
+      "address_line_1": "unavailable",
+      "postal_code": "matched",
+      "cardholder_name": "matched"
+    }
+  }
+}
+```
+
+`avs_code` is `Z` when the postal code matches and no street address was sent. It is `N` when the postal code does not match.
+
+
 ## Validation Rules
 
 When creating verification payments, the following rules apply:
@@ -222,11 +341,12 @@ When creating verification payments, the following rules apply:
 
 ## Handling Declined Verifications
 
-If the card verification fails (e.g., invalid card, expired, or blocked by fraud rules), the response will have a `declined` or `rejected` status:
+A `declined` or `rejected` status means the issuer refused the authorization itself, for example a closed or blocked card. This is different from a check that returns `not_matched`:
 
 ```json showLineNumbers title="Declined Verification Response"
 {
   "id": "pmt_3ZLfwCpnH5ukl23OifZ4QPNzk",
+  // highlight-next-line
   "status": "declined",
   "amount": 0,
   "verification": {
@@ -237,7 +357,12 @@ If the card verification fails (e.g., invalid card, expired, or blocked by fraud
 }
 ```
 
-You should inform the customer that their card could not be verified and request an alternative payment method.
+Tell the customer that you could not verify the card, and ask for another payment method.
+
+Handle the two outcomes separately:
+
+- A `declined` status. The card is unusable. Ask for another card.
+- A `succeeded` status with a failed check in `verification.result`. The card works, but a detail does not match. Ask the customer to correct that detail, or apply your own risk rule.
 
 ## Conclusion
 
