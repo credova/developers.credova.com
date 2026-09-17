@@ -10,12 +10,61 @@ Credova uses different transaction types to track the flow of money for differen
 | Type               | Description                                                                                                                                                                                                                              |
 |--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `payment`          | Payments are used to collect funds from customers. Payments are recorded in Credova as a debit transaction type.                                                                                                                    |
+| `capture`          | Captures collect funds against an authorized `payment`. One authorization can have several captures, and each capture is its own transaction. |
 | `refund`           | Refunds enable you to return funds to a payment method associated with a payment. Credova will attempt to cancel the payment if the payment has not been settled, and if unable to cancel, will create a refund.                    |
 | `payout`           | Payouts are used to send funds to customers, merchants, and vendors.                                                                                                                                                                     |
 | `settlement`       | Settlements are batches created during end of day reconciliation processes and are associated with payments, refunds, and payouts. This represents money being deposited or withdrawn from your primary bank account.                    |
 | `payment_transfer` | Payment transfers are used to send funds to seller accounts from an existing `payment`. For instance, if you charge a customer $300, you can transfer $100 to three different sellers.                                                   |
 | `refund_transfer`  | Refund transfers are used to retrieve funds from seller accounts from an existing `refund` referencing the original `payment_transfer`. For instance, if you refund a customer $300, you can transfer $100 from three different sellers. |
 | `adjustment`       | Adjustments are created during the dispute process when a chargeback is created or a dispute is won/lost. These represent funds moving to or from your account balance. Several adjustments may be possible for a single dispute case.   |
+
+## Authorizations and Captures
+
+An authorized payment and its captures are separate transactions. The authorization holds the funds. Each capture collects part or all of the held amount.
+
+One authorization can have several captures, so a single payment can produce several `capture` transactions. They are not duplicate charges. The customer pays the total of the captures, which the payment reports as `amount_charged`.
+
+The account setting `max_captures_per_authorization` limits how many captures one authorization allows. The default is `5`. See [Authorize and Capture Payments](/guides/payments/authorize-and-capture-payments) for the limit and the error returned when you pass it.
+
+### Find the Payment for a Capture
+
+A `capture` transaction carries the capture ID in `type_id`, not the payment ID. Capture IDs start with `cpt_`:
+
+```json showLineNumbers title="Capture Transaction"
+{
+  "id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
+  "type": "capture",
+  // highlight-next-line
+  "type_id": "cpt_8KqmVQ3nPzX4bRtL7wYdSv",
+  "status": "succeeded",
+  "amount": 1000
+}
+```
+
+Read the capture to get its payment:
+
+```shell title="Get a Capture"
+curl 'https://api.publicsquare.com/captures/cpt_8KqmVQ3nPzX4bRtL7wYdSv' \
+-H 'X-API-KEY: <SECRET_API_KEY>'
+```
+
+The capture reports the payment it belongs to:
+
+```json showLineNumbers title="Capture"
+{
+  "id": "cpt_8KqmVQ3nPzX4bRtL7wYdSv",
+  // highlight-next-line
+  "payment_id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+  "transaction_id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
+  "amount": 1000,
+  "status": "succeeded",
+  "is_final": true
+}
+```
+
+You can also start from the payment. Every payment lists its captures in `payment_captures`, each with its own `id`, `amount`, `status` and `transaction_id`.
+
+A capture also copies the `external_id` of its payment, so your own order reference appears on the authorization and on every capture.
 
 ## Statuses
 
