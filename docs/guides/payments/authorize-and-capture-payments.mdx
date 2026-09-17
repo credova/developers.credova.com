@@ -528,6 +528,23 @@ Each authorization allows a limited number of captures, controlled by the accoun
 
 <Alert type="warning">American Express does not support partial capture: `'american_express' does not support partial payment capture.` This error is returned unless the capture amount equals the full capturable amount.</Alert>
 
+## Amount Fields
+
+A payment reports four amounts. They all use the smallest currency unit, so `1000` is $10.00 USD.
+
+| Field | Meaning |
+|-------|---------|
+| `amount` | The amount you requested when you created the payment. It does not change |
+| `amount_capturable` | The authorized amount you can still capture |
+| `amount_charged` | The amount captured so far. This is the amount the customer pays |
+| `amount_refunded` | The amount refunded so far |
+
+After an authorization, `amount_charged` is `0` and `amount_capturable` holds the full amount. After a capture, the captured value moves to `amount_charged` and `amount_capturable` drops by the same value.
+
+A partial capture leaves the rest in `amount_capturable`, so a second capture can take it.
+
+To know what the customer paid, read `amount_charged`. Do not read `amount`, which only records what you asked for.
+
 ## Conclusion
 
 Authorize and capturing payments also works with ACH payments using a bank account payment method.
