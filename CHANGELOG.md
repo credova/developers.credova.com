@@ -1,3 +1,10 @@
+# [1.58.0](https://github.com/credova/developers.credova.com/compare/v1.57.1...v1.58.0) (2026-09-18)
+
+
+### Features
+
+* document collect-test.publicsquare.com test mode endpoint ([#21](https://github.com/credova/developers.credova.com/issues/21)) ([68f1db7](https://github.com/credova/developers.credova.com/commit/68f1db7028da82b33d1079a334da3dec5c7a1f47))
+
 ## [1.57.1](https://github.com/credova/developers.credova.com/compare/v1.57.0...v1.57.1) (2026-09-17)
 
 # [1.57.0](https://github.com/credova/developers.credova.com/compare/v1.56.0...v1.57.0) (2026-09-15)
