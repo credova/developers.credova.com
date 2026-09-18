@@ -246,6 +246,25 @@ curl -L 'https://collect.publicsquare.com' \
 }'
 
 ```
+
+<Alert>To test card collection in test mode, use the `https://collect-test.publicsquare.com` endpoint instead of `https://collect.publicsquare.com`, along with your **test mode** `Publishable Key`. This lets you exercise the collect card flow without submitting live cardholder data.</Alert>
+
+```shell showLineNumbers
+curl -L 'https://collect-test.publicsquare.com' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-H 'X-API-KEY: <TEST_PUBLISHABLE_API_KEY>' \
+-d '{
+  "cardholder_name": "John Smith",
+  "card": {
+    "number": "4242424242424242",
+    "expirationMonth": 12,
+    "expirationYear": 2025,
+    "cvc": "123"
+  }
+}'
+
+```
   </TabItem>
 </Tabs>
 
