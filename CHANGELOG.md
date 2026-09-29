@@ -1,3 +1,5 @@
+## [1.58.1](https://github.com/credova/developers.credova.com/compare/v1.58.0...v1.58.1) (2026-09-29)
+
 # [1.58.0](https://github.com/credova/developers.credova.com/compare/v1.57.1...v1.58.0) (2026-09-18)
 
 
