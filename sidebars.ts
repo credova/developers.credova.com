@@ -29,6 +29,7 @@ const sidebars: SidebarsConfig = {
       },
       items: [
         "guides/payment-methods/collect-cards",
+        "guides/payment-methods/recollect-cvc",
         "guides/payment-methods/collect-apple-pay",
         "guides/payment-methods/collect-google-pay",
         "guides/payment-methods/collect-bank-accounts",

@@ -1,0 +1,191 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert } from "@site/src/components/shared/Alert";
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+
+# Recollect a CVC for a Saved Card
+
+In this guide, we will use Credova Elements SDKs to recollect a CVC for a saved card — attaching a freshly re-entered CVC without asking the customer to re-enter the whole card. This uses the `cards.updateCvc()` method, available in both the [JavaScript](/sdks/web/javascript) and [React](/sdks/web/react) SDKs.
+
+<Alert type="warning">Updating the CVC does not verify it by itself. See [Verification happens at authorization, not at update](#verification-happens-at-authorization-not-at-update) below before you treat a successful update as an approved card.</Alert>
+
+## How it works
+
+1. Mount a standalone `CardVerificationCodeElement` and have the customer enter their CVC.
+2. Call `publicsquare.cards.updateCvc(cardId, cvcElement)`.
+3. PublicSquare confirms the card belongs to your account, then the CVC is attached directly from the customer's browser — it never touches your servers or PublicSquare's, so your PCI scope doesn't change.
+4. The CVC stays attached to the card for **24 hours**, ready for the next charge.
+
+## Getting Started
+
+<GettingStartedSection />
+
+### Get your Publishable Key
+
+This uses the same `Publishable Key` as [Collect Cards](/guides/payment-methods/collect-cards). [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Publishable Key` and copy the value.
+
+<Alert>This guide assumes you've already completed [Collect Cards](/guides/payment-methods/collect-cards) and have a saved card's `id` to work with.</Alert>
+
+## Mount the CVC Element
+
+Mount a standalone `CardVerificationCodeElement` — the same element used in [Collect Cards](/guides/payment-methods/collect-cards), just on its own, without the rest of the card form.
+
+<Tabs className="publicsquare-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```html showLineNumbers title="index.html"
+<div id="cardVerificationCode"></div>
+```
+
+```javascript showLineNumbers title="index.js"
+import { PublicSquare } from '@publicsquare/elements-js';
+
+let publicsquare;
+let cvcElement;
+
+async function init() {
+  publicsquare = await new PublicSquare().init('<PUBLISHABLE_API_KEY>');
+
+  //highlight-start
+  cvcElement = publicsquare.createCardVerificationCodeElement({});
+  cvcElement.mount('#cardVerificationCode');
+  //highlight-end
+}
+
+init();
+```
+  </TabItem>
+
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title="App.jsx"
+import React, { useRef } from 'react';
+import {
+  PublicSquareProvider,
+  // highlight-next-line
+  CardVerificationCodeElement,
+} from '@publicsquare/elements-react';
+
+export default function App() {
+  // highlight-next-line
+  const cvcRef = useRef(null);
+
+  return (
+    <PublicSquareProvider apiKey={apiKey}>
+      {/* highlight-next-line */}
+      <CardVerificationCodeElement id="cardVerificationCode" ref={cvcRef} />
+    </PublicSquareProvider>
+  );
+}
+```
+  </TabItem>
+</Tabs>
+
+## Call updateCvc
+
+Once the customer submits the form, call `cards.updateCvc()` with the card's `id` and the mounted CVC element:
+
+<Tabs className="publicsquare-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```html showLineNumbers title="index.html"
+<!-- Form from above -->
+// highlight-next-line
+<button id="submit">Submit</button>
+```
+
+```javascript showLineNumbers title="index.js"
+async function init() {
+  ...
+  //highlight-next-line
+  document.getElementById('submit').addEventListener('click', submit);
+}
+
+// highlight-start
+async function submit(cardId) {
+  const response = await publicsquare.cards.updateCvc(cardId, cvcElement);
+  if (response.error) {
+    // handle the error — see "Handle the response" below
+    return;
+  }
+  // proceed to charge the card
+}
+// highlight-end
+
+init();
+```
+  </TabItem>
+
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title="App.jsx"
+export default function App() {
+  const { publicsquare } = usePublicSquare();
+
+  // highlight-start
+  const submit = async (cardId) => {
+    const response = await publicsquare.cards.updateCvc(cardId, cvcRef.current);
+    if (response.error) {
+      // handle the error — see "Handle the response" below
+      return;
+    }
+    // proceed to charge the card
+  };
+  // highlight-end
+
+  return (
+    <PublicSquareProvider apiKey={apiKey}>
+      ...
+      {/* highlight-next-line */}
+      <button onClick={() => submit(cardId)}>Submit</button>
+    </PublicSquareProvider>
+  );
+}
+```
+  </TabItem>
+</Tabs>
+
+### Handle the response
+
+`updateCvc()` resolves rather than throwing, whether the update succeeds or fails — check `response.error` instead of wrapping the call in `try/catch`:
+
+```json showLineNumbers title="Success"
+{
+  "id": "20713d75-6764-4818-9394-4ac47f1b4238",
+  "type": "card",
+  "created_at": "2024-06-24T13:51:24.980Z",
+  "modified_at": "2026-09-21T13:51:24.980Z"
+}
+```
+
+```json showLineNumbers title="Error"
+{
+  "error": {
+    "error": "not_found",
+    "data": { ... }
+  }
+}
+```
+
+A successful response means the CVC was accepted and attached to the card — it says nothing about whether the CVC is actually correct.
+
+## The 24-hour window
+
+The recollected CVC stays attached to the card for **24 hours**, to be used on the next charge. There's no separate expiration event or webhook — the window is simply how long the CVC is available to attach to a charge.
+
+**If more than 24 hours pass before you charge the card**, don't assume the CVC is still there. Prompt the customer for their CVC again and call `updateCvc()` a second time, immediately before you retry the charge. Treat a stale update as if it never happened rather than relying on it.
+
+## Verification happens at authorization, not at update
+
+<Alert type="warning">A successful `updateCvc()` response is **not** an approved card. It only confirms the CVC was attached to the card — the card issuer doesn't check it until you actually charge the card.</Alert>
+
+`updateCvc()` never contacts the card network — it just attaches the CVC. The CVC is only validated when the next charge on that card goes through [Process Card Payments](/guides/payments/process-card-payments) or [Authorize and Capture Payments](/guides/payments/authorize-and-capture-payments) and reaches the issuer. Just like a first-time card charge, a `succeeded` payment status doesn't guarantee the CVC matched — read `cvv2_reply` on the resulting card, or `verification.result.card_security_code` if you ran a [verification](/guides/payments/verify-cards), to see whether the issuer confirmed it. See [Read the Verification Result](/guides/payments/verify-cards#read-the-verification-result) for the full set of values that field can return.
+
+## Security
+
+- The CVC goes directly from the customer's browser to Basis Theory. It never reaches your servers or PublicSquare's, so re-collecting a CVC doesn't change your PCI scope.
+
+## Conclusion
+
+Following this guide, you've attached a freshly collected CVC to a saved card. Charge the card within 24 hours using [Process Card Payments](/guides/payments/process-card-payments), and check the resulting `cvv2_reply` to confirm the issuer accepted it.
