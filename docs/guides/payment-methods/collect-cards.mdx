@@ -259,8 +259,6 @@ The request body accepts these fields:
 | `customer_id` | No | ID of an existing customer to associate with the card. |
 | `billing_details` | No | Billing address for the card. |
 
-<Alert>Field names in the request body use `snake_case`, as in the cURL examples. The JavaScript and React examples above use `camelCase` because the SDK converts the names before it sends the request.</Alert>
-
 ### Saving a card without a CVC
 
 The `cvc` field is optional. Leave it out when you save a card that you will charge later without the customer present, for example a card on file or a card that you move from another vault.
