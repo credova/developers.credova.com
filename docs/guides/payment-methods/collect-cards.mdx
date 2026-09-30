@@ -239,9 +239,45 @@ curl -L 'https://collect.publicsquare.com' \
   "cardholder_name": "John Smith",
   "card": {
     "number": "4242424242424242",
-    "expirationMonth": 12,
-    "expirationYear": 2025,
+    "expiration_month": 12,
+    "expiration_year": 2030,
     "cvc": "123"
+  }
+}'
+
+```
+
+The request body accepts these fields:
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `cardholder_name` | Yes | Name on the card. |
+| `card.number` | Yes | Card number. |
+| `card.expiration_month` | Yes | Expiration month, from `1` to `12`. |
+| `card.expiration_year` | Yes | Four-digit expiration year. The expiration date must be in the future. |
+| `card.cvc` | No | Card security code. If you send it, PublicSquare still validates it. |
+| `customer_id` | No | ID of an existing customer to associate with the card. |
+| `billing_details` | No | Billing address for the card. |
+
+<Alert>Field names in the request body use `snake_case`, as in the cURL examples. The JavaScript and React examples above use `camelCase` because the SDK converts the names before it sends the request.</Alert>
+
+### Saving a card without a CVC
+
+The `cvc` field is optional. Leave it out when you save a card that you will charge later without the customer present, for example a card on file or a card that you move from another vault.
+
+<Alert type="warning">A card saved without a CVC can decline more often on its first charge. Its `cvv2_reply` cannot show a match (`M`), so do not use a missing CVV as a reason to decline these payments. See [Fraud Details and Prevention](/concepts/fraud-details-and-prevention#card-verification-value-cvv).</Alert>
+
+```shell showLineNumbers
+curl -L 'https://collect.publicsquare.com' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-H 'X-API-KEY: <PUBLISHABLE_API_KEY>' \
+-d '{
+  "cardholder_name": "John Smith",
+  "card": {
+    "number": "4242424242424242",
+    "expiration_month": 12,
+    "expiration_year": 2030
   }
 }'
 
@@ -258,8 +294,8 @@ curl -L 'https://collect-test.publicsquare.com' \
   "cardholder_name": "John Smith",
   "card": {
     "number": "4242424242424242",
-    "expirationMonth": 12,
-    "expirationYear": 2025,
+    "expiration_month": 12,
+    "expiration_year": 2030,
     "cvc": "123"
   }
 }'
@@ -279,7 +315,7 @@ The created `card` object contains the non-sensitive information about the card,
   "last4": "4242",
   "bin": "424242",
   "exp_month": "12",
-  "exp_year": "2025",
+  "exp_year": "2030",
   "brand": "visa",
   "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL",
   "created_at": "2024-06-30T01:02:29.212Z",
