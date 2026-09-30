@@ -15,7 +15,7 @@ In this guide, we will use Credova Elements SDKs to recollect a CVC for a saved 
 1. Mount a standalone `CardVerificationCodeElement` and have the customer enter their CVC.
 2. Call `publicsquare.cards.updateCvc(cardId, cvcElement)`.
 3. PublicSquare confirms the card belongs to your account, then the CVC is attached directly from the customer's browser — it never touches your servers or PublicSquare's, so your PCI scope doesn't change.
-4. The CVC stays attached to the card for **24 hours**, ready for the next charge.
+4. The CVC is attached to the card, ready for the next charge.
 
 ## Getting Started
 
@@ -170,12 +170,6 @@ export default function App() {
 
 A successful response means the CVC was accepted and attached to the card — it says nothing about whether the CVC is actually correct.
 
-## The 24-hour window
-
-The recollected CVC stays attached to the card for **24 hours**, to be used on the next charge. There's no separate expiration event or webhook — the window is simply how long the CVC is available to attach to a charge.
-
-**If more than 24 hours pass before you charge the card**, don't assume the CVC is still there. Prompt the customer for their CVC again and call `updateCvc()` a second time, immediately before you retry the charge. Treat a stale update as if it never happened rather than relying on it.
-
 ## Verification happens at authorization, not at update
 
 <Alert type="warning">A successful `updateCvc()` response is **not** an approved card. It only confirms the CVC was attached to the card — the card issuer doesn't check it until you actually charge the card.</Alert>
@@ -188,4 +182,4 @@ The CVC goes directly from the customer's browser to Basis Theory. It never reac
 
 ## Conclusion
 
-Following this guide, you've attached a freshly collected CVC to a saved card. Charge the card within 24 hours using [Process Card Payments](/guides/payments/process-card-payments), and check the resulting `cvv2_reply` to confirm the issuer accepted it.
+Following this guide, you've attached a freshly collected CVC to a saved card. Charge the card using [Process Card Payments](/guides/payments/process-card-payments), and check the resulting `cvv2_reply` to confirm the issuer accepted it.
