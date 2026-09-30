@@ -55,7 +55,7 @@ We need to make a call to [Create Payment](/api/financial/create-payment) endpoi
 curl 'https://api.publicsquare.com/payments' \
 -X 'POST' \
 -H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPONTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
 -H 'Content-Type: application/json' \
 -d '{
   "amount": 1000,
@@ -80,7 +80,7 @@ curl 'https://api.publicsquare.com/payments' \
 
 <Alert>The amount is provided in cents. 1000 is the equivalent of $10.00</Alert>
 
-<Alert type="warning">The IDEMPONTENCY-KEY header can be passed to protect against duplicate payments being processed.</Alert>
+<Alert type="warning">The IDEMPOTENCY-KEY header can be passed to protect against duplicate payments being processed.</Alert>
 
 ### Create with Existing Customer
 
@@ -90,7 +90,7 @@ If you [created a customer](/api/accounts/create-customer), then you can pass th
 curl 'https://api.publicsquare.com/payments' \
 -X 'POST' \
 -H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPONTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
 -H 'Content-Type: application/json' \
 -d '{
   "amount": 1000,
@@ -119,7 +119,7 @@ If you [attached the Apple Pay payment method to a customer](/api/financial/atta
 curl 'https://api.publicsquare.com/payments' \
 -X 'POST' \
 -H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPONTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
 -H 'Content-Type: application/json' \
 -d '{
   "amount": 1000,
@@ -145,7 +145,7 @@ If you supplied the `billing_details` or [updated the Apple Pay payment method](
 curl 'https://api.publicsquare.com/payments' \
 -X 'POST' \
 -H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPONTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
 -H 'Content-Type: application/json' \
 -d '{
   "amount": 1000,

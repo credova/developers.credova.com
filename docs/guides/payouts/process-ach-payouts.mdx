@@ -71,7 +71,7 @@ We need to make a call to [Create Payout](/api/financial/create-payout) endpoint
 curl 'https://api.publicsquare.com/payouts' \
 -X 'POST' \
 -H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPONTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
 -H 'Content-Type: application/json' \
 -d '{
   "amount": 1000,
@@ -96,7 +96,69 @@ curl 'https://api.publicsquare.com/payouts' \
 
 <Alert>The amount is provided in cents. 1000 is the equivalent of $10.00</Alert>
 
-<Alert type="warning">The IDEMPONTENCY-KEY header can be passed to protect against duplicate payouts being processed.</Alert>
+<Alert type="warning">The IDEMPOTENCY-KEY header can be passed to protect against duplicate payouts being processed.</Alert>
+
+### Create with Bank Account Details
+
+If you have not saved the bank account yet, you can send its details with the payout. The API saves the bank account and sends the payout in the same request, so you do not need to call [Create Bank Account](/api/financial/create-bank-account) first.
+
+Before you use `bank_account_details`:
+
+- Your account must have the `payment-methods:bank-accounts:manual-creation` account setting. See [Request Account Setting Access](/guides/payment-methods/collect-bank-accounts#request-account-setting-access).
+- A restricted API key must have the `payment-method:write` permission in addition to `payout:write`. Secret keys have all permissions.
+
+```shell showLineNumbers title="Create a Payout with Bank Account Details"
+curl 'https://api.publicsquare.com/payouts' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "bank_account_details": {
+      "account_holder_name": "John Doe",
+      "account_holder_type": "individual",
+      "account_type": "checking",
+      "routing_number": "110000000",
+      "account_number": "000123456789"
+    }
+  },
+  "customer": {
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+- `bank_account_details` accepts the same fields as [Create Bank Account](/api/financial/create-bank-account).
+- Include `account_holder_name` and `account_holder_type`. Some processors require them.
+- You cannot combine `bank_account_details` with `bank_account` or `card`.
+- If you omit the top-level `customer` or `billing_details`, the payout uses the `customer_id` and `billing_details` inside `bank_account_details`.
+- Every [`payout_type`](#payout-types) works with `bank_account_details`, with the same requirements as a saved bank account.
+- The response returns the saved bank account in `payment_method.bank_account`. Use its `id` as `bank_account` for later payouts.
+
+<Alert type="warning">
+  Send an `IDEMPOTENCY-KEY` with each request. If a request fails and you retry it with the same key, the payout uses the bank account that the first
+  request saved. A retry with the same key and different bank account details returns a 400. Use a new key when you change the bank account details.
+</Alert>
+
+```json showLineNumbers title="Retry with different bank account details"
+{
+  "title": "Error",
+  "status": 400,
+  "detail": "'bank_account_details' differs from the request first sent with this IDEMPOTENCY-KEY."
+}
+```
 
 ### Create a Same-Day or Instant Payout
 
@@ -106,7 +168,7 @@ To use a faster payout type, set `payout_type` to `same_day` or `instant`:
 curl 'https://api.publicsquare.com/payouts' \
 -X 'POST' \
 -H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPONTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
 -H 'Content-Type: application/json' \
 -d '{
   "amount": 1000,
@@ -141,7 +203,7 @@ If you [created a customer](/api/accounts/create-customer), then you can pass th
 curl 'https://api.publicsquare.com/payouts' \
 -X 'POST' \
 -H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPONTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
 -H 'Content-Type: application/json' \
 -d '{
   "amount": 1000,
@@ -170,7 +232,7 @@ If you [attached the bank account to a customer](/api/financial/attach-bank-acco
 curl 'https://api.publicsquare.com/payouts' \
 -X 'POST' \
 -H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPONTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
 -H 'Content-Type: application/json' \
 -d '{
   "amount": 1000,
@@ -196,7 +258,7 @@ If you supplied the `billing_details` or [updated the bank account](/api/financi
 curl 'https://api.publicsquare.com/payouts' \
 -X 'POST' \
 -H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPONTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
 -H 'Content-Type: application/json' \
 -d '{
   "amount": 1000,
@@ -272,7 +334,7 @@ The payout's `status` is `pending` immediately after creation, and the response'
 
 ## Handling Declines
 
-If a payout is declined, the response's `declined_reason` will contain the reason available at the time of the decline. The linked bank account's `status` may also change as a result of the decline. See [Bank Accounts](/concepts/bank-accounts#statuses).
+If a payout is declined, the response's `declined_reason` will contain the reason available at the time of the decline. When the receiving bank returns the payout, `declined_reason` contains the ACH return code and its description, for example `R03 - No Account/Unable to Locate Account`. The linked bank account's `status` may also change as a result of the decline. See [Bank Accounts](/concepts/bank-accounts#statuses).
 
 ## Conclusion
 
