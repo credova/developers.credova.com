@@ -41,7 +41,7 @@ Permissions enable granular access to Credova API endpoints. A `publishable` API
 | `event:read`                | Allows reading all generated events for the account such as transaction, connection, and onboarding events.                |
 | `payment-method:capture`    | Allows capturing payment methods with a `publishable` API key.                                                             |
 | `payment-method:read`       | Allows reading payment method details.                                                                                     |
-| `payment-method:write`      | Allows creating payment methods with a `secret` or `restricted` API key.                                                   |
+| `payment-method:write`      | Allows creating payment methods with a `secret` or `restricted` API key. Also required to send `bank_account_details` when you create a payment, payment intent, or payout. |
 | `payment-method:delete`     | Allows removing a payment method. This will not remove any payment method details used for payments, payouts, and refunds. |
 | `payment:read`              | Allows reading payments.                                                                                                   |
 | `payment:write`             | Allows creating and updating payments.                                                                                     |
