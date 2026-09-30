@@ -1,3 +1,10 @@
+# [1.59.0](https://github.com/credova/developers.credova.com/compare/v1.58.1...v1.59.0) (2026-09-30)
+
+
+### Features
+
+* add inline bank account details and ACH status [sc-89729] ([#23](https://github.com/credova/developers.credova.com/issues/23)) ([e134b2a](https://github.com/credova/developers.credova.com/commit/e134b2aaf8d968fc2f55ac57ca824be7abe25abb))
+
 ## [1.58.1](https://github.com/credova/developers.credova.com/compare/v1.58.0...v1.58.1) (2026-09-29)
 
 # [1.58.0](https://github.com/credova/developers.credova.com/compare/v1.57.1...v1.58.0) (2026-09-18)
