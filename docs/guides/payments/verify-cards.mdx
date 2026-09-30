@@ -53,7 +53,7 @@ When a customer adds a new payment method, use `add_card` verification type to v
 curl 'https://api.publicsquare.com/payments' \
 -X 'POST' \
 -H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPOTENCY-KEY: '09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
 -H 'Content-Type: application/json' \
 -d '{
   // highlight-next-line
@@ -95,7 +95,7 @@ When setting up a subscription or recurring billing, use `recurring` verificatio
 curl 'https://api.publicsquare.com/payments' \
 -X 'POST' \
 -H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPOTENCY-KEY: '19ec2c87-7fb8-44ca-bb18-5c71a76974db' \
+-H 'IDEMPOTENCY-KEY: 19ec2c87-7fb8-44ca-bb18-5c71a76974db' \
 -H 'Content-Type: application/json' \
 -d '{
   // highlight-next-line
