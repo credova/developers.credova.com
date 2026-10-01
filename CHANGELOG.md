@@ -1,3 +1,10 @@
+# [1.60.0](https://github.com/credova/developers.credova.com/compare/v1.59.0...v1.60.0) (2026-10-01)
+
+
+### Features
+
+* make cvc optional when saving a card [sc-89767] ([#25](https://github.com/credova/developers.credova.com/issues/25)) ([fa1b124](https://github.com/credova/developers.credova.com/commit/fa1b1245aa7f9a78388fd3a306cb613eb5a9ab6f))
+
 # [1.59.0](https://github.com/credova/developers.credova.com/compare/v1.58.1...v1.59.0) (2026-09-30)
 
 
