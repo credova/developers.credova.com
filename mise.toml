@@ -2,9 +2,9 @@
 # Run tasks with `mise run <task>`, e.g. `mise run build`.
 [tools]
 node = "22"
-# Pinned for reproducible CI (matches the elements migration). Bump deliberately
-# rather than tracking "latest".
-bun = "1.3.14"
+# Pinned for reproducible CI. Bump deliberately rather than tracking "latest".
+# 1.4.0+ is required for the nested overrides in package.json (lockfileVersion 3).
+bun = "1.4.2"
 
 [tasks.build]
 description = "Install deps (+ sharp for image processing) and build the Docusaurus site"
