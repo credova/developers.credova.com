@@ -1,13 +1,19 @@
 # Security-scan ignore rules (honored by credova/platform-workflows' security action).
 #
-# GHSA-5p4m-2wfm-xmqj (js-yaml 4.3.0): pulled only by `openapi-to-postmanv2`, a
-# dev-only OpenAPI->Postman docs-codegen tool run via `regenerate-docs` — it is NOT
-# part of the built site or any runtime. Every published openapi-to-postmanv2 version
-# pins a vulnerable js-yaml (<4.3.1), so there is no upstream fix to upgrade to, and
-# bun only honors GLOBAL dependency overrides (a global js-yaml override would break
-# @redocly/openapi-core's required js-yaml ^5.2.2). Scoped-fixable under yarn, not bun.
-# Revisit if openapi-to-postmanv2 ships js-yaml >=4.3.1 or bun gains scoped overrides.
+# GHSA-qxc2-j82w-r537 (@faker-js/faker 5.5.3): pulled only by `postman-collection`,
+# which `docusaurus-plugin-openapi-docs` / `docusaurus-theme-openapi-docs` use to build
+# the API Explorer request, code snippets and Try-it panel. The advisory is in
+# `faker.helpers.fake` (template evaluation); postman-collection never calls it and
+# our generated API docs use no Postman dynamic variables, so the code path is
+# unreachable. Every faker version <=10.4.0 is affected and 10.5.0+ drops the v5 API
+# (`faker.address.*`, `faker.name.*`, `faker.random.*`) that postman-collection calls
+# at import time, so a scoped override to a patched version breaks the Docusaurus build.
+# Revisit when postman-collection moves off faker 5.
+#
+# The js-yaml and minimatch findings are fixed with nested overrides in package.json
+# (bun 1.4.0+), so they no longer need ignore rules here.
 ignore:
-  - vulnerability: GHSA-5p4m-2wfm-xmqj
+  - vulnerability: GHSA-qxc2-j82w-r537
     package:
-      name: js-yaml
+      name: "@faker-js/faker"
+      version: 5.5.3
