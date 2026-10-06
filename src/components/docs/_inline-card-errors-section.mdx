@@ -1,0 +1,10 @@
+The secure hostname checks the card before the request reaches the Credova API:
+
+| Status | Cause |
+|--------|-------|
+| `400` | A card field is missing or not valid. Each key in `errors` starts with `payment_method.card_details.`, for example `payment_method.card_details.number`. |
+| `400` | The card could not be turned into a token. The `detail` field gives the reason. |
+| `404` | The request is not a `POST` to `/payments` or `/payouts`. |
+| `502` | The secure hostname could not reach the card vault. Send the request again with the same `IDEMPOTENCY-KEY`. |
+
+All other responses come from the Credova API. See [Errors](/api/errors).

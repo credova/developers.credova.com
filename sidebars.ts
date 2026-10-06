@@ -44,6 +44,7 @@ const sidebars: SidebarsConfig = {
       },
       items: [
         "guides/payments/process-card-payments",
+        "guides/payments/process-inline-card-payments",
         "guides/payments/process-apple-pay-payments",
         "guides/payments/process-google-pay-payments",
         "guides/payments/process-3ds-iframe-payments",
@@ -68,7 +69,7 @@ const sidebars: SidebarsConfig = {
       customProps: {
         icon: "/img/icons/money-bill-wave.svg",
       },
-      items: ["guides/payouts/process-card-payouts", "guides/payouts/process-ach-payouts", "guides/payouts/cancel-payouts"],
+      items: ["guides/payouts/process-card-payouts", "guides/payouts/process-inline-card-payouts", "guides/payouts/process-ach-payouts", "guides/payouts/cancel-payouts"],
     },
     {
       type: "category",
