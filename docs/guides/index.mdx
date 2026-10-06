@@ -12,12 +12,12 @@ import { Card } from "@site/src/components/shared/Card";
 import ApplePayImage from "@site/static/img/icons/apple-pay-brands-gradient.svg";
 import CollectCardsImage from "@site/static/img/icons/hand-holding-card-gradient.svg";
 import CollectBankAccountsImage from "@site/static/img/icons/hand-holding-bank-gradient.svg";
-import CollectVerifiedBankAccountsImage from "@site/static/img/icons/light-building-columns-circle-check-full-gradient.svg";
 import GooglePayImage from "@site/static/img/icons/google-pay-brands-gradient.svg";
 import ProcessCardPaymentsImage from "@site/static/img/icons/process-card-gradient.svg";
-import ProcessAchPaymentsImage from "@site/static/img/icons/process-bank-gradient.svg";
 import ProcessCardPayoutsImage from "@site/static/img/icons/light-credit-card-circle-arrow-right-gradient.svg";
 import ProcessAchPayoutsImage from "@site/static/img/icons/light-building-columns-circle-arrow-right-gradient.svg";
+import PluginsImage from "@site/static/img/icons/cube-gradient.svg";
+import MarketplacesImage from "@site/static/img/icons/arrows-gradient.svg";
 import RefundPaymentsImage from "@site/static/img/icons/light-receipt-rotate-left-gradient.svg";
 import SearchTransactionsImage from "@site/static/img/icons/magnifying-glass-dollar-gradient.svg";
 import TransactionsImage from "@site/static/img/icons/money-bill-transfer-gradient.svg";
@@ -39,83 +39,104 @@ Head over to the [Credova Portal](https://portal.publicsquare.com).
 
 <AuthButtons />
 
-### 2. Start Building
+### 2. Choose your Integration Path
 
-Jump into action with a step-by-step guide tailored to your use case.
+Pick the path that matches where your customers enter their payment details:
+
+| Path | Choose it when | Card data on your servers |
+|------|----------------|---------------------------|
+| [Browser](#accept-payments-in-the-browser) | Customers enter payment details in your web app. | No. Credova Elements collects it. |
+| [Server-to-server](#accept-payments-server-to-server) | Your organization is PCI certified and your servers already have the card. | Yes |
+| [eCommerce plugins](/plugins) | You sell on Shopify, WooCommerce, Magento or BigCommerce. | No |
+| [Marketplaces](/guides/marketplaces/onboard-sellers) | You onboard sellers and move funds to and from them. | Depends on how you collect payments |
+
+#### Accept Payments in the Browser
 
 <Card.TwoColumnLayout>
   <Card
-    href="/guides/payment-methods/collect-cards"
-    heading="Collect Cards"
+    href="/guides/browser/accept-card-payments"
+    heading="Accept Card Payments"
     img={<div className="card-img-container"><CollectCardsImage /></div>}
-  >Collect credit/debit cards in your web application.</Card>
+  >Collect a card with Credova Elements and charge it.</Card>
 
   <Card
-    href="/guides/payment-methods/collect-bank-accounts"
-    heading="Collect Bank Accounts Manually"
+    href="/guides/browser/accept-bank-account-payments"
+    heading="Accept Bank Account Payments"
     img={<div className="card-img-container"><CollectBankAccountsImage /></div>}
-  >Manually collect bank accounts manually in your web application.</Card>
+  >Collect a bank account, manually or verified, and charge it with ACH.</Card>
 
   <Card
-    href="/guides/payment-methods/collect-verified-bank-accounts"
-    heading="Collect Verified Bank Accounts"
-    img={<div className="card-img-container"><CollectVerifiedBankAccountsImage /></div>}
-  >Collect verified bank accounts in your web application.</Card>
-
-  <Card
-    href="/guides/payment-methods/collect-apple-pay"
-    heading="Collect Apple Pay"
+    href="/guides/browser/accept-apple-pay"
+    heading="Accept Apple Pay"
     img={<div className="card-img-container"><ApplePayImage /></div>}
-  >Collect Apple Pay in your web application.</Card>
+  >Collect Apple Pay with Credova Elements and charge it.</Card>
 
   <Card
-    href="/guides/payment-methods/collect-google-pay"
-    heading="Collect Google Pay"
+    href="/guides/browser/accept-google-pay"
+    heading="Accept Google Pay"
     img={<div className="card-img-container"><GooglePayImage /></div>}
-  >Collect Google Pay in your web application.</Card>
-
-  <Card
-    href="/guides/payments/process-card-payments"
-    heading="Process Card Payments"
-    img={<div className="card-img-container"><ProcessCardPaymentsImage /></div>}
-  >Process card payments.</Card>
-
-  <Card
-    href="/guides/payments/process-ach-payments"
-    heading="Process ACH Payments"
-    img={<div className="card-img-container"><ProcessAchPaymentsImage /></div>}
-  >Process ACH payments.</Card>
-
-  <Card
-    href="/guides/payouts/process-card-payouts"
-    heading="Process Card Payouts"
-    img={<div className="card-img-container"><ProcessCardPayoutsImage /></div>}
-  >Process card payouts.</Card>
-
-  <Card
-    href="/guides/payouts/process-ach-payouts"
-    heading="Process ACH Payouts"
-    img={<div className="card-img-container"><ProcessAchPayoutsImage /></div>}
-  >Process ACH payouts.</Card>
-
-  <Card
-    href="/guides/refunds/refund-payments"
-    heading="Refund Payments"
-    img={<div className="card-img-container"><RefundPaymentsImage /></div>}
-  >Issue refunds to your customers.</Card>
-
-  <Card
-    heading="Search and View Transactions"
-    href="/guides/transactions/search-and-view-transactions"
-    img={<div className="card-img-container"><SearchTransactionsImage /></div>}
-  >Search and view transactions in your account.</Card>
+  >Collect Google Pay with Credova Elements and charge it.</Card>
 </Card.TwoColumnLayout>
 
-Explore the Guides menu for more developer-centric guides.
+#### Accept Payments Server-to-server
 
-### 3. Go Live
+<Card.TwoColumnLayout>
+  <Card
+    href="/guides/server-to-server/inline-payments-and-payouts"
+    heading="Inline Card Payments and Payouts"
+    img={<div className="card-img-container"><ProcessCardPayoutsImage /></div>}
+  >Send the card in the same request that creates the payment or payout.</Card>
 
-[View our interactive checklist](/guides/production-checklist) to ensure you are following the best recommended practices and go live without overthinking it.
+  <Card
+    href="/guides/server-to-server/save-cards"
+    heading="Save Cards"
+    img={<div className="card-img-container"><ProcessCardPaymentsImage /></div>}
+  >Save a card from your servers to charge it later.</Card>
+</Card.TwoColumnLayout>
+
+#### eCommerce Plugins and Marketplaces
+
+<Card.TwoColumnLayout>
+  <Card
+    href="/plugins"
+    heading="eCommerce Plugins"
+    img={<div className="card-img-container"><PluginsImage /></div>}
+  >Accept payments in Shopify, WooCommerce, Magento and BigCommerce.</Card>
+
+  <Card
+    href="/guides/marketplaces/onboard-sellers"
+    heading="Marketplaces"
+    img={<div className="card-img-container"><MarketplacesImage /></div>}
+  >Onboard sellers and move funds to and from them.</Card>
+</Card.TwoColumnLayout>
+
+### 3. Manage Payments
+
+Every path uses the same guides after the payment is created.
+
+<Card.TwoColumnLayout>
+  <Card
+    href="/guides/refunds/refund-payments"
+    heading="Refunds"
+    img={<div className="card-img-container"><RefundPaymentsImage /></div>}
+  >Issue and cancel refunds.</Card>
+
+  <Card
+    href="/guides/payouts/send-payouts"
+    heading="Payouts"
+    img={<div className="card-img-container"><ProcessAchPayoutsImage /></div>}
+  >Send card and bank account payouts.</Card>
+
+  <Card
+    href="/guides/transactions/search-and-view-transactions"
+    heading="Transactions and Settlements"
+    img={<div className="card-img-container"><SearchTransactionsImage /></div>}
+  >Search transactions and view settlements.</Card>
+</Card.TwoColumnLayout>
+
+### 4. Go Live
+
+[Test your integration](/api/testing), then [view our interactive checklist](/guides/production-checklist) to ensure you are following the best recommended practices and go live without overthinking it.
 
 ## Learn More
 

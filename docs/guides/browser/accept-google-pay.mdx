@@ -5,9 +5,9 @@ import { Alert } from "@site/src/components/shared/Alert";
 import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
 import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
 
-# Collect Google Pay
+# Accept Google Pay
 
-In this guide, we will set up Credova Elements SDKs to capture Google Pay in a frontend application and securely authorize and store the Google Pay data while avoiding PCI requirements.
+In this guide, we will set up Credova Elements SDKs to capture Google Pay in a frontend application and securely authorize and store the Google Pay data while avoiding PCI requirements. Then we will create a payment with the collected Google Pay payment method.
 
 ## Getting Started
 
@@ -18,6 +18,12 @@ In this guide, we will set up Credova Elements SDKs to capture Google Pay in a f
 Next you will need your `Publishable Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Publishable Key` and copy the value.
 
 <Alert>Save the Publishable Key as it will be used in the next steps of this guide.</Alert>
+
+### Get your Secret Key
+
+You will also need your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Secret Key` and copy the value.
+
+<Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
 
 ## Configuring Credova Elements
 
@@ -202,7 +208,7 @@ Shipping address collection is optional and off by default. Enable it with the `
   </TabItem>
 </Tabs>
 
-When `shippingAddressRequired` is enabled, the shipping address is returned at the root of the `onPaymentDataLoaded` payload as `paymentData.shippingAddress`. We don't store the shipping address on the payment method &mdash; pass it along as `shipping_address` when you [create the payment](/guides/payments/process-google-pay-payments). The billing address is already stored on the payment method from the earlier tokenization step, so you don't need to read it again here.
+When `shippingAddressRequired` is enabled, the shipping address is returned at the root of the `onPaymentDataLoaded` payload as `paymentData.shippingAddress`. We don't store the shipping address on the payment method &mdash; pass it along as `shipping_address` when you [create the payment](#create-a-payment). The billing address is already stored on the payment method from the earlier tokenization step, so you don't need to read it again here.
 
 ```javascript showLineNumbers title="index.js"
 async function onPaymentAuthorized(paymentData) {
@@ -359,11 +365,11 @@ export default function App() {
   </TabItem>
 </Tabs>
 
-
 The created `Google Pay` object contains the non-sensitive information about the Google Pay:
 
 ```json showLineNumbers title=google-pay.json
 {
+  // highlight-next-line
   "id": "ggl_Aw3U2eESBnq6DoYEFn8qaSMrA",
   "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
   "environment": "test",
@@ -392,18 +398,208 @@ You can safely store the Google Pay payment method `id` value in your database t
 
 You can optionally pass in a `customer_id` to associate with an existing [Created Customer](/api/accounts/create-customer). The `billing_details` shown above always comes from the Google Pay sheet (see [Billing and Shipping Addresses](#billing-and-shipping-addresses)) &mdash; there's no need to pass them yourself, and doing so has no effect.
 
-## Testing 
+## Process the Payment
 
-If you don't have a Google Pay `merchantId` yet from Google's [setup guide](https://developers.google.com/pay/api/web/guides/setup), you can use the `TEST` environment in the Google Pay button configuration. 
+Now that you have collected a Google Pay payment method, use its `id` to create a payment. Your frontend sends the `id` to your backend, as in the `chargePayment` call above, and your backend makes the call with your [Secret Key](#get-your-secret-key).
+
+For example, given the Google Pay payment method `ggl_Aw3U2eESBnq6DoYEFn8qaSMrA` from the previous step:
+
+### Create a Payment
+
+We need to make a call to [Create Payment](/api/financial/create-payment) endpoint:
+
+```shell showLineNumbers title="Create a Payment"
+curl 'https://api.publicsquare.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "google_pay": "ggl_Aw3U2eESBnq6DoYEFn8qaSMrA"
+  },
+  "customer": {
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+<Alert>The amount is provided in cents. 1000 is the equivalent of $10.00</Alert>
+
+<Alert type="warning">The IDEMPOTENCY-KEY header can be passed to protect against duplicate payments being processed.</Alert>
+
+### Create with Existing Customer
+
+If you [created a customer](/api/accounts/create-customer), then you can pass the `customer_id` when processing the payment:
+
+```shell showLineNumbers title="Create a Payment with Customer"
+curl 'https://api.publicsquare.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "google_pay": "ggl_Aw3U2eESBnq6DoYEFn8qaSMrA"
+  },
+  "customer": {
+    "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+### Create with Customer's Payment Method
+
+If you [attached the Google Pay payment method to a customer](/api/financial/attach-google-pay-to-customer), then you can omit the `customer` section when processing the payment:
+
+```shell showLineNumbers title="Create a Payment with Payment Method"
+curl 'https://api.publicsquare.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "google_pay": "ggl_Aw3U2eESBnq6DoYEFn8qaSMrA"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+### Create with Payment Method's Billing Details
+
+If you supplied the `billing_details` or [updated the Google Pay payment method](/api/financial/update-google-pay-payment-method), then you can omit the `billing_details` section when processing the payment:
+
+```shell showLineNumbers title="Create a Payment with Payment Method"
+curl 'https://api.publicsquare.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "google_pay": "ggl_Aw3U2eESBnq6DoYEFn8qaSMrA"
+  }
+}'
+```
+
+## Payment Response
+
+Given the above examples, you should see a payment result similar to:
+
+```json showLineNumbers
+{
+  "id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  "status": "succeeded",
+  "transaction_id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
+  "amount": 1000,
+  "amount_capturable": 0,
+  "amount_charged": 1000,
+  "amount_refunded": 0,
+  "refunded": false,
+  "currency": "USD",
+  "payment_method": {
+    "google_pay": {
+      "id": "ggl_Aw3U2eESBnq6DoYEFn8qaSMrA",
+      "token_type": "card",
+      "last4": "4242",
+      "exp_month": "12",
+      "exp_year": "2025",
+      "fingerprint": "6Bh4Dnq4jrTte3Rp4k9u6HheqSXvhTEDi4qv5M4bNrbH",
+      "brand": "visa",
+      "avs_code": "Y",
+      "cvv2_reply": "M"
+    }
+  },
+  "customer": {
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com",
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "shipping_address": {
+    "address_line_1": "111 Colorado Ave.",
+    "address_line_2": "Apt 403",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "fraud_decision": {
+    "decision": "accept"
+  },
+  "transaction": {
+    "id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
+    "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+    "environment": "test",
+    "status": "succeeded",
+    "amount": 1000,
+    "fee_amount": 0,
+    "net_amount": 1000,
+    "currency": "USD",
+    "type_id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+    "type": "payment",
+    "processor": "nuvei",
+    "processor_id": "7110000000010554769",
+    "created_at": "2024-06-30T01:02:29.212Z",
+    "modified_at": "2024-06-30T01:02:29.212Z"
+  },
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z"
+}
+```
+
+## Testing
+
+If you don't have a Google Pay `merchantId` yet from Google's [setup guide](https://developers.google.com/pay/api/web/guides/setup), you can use the `TEST` environment in the Google Pay button configuration.
 Also retrieve your `Test` API Keys from your [Account](https://portal.publicsquare.com/developers/api-keys) in `Test mode` to simulate production.
-This environment allows you to test your integration. 
+This environment allows you to test your integration.
 
 For more information about testing, refer to the [Testing](https://developers.publicsquare.com/api/testing) documentation.
 
 ## Preparing for Production
 
-Once you're ready for production, you'll want to publish your integration with Google Pay by following the [official guide](https://developers.google.com/pay/api/web/guides/test-and-deploy/publish-your-integration). 
-When you have your official `merchantId`, you can set your `merchantId` in the Google Pay button configuration, and change the `environment` to `PRODUCTION`. 
+Once you're ready for production, you'll want to publish your integration with Google Pay by following the [official guide](https://developers.google.com/pay/api/web/guides/test-and-deploy/publish-your-integration).
+When you have your official `merchantId`, you can set your `merchantId` in the Google Pay button configuration, and change the `environment` to `PRODUCTION`.
 
 <Tabs className="publicsquare-tabs" queryString="sdk">
   <TabItem value="javascript" label="JavaScript">
@@ -471,4 +667,9 @@ When you have your official `merchantId`, you can set your `merchantId` in the G
 
 ## Conclusion
 
-Following this guide, you have successfully collected a customer's Google Pay. To use this Google Pay payment method, proceed with the [Process Google Pay Payments](/guides/payments/process-google-pay-payments) guide.
+Following this guide, you have successfully collected a customer's Google Pay and created a payment with it. Now we may need to manage the payment or view information about the payment.
+Follow these guides to learn more:
+
+- [Issue a Refund](/guides/refunds/refund-payments)
+- [Cancel a Payment](/guides/payments/cancel-payments)
+- [Search and View Transactions](/guides/transactions/search-and-view-transactions)

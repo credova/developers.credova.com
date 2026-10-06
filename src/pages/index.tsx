@@ -48,7 +48,7 @@ export default function Home() {
               </Card>
 
               <Card
-                href="/guides/payment-methods/collect-cards"
+                href="/guides/browser/accept-card-payments"
                 heading={<Card.PrimaryHeader>Collect Cards</Card.PrimaryHeader>}
                 column
                 raised
@@ -63,7 +63,7 @@ export default function Home() {
               </Card>
 
               <Card
-                href="/guides/payments/process-card-payments"
+                href="/guides/browser/accept-card-payments"
                 heading={<Card.PrimaryHeader>Process Payments</Card.PrimaryHeader>}
                 column
                 raised

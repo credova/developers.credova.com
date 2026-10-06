@@ -4,11 +4,11 @@ import InlineCardDetailsSection from "@site/src/components/docs/_inline-card-det
 import InlineCardRetriesSection from "@site/src/components/docs/_inline-card-retries-section.mdx";
 import InlineCardErrorsSection from "@site/src/components/docs/_inline-card-errors-section.mdx";
 
-# Process Inline Card Payments
+# Inline Card Payments and Payouts
 
-Send the card details in the same request that creates the payment. You do not need to save the card first. The card is saved to the customer, and the response gives you its `id` for later payments.
+Send the card details in the same request that creates the payment or payout. You do not need to save the card first. The card is saved to the customer, and the response gives you its `id` for later payments and payouts.
 
-<Alert type="warning">Your servers receive and send cardholder data in this flow, so your organization must be PCI certified. If you are unsure, please [reach out for support](mailto:support@publicsquare.com). To keep card data out of your servers, use [Collect Cards](/guides/payment-methods/collect-cards) and [Process Card Payments](/guides/payments/process-card-payments).</Alert>
+<Alert type="warning">Your servers receive and send cardholder data in this flow, so your organization must be PCI certified. If you are unsure, please [reach out for support](mailto:support@publicsquare.com). To keep card data out of your servers, use [Accept Card Payments](/guides/browser/accept-card-payments) for payments and [Send Payouts](/guides/payouts/send-payouts) for payouts.</Alert>
 
 <Alert>Inline card details work with [Create Payment](/api/financial/create-payment). Payment Intents do not accept `card_details`.</Alert>
 
@@ -20,11 +20,13 @@ Send the card details in the same request that creates the payment. You do not n
 
 Next you will need your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Secret Key` and copy the value.
 
-<Alert>A restricted key needs the `payment-method:write` or `payment-method:capture` permission, in addition to the permission to create payments.</Alert>
+<Alert>A restricted key needs the `payment-method:write` or `payment-method:capture` permission, in addition to the permission to create payments or payouts.</Alert>
 
-## Process the Payment
+## Send Card Details
 
 <InlineCardDetailsSection />
+
+## Process a Payment
 
 A payment with `card_details` also needs `device_information.ip_address`, the IP address of the customer's device.
 
@@ -155,15 +157,7 @@ curl 'https://secure.payments.credova.com/payments' \
 }'
 ```
 
-### Retries
-
-<InlineCardRetriesSection />
-
-### Errors
-
-<InlineCardErrorsSection />
-
-## Payment Response
+### Payment Response
 
 The response is the same as for a payment with a saved card. `payment_method.card` describes the card that the request saved:
 
@@ -230,14 +224,167 @@ The response is the same as for a payment with a saved card. `payment_method.car
 }
 ```
 
-Store `payment_method.card.id`. For the next payment with this card, send `"payment_method": { "card": "<card id>" }` to `https://api.publicsquare.com/payments`, as in [Process Card Payments](/guides/payments/process-card-payments).
+Store `payment_method.card.id`. For the next payment with this card, send `"payment_method": { "card": "<card id>" }` to `https://api.publicsquare.com/payments`, as in [Accept Card Payments](/guides/browser/accept-card-payments).
+
+## Process a Payout
+
+A payout with `card_details` does not need `device_information`.
+
+### Create a Payout
+
+```shell showLineNumbers title="Create a Payout with Inline Card Details"
+curl 'https://secure.payments.credova.com/payouts' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    // highlight-start
+    "card_details": {
+      "cardholder_name": "John Smith",
+      "number": "4242424242424242",
+      "expiration_month": 12,
+      "expiration_year": 2030,
+      "cvc": "123"
+    }
+    // highlight-end
+  },
+  "customer": {
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+<Alert>The amount is provided in cents. 1000 is the equivalent of $10.00</Alert>
+
+To test, send the same request to `https://secure-test.payments.credova.com` with your test mode `Secret Key` and a [test card](/api/testing#cards).
+
+### Create with Existing Customer
+
+If you [created a customer](/api/accounts/create-customer), pass the `customer_id`:
+
+```shell showLineNumbers title="Create a Payout with Customer"
+curl 'https://secure.payments.credova.com/payouts' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "card_details": {
+      "cardholder_name": "John Smith",
+      "number": "4242424242424242",
+      "expiration_month": 12,
+      "expiration_year": 2030,
+      "cvc": "123"
+    }
+  },
+  "customer": {
+    // highlight-next-line
+    "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+### Payout Response
+
+The response is the same as for a payout with a saved card. `payment_method.card` describes the card that the request saved:
+
+```json showLineNumbers title="Payout Response"
+{
+  "id": "pyt_24NFPd3jSZFTxiaH9UwjuqNdP",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "succeeded",
+  "transaction_id": "trx_6QgmXzQzk3S5K5EsR3DfEiMRj",
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "card": {
+      // highlight-next-line
+      "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
+      "cardholder_name": "John Smith",
+      "last4": "4242",
+      "bin": "424242",
+      "exp_month": "12",
+      "exp_year": "2030",
+      "brand": "visa",
+      "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL"
+    }
+  },
+  "customer": {
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "transaction": {
+    "id": "trx_6QgmXzQzk3S5K5EsR3DfEiMRj",
+    "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+    "environment": "test",
+    "status": "succeeded",
+    "amount": -1000,
+    "fee_amount": 0,
+    "net_amount": -1000,
+    "currency": "USD",
+    "type_id": "pyt_24NFPd3jSZFTxiaH9UwjuqNdP",
+    "type": "payout",
+    "processor": "nuvei",
+    "processor_id": "7110000000010554769",
+    "created_at": "2024-06-30T01:02:29.212Z",
+    "modified_at": "2024-06-30T01:02:29.212Z"
+  },
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z"
+}
+```
+
+Store `payment_method.card.id`. For the next payout to this card, send `"payment_method": { "card": "<card id>" }` to `https://api.publicsquare.com/payouts`, as in [Send Payouts](/guides/payouts/send-payouts#card-payouts).
+
+## Retries
+
+<InlineCardRetriesSection />
+
+## Errors
+
+<InlineCardErrorsSection />
 
 ## Conclusion
 
-Now that we have seen how to process a payment with inline card details, we may need to manage the payment or view information about the payment.
+Now that we have seen how to process a payment or a payout with inline card details, we may need to manage it or view information about it.
 Follow these guides to learn more:
 
 - [Authorize and Capture Payments](/guides/payments/authorize-and-capture-payments)
 - [Issue a Refund](/guides/refunds/refund-payments)
 - [Cancel a Payment](/guides/payments/cancel-payments)
-- [Process Inline Card Payouts](/guides/payouts/process-inline-card-payouts)
+- [Cancel a Payout](/guides/payouts/send-payouts#cancel-a-payout)
+- [Search and View Transactions](/guides/transactions/search-and-view-transactions)

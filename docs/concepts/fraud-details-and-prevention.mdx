@@ -67,7 +67,7 @@ When a configured CVV rule is triggered to cause the payment to fail, the paymen
 
 -	Require CVV for card-not-present checkout when the customer is present.
 -	Decline, or hold for review, payments with a CVV that does not match (`N`) or is invalid (`I`).
--	Do not use a missing CVV as a reason to decline a stored-card charge that has no customer present, such as a card on file. A card saved without a CVC cannot return a CVV match. See [Saving a card without a CVC](/guides/payment-methods/collect-cards?sdk=shell#saving-a-card-without-a-cvc).
+-	Do not use a missing CVV as a reason to decline a stored-card charge that has no customer present, such as a card on file. A card saved without a CVC cannot return a CVV match. See [Saving a card without a CVC](/guides/server-to-server/save-cards).
 -	Use CVV in combination with AVS for enhanced fraud protection.
 
 ### CVV response codes

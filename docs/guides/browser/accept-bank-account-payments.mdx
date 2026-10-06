@@ -1,0 +1,708 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert } from "@site/src/components/shared/Alert";
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
+
+# Accept Bank Account Payments
+
+In this guide, we will set up Credova Elements SDKs to capture bank accounts in a frontend application, securely authorize and store the bank account data while avoiding PCI requirements, and then process an ACH payment with the collected bank account.
+
+## Getting Started
+
+<GettingStartedSection />
+
+### Get your Publishable Key
+
+Next you will need your `Publishable Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Publishable Key` and copy the value.
+
+<Alert>Save the Publishable Key as it will be used in the next steps of this guide.</Alert>
+
+### Get your Secret Key
+
+You will also need your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Secret Key` and copy the value.
+
+<Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
+
+## Request Account Setting Access
+
+Each way to collect a bank account needs an account setting. Request the setting for the option you plan to use:
+
+- **Manual Entry** needs the `payment-methods:bank-accounts:manual-creation` account setting type. In the merchant portal, it is the `Manual Bank Account Creation` setting.
+- **Instant Verification** needs the `payment-methods:bank-accounts:verification` account setting type. In the merchant portal, it is the `Bank Account Verification` setting.
+
+To request a setting, go to the [merchant portal](https://portal.publicsquare.com/settings/features) and click on the `Request this feature` button next to it.
+Alternatively, you can request access via the [API](/api/accounts/request-account-setting-access).
+
+This is required to enable manual bank account creation or instant bank account verification for your account.
+
+<Alert>
+  The `payment-methods:bank-accounts:manual-creation` setting also lets you send bank account details directly when you [process an ACH payment](#create-with-bank-account-details)
+  or [an ACH payout](/guides/payouts/send-payouts#create-with-bank-account-details), without creating the bank account first.
+</Alert>
+
+## Configuring Credova Elements
+
+<ConfigureElementsSection />
+
+## Collect the Bank Account
+
+Credova Elements gives you two ways to collect a bank account:
+
+- [Manual Entry](#manual-entry): your customer types the routing number and account number into the Bank Account Elements.
+- [Instant Verification](#instant-verification): your customer connects their bank account and Credova verifies it instantly.
+
+With either option, you create a `bank account` that holds the non-sensitive information about the bank account. You can safely store the bank account's `id` value in your database to link it with the appropriate payment or customer association.
+
+When you create the bank account, you can optionally pass in a `customer_id` to associate with an existing [Created Customer](/api/accounts/create-customer) and `billing_details` to remove the requirement to pass them when [Creating a Payment](/api/financial/create-payment).
+
+### Manual Entry
+
+Manual entry captures the routing number and account number in your frontend application and stores them securely in your account.
+
+#### Adding Bank Account Elements
+
+Once installed and configured, add the Bank Account Elements to your application.
+
+<Tabs className="publicsquare-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```html showLineNumbers title="index.html"
+<form>
+  <input type="text" id="accountHolderName" placeholder="Account holder name" />
+  <div id="bankAccount" style="width: 100%;"></div>
+</form>
+```
+
+```javascript showLineNumbers title="index.js"
+import { PublicSquare } from '@publicsquare/elements-js';
+
+let publicsquare;
+let bankAccountElement;
+
+async function init() {
+  publicsquare = await new PublicSquare().init('<PUBLISHABLE_API_KEY>');
+
+  //highlight-start
+  // Creates an Bank Account instance that includes the routing number and account number
+  bankAccountElement = publicsquare.createBankAccountElement();
+  bankAccountElement.mount('#bankAccount');
+  //highlight-end
+}
+
+init();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+```jsx showLineNumbers title="App.jsx"
+import React, { useRef, useState } from 'react';
+import {
+  PublicSquareProvider,
+  // highlight-start
+  BankAccountElement,
+  //highlight-end
+  usePublicSquare,
+} from '@publicsquare/elements-react';
+
+export default function App() {
+  const { publicsquare } = usePublicSquare();
+  // highlight-start
+  // Refs to get access to the Elements instance
+  const bankAccountRef = useRef(null);
+  // highlight-end
+
+  // See below for handleSubmit function
+
+  return (
+    <PublicSquareProvider apiKey={apiKey}>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="accountHolderName"
+          placeholder="Account holder name"
+        />
+
+        // highlight-start
+        <BankAccountElement
+          id="bankAccount"
+          ref={bankAccountRef}
+        />
+        // highlight-end
+      </form>
+    </PublicSquareProvider>
+  );
+}
+```
+  </TabItem>
+</Tabs>
+
+#### Storing Bank Accounts
+
+Now that you are capturing bank account data in your web application, it is time to store the bank account in your account.
+
+To do this, we will call the `create bank account` method from the SDK, passing the Bank Account Elements as data points in the payload.
+
+Add a submit function along with a button to trigger it:
+
+<Tabs className="publicsquare-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+```javascript showLineNumbers title=index.js
+async function submit (e: FormEvent<HTMLFormElement>,) {
+  try {
+    const formData = new FormData(e.currentTarget)
+    const account_holder_name = formData.get('accountHolderName');
+    const routing_number = bankAccountElement.routingNumber.el.value
+    const account_number = bankAccountElement.accountNumber.el.value
+    // highlight-start
+    const bankAccount = await publicsquare.bankAccounts.create({
+      account_holder_name,
+      routing_number,
+      account_number,
+    });
+    // highlight-end
+    console.log(bankAccount); // e.g { id: 'ba_1234567890', ... }
+  } catch (error) {
+    console.error(error);
+  }
+}
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+async function handleSubmit(e) {
+  e.preventDefault();
+  const account_holder_name = e.target.accountHolderName.value;
+  const routing_number = bankeAccountRef.current.routingNumber.el.value
+  const account_number = bankeAccountRef.current.accountNumber.el.value
+  // highlight-start
+  const bankAccount = await publicsquare.bankAccounts.create({
+    account_holder_name,
+    routing_number,
+    account_number,
+  });
+  // highlight-end
+  console.log(bankAccount); // e.g { id: 'ba_1234567890', ... }
+}
+```
+  </TabItem>
+</Tabs>
+
+The created `bank account` object contains the non-sensitive information about the bank account:
+
+```json showLineNumbers title=bankAccount.json
+{
+  "id": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "production",
+  "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+  "billing_details": {
+    "address_line_1": "111 Colorado Ave.",
+    "address_line_2": "Apt 403",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z",
+  "account_holder_name": "John Doe",
+  "account_holder_type": "individual",
+  "account_type": "checking",
+  "routing_number": "110000000",
+  "account_number_last4": "1011"
+}
+```
+
+### Instant Verification
+
+Instant verification lets your customer connect their bank account so that Credova can verify it instantly, then stores the verified bank account in your account.
+
+#### Adding Bank Account Verification Elements
+
+Credova has partnered with [Flinks](https://www.flinks.com/) to provide a secure way to collect bank accounts.
+Once installed and configured, add the Bank Account Verification Elements to your application.
+
+<Tabs className="publicsquare-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```html showLineNumbers title="index.html"
+<div id="bank-account-verification-element">
+  <button
+    onclick={onConnectBankAccountWithVerification}
+  >
+    Connect Bank Account
+  </button>
+</div>
+```
+
+```javascript showLineNumbers title="index.js"
+import { PublicSquare } from '@publicsquare/elements-js';
+
+let publicsquare;
+let result;
+
+async function init() {
+  publicsquare = await new PublicSquare().init('<PUBLISHABLE_API_KEY>');
+
+  async function onConnectBankAccountWithVerification() {
+    result = await publicsquare?.bankAccounts.openVerification(
+      `#${'bank-account-verification-element'}`
+    )
+  }
+}
+
+await init();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+```jsx showLineNumbers title="App.jsx"
+import React, { useRef } from 'react';
+import {
+  PublicSquareProvider,
+  BankAccountVerificationElement,
+  usePublicSquare,
+} from '@publicsquare/elements-react';
+
+export default function App() {
+  const { publicsquare } = usePublicSquare();
+  // Refs to get access to the Elements instance
+  const bankAccountVerificationElementRef = useRef(null);
+
+  return (
+    <PublicSquareProvider apiKey={apiKey}>
+        <BankAccountVerificationElement
+          id="bankAccountVerificationElement"
+          ref={bankAccountVerificationElementRef}
+          onVerificationComplete={(result) => {
+            console.log('Bank account verification completed:', result.bank_account_verification_id);
+          }}
+        />
+    </PublicSquareProvider>
+  );
+}
+```
+  </TabItem>
+</Tabs>
+
+#### Storing Verified Bank Accounts
+
+Now that your customer has verified their bank account information, we need to create a bank account payment method from the results.
+
+To do this, we will call the `create bank account` method from the SDK passing the `bank_account_verification_id`, returned from the bank account verification result.
+
+Add a submit function along with a button to trigger it:
+
+<Tabs className="publicsquare-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+  
+```html showLineNumbers title="index.html"
+<div id="bank-account-verification-element">
+  <button
+    onclick={onConnectBankAccountWithVerification}
+  >
+    Connect Bank Account
+  </button>
+</div>
+
+// highlight-next-line
+<button id="submit">Submit</button>
+```
+
+```javascript showLineNumbers title=index.js
+import { PublicSquare } from '@publicsquare/elements-js';
+
+let publicsquare;
+let result;
+
+async function init () {
+  publicsquare = await new PublicSquare().init('<PUBLISHABLE_API_KEY>');
+
+  async function onConnectBankAccountWithVerification() {
+    result = await publicsquare?.bankAccounts.openVerification(
+      `#${'bank-account-verification-element'}`
+    )
+  }
+  
+  //highlight-next-line
+  document.getElementById("submit").addEventListener("click", submit);
+}
+
+// highlight-start
+async function submit (e: FormEvent<HTMLFormElement>,) {
+  try {
+    const bankAccount = await publicsquare?.bankAccounts.create({
+      bank_account_verification_id: result?.bank_account_verification_id
+    });
+    console.log(bankAccount); // e.g { id: 'ba_1234567890', ... }
+  } catch (error) {
+    console.error(error);
+  }
+}
+// highlight-end
+
+await init();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title=App.jsx
+import React, { useRef } from 'react';
+import {
+  PublicSquareProvider,
+  BankAccountVerificationElement,
+  usePublicSquare,
+} from '@publicsquare/elements-react';
+
+export default function App() {
+  const { publicsquare } = usePublicSquare();
+  // Refs to get access to the Elements instance
+  const bankAccountVerificationElementRef = useRef(null);
+
+  // highlight-start
+  const submit = async () => {
+    try {
+      const bankAccount = await publicsquare.bankAccounts.create({
+        bank_account_verification_id: bankAccountVerificationElementRef.current.bank_account_verification_id
+      });
+      console.log(bankAccount); // e.g { id: 'ba_1234567890', ... }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  // highlight-end
+
+  return (
+    <PublicSquareProvider apiKey={apiKey}>
+      <BankAccountVerificationElement
+        id="bankAccountVerificationElement"
+        ref={bankAccountVerificationElementRef}
+        onVerificationComplete={(result) => {
+          console.log('Bank account verification completed:', result.bank_account_verification_id);
+        }}
+      />
+      // highlight-next-line
+      <button onClick={submit}>Submit</button>
+    </PublicSquareProvider>
+  );
+}
+```
+  </TabItem>
+</Tabs>
+
+The created `bank account` object contains the non-sensitive information about the bank account:
+
+```json showLineNumbers title=bankAccount.json
+{
+  "id": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "production",
+  "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+  "billing_details": {
+    "address_line_1": "111 Colorado Ave.",
+    "address_line_2": "Apt 403",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z",
+  "account_holder_name": "John Doe",
+  "account_holder_type": "individual",
+  "account_type": "checking",
+  "routing_number": "110000000",
+  "account_number_last4": "1011",
+  // highlight-next-line
+  "status": "verified"
+}
+```
+<Alert>If Credova has not yet received a response back from Flinks, we will return `bank account verification result is still in progress.` validation message.</Alert>
+
+#### Nightly Balance Refresh
+
+We automatically refresh the balance for all verified bank accounts for up to 30 days after verification. 
+To obtain the most recent balance, you can make a call to the [Get Bank Account Balance](/api/financial/get-bank-account-balance-by-id) endpoint.
+
+If more than 30 days have passed since the account was verified, you must re-verify the bank account to update its balance.
+
+<Alert type="warning">Bank accounts with MFA enabled do not support nightly balance refresh.</Alert>
+
+## Process the Payment
+
+We will need to use the information from the previously [manually collected bank account](#manual-entry) or [collected verified bank account](#instant-verification) to create a new payment.
+
+Use the `id` of the collected bank account, such as `ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ`, as the `bank_account` value in the payment.
+
+### Create a Payment
+
+We need to make a call to [Create Payment](/api/financial/create-payment) endpoint:
+
+```shell showLineNumbers title="Create a Payment"
+curl 'https://api.publicsquare.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "bank_account": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+  },
+  "customer": {
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+<Alert>The amount is provided in cents. 1000 is the equivalent of $10.00</Alert>
+
+<Alert type="warning">The IDEMPOTENCY-KEY header can be passed to protect against duplicate payments being processed.</Alert>
+
+### Create with Bank Account Details
+
+If you have not saved the bank account yet, you can send its details with the payment. The API saves the bank account and charges it in the same request, so you do not need to call [Create Bank Account](/api/financial/create-bank-account) first.
+
+Before you use `bank_account_details`:
+
+- Your account must have the `payment-methods:bank-accounts:manual-creation` account setting. See [Request Account Setting Access](#request-account-setting-access).
+- A restricted API key must have the `payment-method:write` permission in addition to `payment:write`. Secret keys have all permissions.
+
+```shell showLineNumbers title="Create a Payment with Bank Account Details"
+curl 'https://api.publicsquare.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "bank_account_details": {
+      "account_holder_name": "John Doe",
+      "account_holder_type": "individual",
+      "account_type": "checking",
+      "routing_number": "110000000",
+      "account_number": "000123456789"
+    }
+  },
+  "customer": {
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+- `bank_account_details` accepts the same fields as [Create Bank Account](/api/financial/create-bank-account).
+- Include `account_holder_name` and `account_holder_type`. Some processors require them.
+- You cannot combine `bank_account_details` with `bank_account`, `card`, `apple_pay`, or `google_pay`.
+- If you omit the top-level `customer` or `billing_details`, the payment uses the `customer_id` and `billing_details` inside `bank_account_details`.
+- The response returns the saved bank account in `payment_method.bank_account`. Use its `id` as `bank_account` for later payments.
+- [Payment intents](/concepts/payment-intents) accept `bank_account_details` when you create the intent. An update request with `bank_account_details` returns a 400.
+
+<Alert type="warning">
+  Send an `IDEMPOTENCY-KEY` with each request. If a request fails and you retry it with the same key, the payment uses the bank account that the first
+  request saved. A retry with the same key and different bank account details returns a 400. Use a new key when you change the bank account details.
+</Alert>
+
+```json showLineNumbers title="Retry with different bank account details"
+{
+  "title": "Error",
+  "status": 400,
+  "detail": "'bank_account_details' differs from the request first sent with this IDEMPOTENCY-KEY."
+}
+```
+
+### Create with Existing Customer
+
+If you [created a customer](/api/accounts/create-customer), then you can pass the `customer_id` when processing the payment:
+
+```shell showLineNumbers title="Create a Payment with Customer"
+curl 'https://api.publicsquare.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "bank_account": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+  },
+  "customer": {
+    "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+### Create with Customer's Payment Method
+
+If you [attached the bank account to a customer](/api/financial/attach-bank-account-to-customer), then you can omit the `customer` section when processing the payment:
+
+```shell showLineNumbers title="Create a Payment with Payment Method"
+curl 'https://api.publicsquare.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "bank_account": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+### Create with Payment Method's Billing Details
+
+If you supplied the `billing_details` or [updated the bank account](/api/financial/update-bank-account), then you can omit the `billing_details` section when processing the payment:
+
+```shell showLineNumbers title="Create a Payment with Payment Method"
+curl 'https://api.publicsquare.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "bank_account": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+  }
+}'
+```
+
+## Payment Response
+
+Given the above examples, you should see a payment result similar to:
+
+```json showLineNumbers
+{
+  "id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  "status": "pending",
+  "transaction_id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
+  "amount": 1000,
+  "amount_capturable": 0,
+  "amount_charged": 1000,
+  "amount_refunded": 0,
+  "refunded": false,
+  "currency": "USD",
+  "payment_method": {
+    "bank_account": {
+      "id": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+      "account_holder_name": "John Doe",
+      "account_holder_type": "individual",
+      "account_type": "individual",
+      "routing_number": "123456789",
+      "account_number_last4": "1011"
+    }
+  },
+  "customer": {
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com",
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "shipping_address": {
+    "address_line_1": "111 Colorado Ave.",
+    "address_line_2": "Apt 403",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "fraud_decision": {
+    "decision": "accept"
+  },
+  "transaction": {
+    "id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
+    "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+    "environment": "test",
+    "status": "pending",
+    "amount": 1000,
+    "fee_amount": 0,
+    "net_amount": 1000,
+    "currency": "USD",
+    "type_id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+    "type": "payment",
+    "processor": "nuvei",
+    "processor_id": "7110000000010554769",
+    "created_at": "2024-06-30T01:02:29.212Z",
+    "modified_at": "2024-06-30T01:02:29.212Z"
+  },
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z"
+}
+```
+
+## Payment Status
+
+ACH payments do not settle instantly. A new ACH payment has the `pending` status. When the bank transfer settles, the payment moves to `succeeded`.
+Subscribe to the [`payment:update` webhook](/concepts/webhooks) to receive each status change.
+
+If the bank rejects the debit, the payment moves to `declined`. The `declined_reason` field contains the ACH return code and its description:
+
+```json showLineNumbers title="Declined ACH payment"
+{
+  "id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+  "status": "declined",
+  "declined_reason": "R02 - Account Closed"
+}
+```
+
+Some return codes also change the bank account's `status` to `closed` or `invalid`. A new payment with that bank account returns a 400 with
+`bank account has 'closed' status.` See [Bank Accounts](/concepts/bank-accounts#statuses), and collect a new bank account from the customer.
+
+You can [refund](/guides/refunds/refund-payments) an ACH payment after it reaches `succeeded`.
+
+## Conclusion
+
+Following this guide, you have successfully collected a customer's bank account and processed an ACH payment with it. Now we may need to manage the payment or view information about the payment.
+Follow these guides to learn more:
+
+- [Issue a Refund](/guides/refunds/refund-payments)
+- [Cancel a Payment](/guides/payments/cancel-payments)
+- [Search and View Transactions](/guides/transactions/search-and-view-transactions)

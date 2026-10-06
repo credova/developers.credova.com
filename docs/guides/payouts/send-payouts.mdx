@@ -1,17 +1,11 @@
 import { Alert } from "@site/src/components/shared/Alert";
 import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
 
-# Process ACH Payouts
+# Send Payouts
 
-Now that you have completed the [Collect Bank Accounts](/guides/payment-methods/collect-bank-accounts) guide, let's process an ACH payout with the newly captured bank account.
+Now that you have collected a card with [Accept Card Payments](/guides/browser/accept-card-payments) or a bank account with [Accept Bank Account Payments](/guides/browser/accept-bank-account-payments), let's send a payout to it. This guide also shows how to cancel a payout before it is settled.
 
-## Payout Types
-
-Payouts made to a bank account travel over the ACH network and support three speeds, set via the `payout_type` field on [Create Payout](/api/financial/create-payout):
-
-- **`standard`** (default) — A standard ACH transfer. Settles over the standard multi-day ACH timeline.
-- **`same_day`** — A same-day ACH transfer. Settles the same business day.
-- **`instant`** — Sent over real-time payment rails instead of ACH batch processing, and typically settles within minutes. Requires the `payouts:instant` account setting to be enabled — see [Request Account Setting Access](#request-account-setting-access) below.
+PCI-certified merchants can also pay out to a raw card in one call with [Inline Card Payments and Payouts](/guides/server-to-server/inline-payments-and-payouts).
 
 ## Getting Started
 
@@ -23,18 +17,148 @@ Next you will need your `Secret Key`. [Go to your Developers section](https://po
 
 <Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
 
-## Request Account Setting Access
+## Payout Types
 
-<Alert type="warning">This section only applies if you plan to use `instant` payouts. Skip it if you're using the default `standard` or `same_day` payout types.</Alert>
+Payouts made to a bank account travel over the ACH network and support three speeds, set via the `payout_type` field on [Create Payout](/api/financial/create-payout):
 
-To use `instant` payouts, you will need to request access to the `payouts:instant` account setting type.
+- **`standard`** (default) — A standard ACH transfer. Settles over the standard multi-day ACH timeline.
+- **`same_day`** — A same-day ACH transfer. Settles the same business day.
+- **`instant`** — Sent over real-time payment rails instead of ACH batch processing, and typically settles within minutes. Requires the `payouts:instant` account setting to be enabled — see [Request Account Setting Access](#request-account-setting-access) below.
 
-To do this, go to the [merchant portal](https://portal.publicsquare.com/settings/features) and click on the `Request this feature` button next to the `Instant Payouts` setting.
-Alternatively, you can request access via the [API](/api/accounts/request-account-setting-access).
+## Card Payouts
 
-## Process the Payout
+We will need to use the information from the previously collected card to create a new payout.
 
-We will need to use the information from the previously collected bank account to create a new payout. A verified bank account is the more reliable choice if you plan to send an `instant` payout — if you haven't already, complete the [Collect Verified Bank Accounts](/guides/payment-methods/collect-verified-bank-accounts) guide first.
+For example, given you have a previously collected card:
+
+```json showLineNumbers title=card.json
+{
+  // highlight-next-line
+  "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  "cardholder_name": "John Smith",
+  "last4": "4242",
+  "exp_month": "12",
+  "exp_year": "2025",
+  "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL",
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z"
+}
+```
+
+### Create a Card Payout
+
+We need to make a call to [Create Payout](/api/financial/create-payout) endpoint:
+
+```shell showLineNumbers title="Create a Payout"
+curl 'https://api.publicsquare.com/payouts' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
+  },
+  "customer": {
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+<Alert>The amount is provided in cents. 1000 is the equivalent of $10.00</Alert>
+
+<Alert type="warning">The IDEMPOTENCY-KEY header can be passed to protect against duplicate payouts being processed.</Alert>
+
+### Create a Card Payout with Existing Customer
+
+If you [created a customer](/api/accounts/create-customer), then you can pass the `customer_id` when processing the payout:
+
+```shell showLineNumbers title="Create a Payout with Customer"
+curl 'https://api.publicsquare.com/payouts' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
+  },
+  "customer": {
+    "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+### Create a Card Payout with Customer's Payment Method
+
+If you [attached the card to a customer](/api/financial/attach-card-to-customer), then you can omit the `customer` section when processing the payout:
+
+```shell showLineNumbers title="Create a Payout with Payment Method"
+curl 'https://api.publicsquare.com/payouts' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+### Create a Card Payout with Payment Method's Billing Details
+
+If you supplied the `billing_details` or [updated the card](/api/financial/update-card), then you can omit the `billing_details` section when processing the payout:
+
+```shell showLineNumbers title="Create a Payout with Payment Method"
+curl 'https://api.publicsquare.com/payouts' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
+  }
+}'
+```
+
+## Bank Account (ACH) Payouts
+
+We will need to use the information from the previously collected bank account to create a new payout. A verified bank account is the more reliable choice if you plan to send an `instant` payout — if you haven't already, complete the [Accept Bank Account Payments](/guides/browser/accept-bank-account-payments) guide first.
 
 For example, given you have a previously collected bank account:
 
@@ -62,6 +186,15 @@ For example, given you have a previously collected bank account:
   "modified_at": "2024-06-30T01:02:29.212Z"
 }
 ```
+
+### Request Account Setting Access
+
+<Alert type="warning">This section only applies if you plan to use `instant` payouts. Skip it if you're using the default `standard` or `same_day` payout types.</Alert>
+
+To use `instant` payouts, you will need to request access to the `payouts:instant` account setting type.
+
+To do this, go to the [merchant portal](https://portal.publicsquare.com/settings/features) and click on the `Request this feature` button next to the `Instant Payouts` setting.
+Alternatively, you can request access via the [API](/api/accounts/request-account-setting-access).
 
 ### Create a Payout
 
@@ -104,7 +237,7 @@ If you have not saved the bank account yet, you can send its details with the pa
 
 Before you use `bank_account_details`:
 
-- Your account must have the `payment-methods:bank-accounts:manual-creation` account setting. See [Request Account Setting Access](/guides/payment-methods/collect-bank-accounts#request-account-setting-access).
+- Your account must have the `payment-methods:bank-accounts:manual-creation` account setting. See [Request Account Setting Access](/guides/browser/accept-bank-account-payments#request-account-setting-access).
 - A restricted API key must have the `payment-method:write` permission in addition to `payout:write`. Secret keys have all permissions.
 
 ```shell showLineNumbers title="Create a Payout with Bank Account Details"
@@ -273,7 +406,71 @@ Each of these request variants works the same way for `same_day` and `instant` p
 
 ## Payout Response
 
-Given the above examples, you should see a payout result similar to:
+Card payouts and bank account payouts return a payout object.
+
+### Card Payout Response
+
+Given the card payout examples, you should see a payout result similar to:
+
+```json showLineNumbers
+{
+  "id": "pyt_24NFPd3jSZFTxiaH9UwjuqNdP",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  "status": "succeeded",
+  "transaction_id": "trx_6QgmXzQzk3S5K5EsR3DfEiMRj",
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "card": {
+      "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
+      "cardholder_name": "John Smith",
+      "last4": "4242",
+      "exp_month": "12",
+      "exp_year": "2025",
+      "brand": "visa",
+      "avs_code": "Y",
+      "cvv2_reply": "M",
+      "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL"
+    }
+  },
+  "customer": {
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com",
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "transaction": {
+    "id": "trx_6QgmXzQzk3S5K5EsR3DfEiMRj",
+    "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+    "environment": "test",
+    "status": "succeeded",
+    "amount": -1000,
+    "fee_amount": 0,
+    "net_amount": -1000,
+    "currency": "USD",
+    "type_id": "pyt_24NFPd3jSZFTxiaH9UwjuqNdP",
+    "type": "payout",
+    "processor": "nuvei",
+    "processor_id": "7110000000010554769",
+    "created_at": "2024-06-30T01:02:29.212Z",
+    "modified_at": "2024-06-30T01:02:29.212Z"
+  },
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z"
+}
+```
+
+### Bank Account Payout Response
+
+Given the bank account payout examples, you should see a payout result similar to:
 
 ```json showLineNumbers
 {
@@ -332,15 +529,88 @@ Given the above examples, you should see a payout result similar to:
 
 The payout's `status` is `pending` immediately after creation, and the response's `payout_type` reflects the speed you requested. For `instant` payouts, the terminal `succeeded` or `declined` status typically arrives via the [`payout:update` webhook](/concepts/webhooks) much sooner than `standard` or `same_day` payouts.
 
-## Handling Declines
+### Handling Declines
 
 If a payout is declined, the response's `declined_reason` will contain the reason available at the time of the decline. When the receiving bank returns the payout, `declined_reason` contains the ACH return code and its description, for example `R03 - No Account/Unable to Locate Account`. The linked bank account's `status` may also change as a result of the decline. See [Bank Accounts](/concepts/bank-accounts#statuses).
 
+## Cancel a Payout
+
+There may be scenarios in which you need to cancel a payout, such as paying a customer or vendor by mistake.
+
+Credova API offers the ability to cancel a payout before it is settled.
+
+### Cancel the Payout
+
+In order to cancel a payout, we will need the ID of a recently created payout. Assuming you have a payout similar to:
+
+```json showLineNumbers title="Payout"
+{
+  // highlight-next-line
+  "id": "pyt_24NFPd3jSZFTxiaH9UwjuqNdP",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  "status": "pending",
+  ...
+}
+```
+
+We need to make a call to [Cancel Payout](/api/financial/cancels-a-payout) endpoint:
+
+```shell showLineNumbers title="Cancel a Payout"
+curl 'https://api.publicsquare.com/payouts/cancel' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'Content-Type: application/json' \
+-d '{
+  "payout_id": "pyt_24NFPd3jSZFTxiaH9UwjuqNdP"
+}'
+```
+
+### Cancelled Payout Response
+
+Given the above examples, you should see a cancelled payout result similar to:
+
+```json showLineNumbers
+{
+  "id": "pyt_24NFPd3jSZFTxiaH9UwjuqNdP",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+   // highlight-next-line
+  "status": "cancelled",
+  "transaction_id": "trx_6QgmXzQzk3S5K5EsR3DfEiMRj",
+  "amount": 1000,
+  ...
+  "transaction": {
+    "id": "trx_6QgmXzQzk3S5K5EsR3DfEiMRj",
+    "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+    "environment": "test",
+    // highlight-next-line
+    "status": "cancelled",
+    "amount": -1000,
+    "fee_amount": 0,
+    "net_amount": -1000,
+    ...
+  },
+  ...
+}
+```
+
+### Handling Cancellation Failures
+
+If a payout cannot be cancelled because the payout has already been settled, an error response will be returned:
+
+```shell showLineNumbers
+{
+  "title": "Error",
+  "status": 400,
+  "detail": "payout cancellation failed."
+}
+```
+
 ## Conclusion
 
-Now that we have seen how to process payouts with a collected bank account, we may need to manage the payout or view information about the payout.
+Now that we have seen how to send payouts to a card or a bank account and how to cancel a payout, we may need to view information about the payout.
 Follow these guides to learn more:
 
-- [Collect Verified Bank Accounts](/guides/payment-methods/collect-verified-bank-accounts)
-- [Cancel a Payout](/guides/payouts/cancel-payouts)
+- [Accept Bank Account Payments](/guides/browser/accept-bank-account-payments)
 - [Search and View Transactions](/guides/transactions/search-and-view-transactions)

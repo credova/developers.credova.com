@@ -23,61 +23,40 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: "category",
-      label: "Payment Methods",
+      label: "Accept Payments in the Browser",
       customProps: {
         icon: "/img/icons/payment-methods.svg",
       },
       items: [
-        "guides/payment-methods/collect-cards",
-        "guides/payment-methods/recollect-cvc",
-        "guides/payment-methods/collect-apple-pay",
-        "guides/payment-methods/collect-google-pay",
-        "guides/payment-methods/collect-bank-accounts",
-        "guides/payment-methods/collect-verified-bank-accounts"
+        "guides/browser/accept-card-payments",
+        "guides/browser/accept-bank-account-payments",
+        "guides/browser/accept-apple-pay",
+        "guides/browser/accept-google-pay",
+        "guides/payments/process-3ds-iframe-payments",
+        "guides/payments/process-3ds-redirect-payments",
+        "guides/payment-methods/recollect-cvc"
       ],
     },
     {
       type: "category",
-      label: "Payments",
+      label: "Accept Payments Server-to-server",
       customProps: {
         icon: "/img/icons/credit-card.svg",
       },
+      items: ["guides/server-to-server/inline-payments-and-payouts", "guides/server-to-server/save-cards"],
+    },
+    {
+      type: "category",
+      label: "eCommerce Plugins",
+      customProps: {
+        icon: "/img/icons/cube.svg",
+      },
       items: [
-        "guides/payments/process-card-payments",
-        "guides/payments/process-inline-card-payments",
-        "guides/payments/process-apple-pay-payments",
-        "guides/payments/process-google-pay-payments",
-        "guides/payments/process-3ds-iframe-payments",
-        "guides/payments/process-3ds-redirect-payments",
-        "guides/payments/authorize-and-capture-payments",
-        "guides/payments/verify-cards",
-        "guides/payments/process-ach-payments",
-        "guides/payments/cancel-payments"
+        {type: "link", label: "Shopify", href: "/plugins/shopify-payments"},
+        {type: "link", label: "WooCommerce", href: "/plugins/woocommerce-payments"},
+        {type: "link", label: "Magento", href: "/plugins/magento-payments"},
+        {type: "link", label: "BigCommerce", href: "/plugins/bigcommerce-payments"}
       ],
-    },
-    {
-      type: "category",
-      label: "Refunds",
-      customProps: {
-        icon: "/img/icons/light-receipt-rotate-left.svg",
-      },
-      items: ["guides/refunds/refund-payments", "guides/refunds/cancel-refunds"],
-    },
-    {
-      type: "category",
-      label: "Payouts",
-      customProps: {
-        icon: "/img/icons/money-bill-wave.svg",
-      },
-      items: ["guides/payouts/process-card-payouts", "guides/payouts/process-inline-card-payouts", "guides/payouts/process-ach-payouts", "guides/payouts/cancel-payouts"],
-    },
-    {
-      type: "category",
-      label: "Transactions",
-      customProps: {
-        icon: "/img/icons/money-bill-transfer.svg",
-      },
-      items: ["guides/transactions/search-and-view-transactions", "guides/transactions/view-settlements"],
     },
     {
       type: "category",
@@ -88,11 +67,27 @@ const sidebars: SidebarsConfig = {
       items: ["guides/marketplaces/onboard-sellers", "guides/marketplaces/transfer-funds-to-sellers", "guides/marketplaces/transfer-funds-from-sellers"],
     },
     {
-      id: "guides/production-checklist/index",
-      type: "doc",
+      type: "category",
+      label: "Manage Payments",
+      customProps: {
+        icon: "/img/icons/money-bill-transfer.svg",
+      },
+      items: [
+        "guides/payments/authorize-and-capture-payments",
+        "guides/payments/verify-cards",
+        "guides/payments/cancel-payments",
+        "guides/refunds/refund-payments",
+        "guides/payouts/send-payouts",
+        "guides/transactions/search-and-view-transactions"
+      ],
+    },
+    {
+      type: "category",
+      label: "Go Live",
       customProps: {
         icon: "/img/icons/ballot-check-light.svg",
       },
+      items: ["guides/production-checklist/index", {type: "link", label: "Testing", href: "/api/testing"}],
     },
     {
       type: "html",

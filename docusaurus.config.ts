@@ -136,6 +136,29 @@ const config: Config = {
       };
     },
     require.resolve("docusaurus-lunr-search"),
+    [
+      "@docusaurus/plugin-client-redirects",
+      {
+        redirects: [
+          {from: "/guides/payment-methods/collect-cards", to: "/guides/browser/accept-card-payments"},
+          {from: "/guides/payments/process-card-payments", to: "/guides/browser/accept-card-payments"},
+          {from: "/guides/payment-methods/collect-apple-pay", to: "/guides/browser/accept-apple-pay"},
+          {from: "/guides/payments/process-apple-pay-payments", to: "/guides/browser/accept-apple-pay"},
+          {from: "/guides/payment-methods/collect-google-pay", to: "/guides/browser/accept-google-pay"},
+          {from: "/guides/payments/process-google-pay-payments", to: "/guides/browser/accept-google-pay"},
+          {from: "/guides/payment-methods/collect-bank-accounts", to: "/guides/browser/accept-bank-account-payments"},
+          {from: "/guides/payment-methods/collect-verified-bank-accounts", to: "/guides/browser/accept-bank-account-payments"},
+          {from: "/guides/payments/process-ach-payments", to: "/guides/browser/accept-bank-account-payments"},
+          {from: "/guides/payments/process-inline-card-payments", to: "/guides/server-to-server/inline-payments-and-payouts"},
+          {from: "/guides/payouts/process-inline-card-payouts", to: "/guides/server-to-server/inline-payments-and-payouts"},
+          {from: "/guides/refunds/cancel-refunds", to: "/guides/refunds/refund-payments"},
+          {from: "/guides/payouts/process-card-payouts", to: "/guides/payouts/send-payouts"},
+          {from: "/guides/payouts/process-ach-payouts", to: "/guides/payouts/send-payouts"},
+          {from: "/guides/payouts/cancel-payouts", to: "/guides/payouts/send-payouts"},
+          {from: "/guides/transactions/view-settlements", to: "/guides/transactions/search-and-view-transactions"},
+        ],
+      },
+    ],
     require.resolve("docusaurus-plugin-sass"),
     [
       "docusaurus-plugin-openapi-docs",

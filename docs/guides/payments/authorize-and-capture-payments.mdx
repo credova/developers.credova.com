@@ -1,3 +1,6 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
 import { Alert } from "@site/src/components/shared/Alert";
 import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
 
@@ -17,7 +20,12 @@ Next you will need your `Secret Key`. [Go to your Developers section](https://po
 
 <Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
 
-## Payment Intents
+## Authorize and Capture
+
+You can authorize and capture with either Payment Intents or the direct Payments API. Select the tab for the API you use.
+
+<Tabs className="publicsquare-tabs" groupId="api-style" queryString="api">
+  <TabItem value="payment-intents" label="Payment Intents" default>
 
 Use `capture_method: manual` to authorize the card without immediately capturing funds. The intent moves to `requires_capture` after confirmation and waits up to 7 days for an explicit capture call.
 
@@ -183,7 +191,8 @@ You can capture up to, but not exceeding, the original authorized amount. If no 
 }
 ```
 
-## Legacy
+  </TabItem>
+  <TabItem value="legacy" label="Legacy">
 
 The direct Payments API supports authorize-and-capture by passing `"capture": false` when creating the payment.
 
@@ -357,6 +366,9 @@ You should see a payment response with a `succeeded` status similar to:
   ...
 }
 ```
+
+  </TabItem>
+</Tabs>
 
 ## Multiple partial captures
 
@@ -548,7 +560,7 @@ To know what the customer paid, read `amount_charged`. Do not read `amount`, whi
 ## Conclusion
 
 Authorize and capturing payments also works with ACH payments using a bank account payment method.
-See our [Process ACH payments](/guides/payments/process-ach-payments) guide to see how to collect bank accounts and process ACH payments following similar steps in this guide.
+See our [Accept Bank Account Payments](/guides/browser/accept-bank-account-payments) guide to see how to collect bank accounts and process ACH payments following similar steps in this guide.
 
 Now that we have seen how to authorize and capture payments with a collected card, we may need to manage the payment or view information about the payment.
 Follow these guides to learn more:
