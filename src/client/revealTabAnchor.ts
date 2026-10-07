@@ -23,17 +23,11 @@ function targetFromHash(hash: string): HTMLElement | null {
   }
 }
 
-function scrollBelowNavbar(target: HTMLElement | null) {
-  if (!target) return;
-  const navbarHeight = document.querySelector<HTMLElement>(".navbar")?.offsetHeight ?? 0;
-  window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - navbarHeight - 8 });
-}
-
 export function onRouteDidUpdate({ location }: { location: { hash: string } }) {
   const target = targetFromHash(location.hash);
   if (!target) return;
   const panels = hiddenTabPanels(target);
   if (panels.length === 0) return;
   panels.forEach((panel) => tabForPanel(panel)?.click());
-  window.setTimeout(() => scrollBelowNavbar(targetFromHash(location.hash)), 100);
+  window.setTimeout(() => targetFromHash(location.hash)?.scrollIntoView(), 100);
 }

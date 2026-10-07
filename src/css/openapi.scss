@@ -256,6 +256,15 @@ ul > .openapi-params__list-item:first-child {
   color: var(--cr-muted);
 }
 
+.openapi-schema__list-item .openapi-schema__name {
+  color: var(--cr-muted) !important;
+}
+
+.openapi-schema__name,
+.openapi-schema__type {
+  opacity: 1 !important;
+}
+
 .openapi-params__description p {
   margin: 0 0 4px;
   color: var(--cr-text);
@@ -327,4 +336,9 @@ summary > .openapi-markdown__details-summary--with-control,
 
 .openapi-tabs__code-container .openapi-tabs__code-list-container > .openapi-tabs__code-item:not(.tabs__item--active):not([aria-selected="true"]):hover {
   background: var(--cr-surface-strong) !important;
+}
+
+.openapi-tabs__response-code-item.tabs__item--active,
+.openapi-tabs__response-code-item.active {
+  color: var(--cr-bg) !important;
 }

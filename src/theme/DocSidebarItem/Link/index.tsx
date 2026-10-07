@@ -29,6 +29,7 @@ export default function DocSidebarItemLink({ item, onItemClick, activePath, leve
       >
         {item.customProps?.icon && (
           <ThemedImage
+            alt=""
             className={clsx({
               [styles.icon]: true,
               [styles.active]: isActive,
@@ -42,6 +43,7 @@ export default function DocSidebarItemLink({ item, onItemClick, activePath, leve
         <span className={styles.label}>{label}</span>
         {!isInternalLink && (
           <ThemedImage
+            alt=""
             sources={{
               light: "/img/sidebar/light/external.svg",
               dark: "/img/sidebar/dark/external.svg",

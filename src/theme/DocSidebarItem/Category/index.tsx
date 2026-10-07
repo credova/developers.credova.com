@@ -127,6 +127,7 @@ export default function DocSidebarItemCategory({ item, onItemClick, activePath, 
       >
         {item.customProps?.icon && (
           <ThemedImage
+            alt=""
             className={clsx({
               [styles.icon]: true,
               [styles.active]: isActive,

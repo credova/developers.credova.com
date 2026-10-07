@@ -110,7 +110,7 @@
   background: var(--cr-surface);
 }
 
-.tileTitle {
+.tile .tileTitle {
   margin: 0 0 10px;
   font-size: 19px;
 }

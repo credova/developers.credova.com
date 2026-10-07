@@ -28,7 +28,7 @@ const theme = (c: {
 export const credovaLight = theme({
   text: "#1b3640",
   background: "var(--cr-surface)",
-  comment: "#5c727a",
+  comment: "#526870",
   punctuation: "#4f666e",
   key: "#004059",
   string: "#8a5a00",
@@ -41,7 +41,7 @@ export const credovaLight = theme({
 export const credovaDark = theme({
   text: "#dde3e6",
   background: "var(--cr-surface)",
-  comment: "#7f888e",
+  comment: "#8a9399",
   punctuation: "#959ea4",
   key: "#5cc8dd",
   string: "#e8b96a",

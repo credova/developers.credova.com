@@ -79,7 +79,7 @@ const CategoryTile = ({ item }: { item: PropSidebarItemCategory }) => {
 
   return (
     <section className={styles.tile}>
-      <h3 className={styles.tileTitle}>{href ? <Link to={href}>{item.label}</Link> : item.label}</h3>
+      <h2 className={styles.tileTitle}>{href ? <Link to={href}>{item.label}</Link> : item.label}</h2>
       {description && <p className={styles.description}>{description}</p>}
       <ul className={styles.tileLinks}>
         {visible.map((link) => (

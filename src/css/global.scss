@@ -11,6 +11,41 @@ h4 {
   letter-spacing: var(--cr-heading-letter-spacing);
 }
 
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  &[id] {
+    scroll-margin-top: calc(var(--ifm-navbar-height) + 16px);
+  }
+}
+
+a,
+button,
+[role="tab"] {
+  touch-action: manipulation;
+}
+
+.theme-doc-markdown :is(p, li, td, dd) a:not(.hash-link):not([class*="button"]),
+[class*="contentText"] a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+
+  &:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
 h1 {
   font-size: 40px;
 }
