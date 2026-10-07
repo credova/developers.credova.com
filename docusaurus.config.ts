@@ -144,6 +144,7 @@ const config: Config = {
           items: [
             {label: "JavaScript Elements", to: "/sdks/web/javascript"},
             {label: "React Elements", to: "/sdks/web/react"},
+            {label: "Changelog", to: "/sdks/web/changelog"},
           ],
         },
         {
@@ -162,10 +163,14 @@ const config: Config = {
     },
     languageTabs: [
       {highlight: "bash", language: "curl", logoClass: "curl", variants: ["curl"]},
-      {highlight: "javascript", language: "nodejs", logoClass: "nodejs", variants: ["axios"]},
-      {highlight: "python", language: "python", logoClass: "python", variants: ["requests"]},
-      {highlight: "csharp", language: "csharp", logoClass: "csharp", variants: ["httpclient"]},
-      {highlight: "php", language: "php", logoClass: "php", variants: ["curl"]},
+      {highlight: "javascript", language: "nodejs", logoClass: "nodejs", variants: ["axios", "native"]},
+      {highlight: "python", language: "python", logoClass: "python", variants: ["requests", "http.client"]},
+      {highlight: "csharp", language: "csharp", logoClass: "csharp", variants: ["httpclient", "restsharp"]},
+      {highlight: "php", language: "php", logoClass: "php", variants: ["curl", "guzzle"]},
+      {highlight: "go", language: "go", logoClass: "go", variants: ["native"]},
+      {highlight: "dart", language: "dart", logoClass: "dart", variants: ["http", "dio"]},
+      {highlight: "java", language: "java", logoClass: "java", variants: ["okhttp", "unirest"]},
+      {highlight: "kotlin", language: "kotlin", logoClass: "kotlin", variants: ["okhttp"]},
     ],
   } satisfies Preset.ThemeConfig,
 

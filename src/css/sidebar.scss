@@ -47,3 +47,59 @@
   margin-left: 18px;
   padding-left: 8px;
 }
+
+.menu__list-item.api-method > .menu__link {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+
+  &::before {
+    flex: none;
+    box-sizing: border-box;
+    width: 44px;
+    padding: 1px 0;
+    border-radius: 4px;
+    background: var(--cr-method-color);
+    color: var(--cr-on-brand);
+    font-family: var(--ifm-font-family-monospace);
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+    text-align: center;
+  }
+}
+
+.menu__list-item.api-method {
+  &.get {
+    --cr-method-color: var(--cr-method-get);
+
+    > .menu__link::before {
+      content: "GET";
+    }
+  }
+
+  &.post {
+    --cr-method-color: var(--cr-method-post);
+
+    > .menu__link::before {
+      content: "POST";
+    }
+  }
+
+  &.put {
+    --cr-method-color: var(--cr-method-put);
+
+    > .menu__link::before {
+      content: "PUT";
+    }
+  }
+
+  &.delete {
+    --cr-method-color: var(--cr-method-delete);
+
+    > .menu__link::before {
+      content: "DELETE";
+    }
+  }
+}

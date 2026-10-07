@@ -21,11 +21,13 @@ In this guide, we will use Credova Elements SDKs to recollect a CVC for a saved 
 
 <BeforeYouStart keys={["publishable"]}>
 This guide uses the same `Publishable Key` as [Accept Card Payments](/guides/payments/elements/accept-card-payments). You need the `id` of a saved card. If you do not have one, save it with [Accept Card Payments](/guides/payments/elements/accept-card-payments) or [Save Cards](/guides/payments/direct-api/save-cards).
+
+`updateCvc()` needs version 2.0.0 or later of `@publicsquare/elements-js` or `@publicsquare/elements-react`.
 </BeforeYouStart>
 
 ## Mount the CVC Element
 
-Mount a standalone `CardVerificationCodeElement` — the same element used in [Accept Card Payments](/guides/payments/elements/accept-card-payments), just on its own, without the rest of the card form.
+Mount a standalone `CardVerificationCodeElement`. It is the same element as in [Accept Card Payments](/guides/payments/elements/accept-card-payments), on its own, without the rest of the card form.
 
 <Tabs className="publicsquare-tabs" queryString="sdk">
   <TabItem value="javascript" label="JavaScript">

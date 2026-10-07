@@ -10,7 +10,7 @@ import InlineCardErrorsSection from "@site/src/components/docs/_inline-card-erro
 
 # Create a Payment with Card Details
 
-Send the card details in the same request that creates the payment. You do not need to save the card first. The card is saved to the customer, and the response gives you its `id` for later payments.
+Send the card details in the same request that creates the payment. You do not need to save the card first. The API saves the card to the customer and returns its `id` for later payments.
 
 <Alert type="warning">Your servers receive and send cardholder data in this flow, so your organization must be PCI certified. If you are unsure, please [reach out for support](mailto:support@publicsquare.com). To keep card data out of your servers, use [Accept Card Payments](/guides/payments/elements/accept-card-payments).</Alert>
 

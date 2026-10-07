@@ -18,6 +18,11 @@
   --cr-success: #1e7a55;
   --cr-info: var(--cr-accent);
 
+  --cr-method-get: var(--cr-accent);
+  --cr-method-post: var(--cr-success);
+  --cr-method-put: var(--cr-warning);
+  --cr-method-delete: var(--cr-danger);
+
   --cr-default-border-color: var(--cr-border);
   --cr-tabs-border-color: var(--cr-border);
   --cr-sidebar-background-color: var(--cr-bg);

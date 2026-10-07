@@ -13,6 +13,7 @@
 .gh-card {
   display: flex !important;
   place-items: center;
+  margin-bottom: 24px;
   background: var(--cr-surface) !important;
 }
 

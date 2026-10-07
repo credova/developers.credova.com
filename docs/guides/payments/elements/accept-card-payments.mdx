@@ -256,7 +256,7 @@ You can optionally pass in a `customer_id` to associate with an existing [Create
 
 Now that you have a card, create the payment from your server using your `Secret Key`.
 
-You can create card payments using either Payment Intents or the direct Payments API. Both approaches result in a `Payment` object. Payment Intents are recommended for new integrations — they provide a durable, stateful lifecycle with built-in support for async outcomes and safe retries.
+You can create card payments using either Payment Intents or the direct Payments API. Both approaches result in a `Payment` object. We recommend Payment Intents for new integrations. They keep state across the whole lifecycle, report slow outcomes by webhook and retry safely.
 
 <Tabs className="publicsquare-tabs" groupId="api-style" queryString="api">
   <TabItem value="payment-intents" label="Payment Intents" default>

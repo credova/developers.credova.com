@@ -246,6 +246,11 @@ const sidebars: SidebarsConfig = {
           type: "doc",
           label: "React Elements",
         },
+        {
+          id: "sdks/web/changelog",
+          type: "doc",
+          label: "Changelog",
+        },
       ],
     },
     {

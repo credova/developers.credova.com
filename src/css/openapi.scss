@@ -29,7 +29,7 @@
 .openapi__method-badge {
   padding: 3px 8px;
   border-radius: 4px;
-  background: var(--cr-accent);
+  background: var(--cr-method-color, var(--cr-accent));
   color: var(--cr-on-brand);
   font-family: var(--ifm-font-family-monospace);
   font-size: 12px;
@@ -38,12 +38,19 @@
 }
 
 .openapi__method-badge--get {
-  background: var(--cr-surface-strong);
-  color: var(--cr-heading);
+  --cr-method-color: var(--cr-method-get);
+}
+
+.openapi__method-badge--post {
+  --cr-method-color: var(--cr-method-post);
+}
+
+.openapi__method-badge--put {
+  --cr-method-color: var(--cr-method-put);
 }
 
 .openapi__method-badge--delete {
-  background: var(--cr-danger);
+  --cr-method-color: var(--cr-method-delete);
 }
 
 .openapi__method-endpoint-path {
@@ -320,12 +327,27 @@ summary > .openapi-markdown__details-summary--with-control,
   margin: 0 !important;
 }
 
-.openapi-tabs__code-container .openapi-tabs__code-list-container > .openapi-tabs__code-item:not(.tabs__item--active):not([aria-selected="true"]) {
+.openapi-tabs__code-container .openapi-tabs__code-list-container > .openapi-tabs__code-item:not(.openapi-tabs__code-item--variant) {
+  position: static;
   gap: 0;
-  padding: 6px 9px !important;
+  padding: 6px 5px !important;
 }
 
-.openapi-tabs__code-container .openapi-tabs__code-list-container > .openapi-tabs__code-item:not(.tabs__item--active):not([aria-selected="true"]) span {
+.openapi-tabs__code-container ul.openapi-tabs__code-list-container:not(.openapi-tabs__code-container-inner) {
+  position: relative;
+  padding-bottom: 32px !important;
+}
+
+.openapi-tabs__code-container .openapi-tabs__code-list-container > .openapi-tabs__code-item:not(.openapi-tabs__code-item--variant):is(.tabs__item--active, [aria-selected="true"]) span {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--cr-heading);
+}
+
+.openapi-tabs__code-container .openapi-tabs__code-list-container > .openapi-tabs__code-item:not(.openapi-tabs__code-item--variant):not(.tabs__item--active):not([aria-selected="true"]) span {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -334,7 +356,7 @@ summary > .openapi-markdown__details-summary--with-control,
   white-space: nowrap;
 }
 
-.openapi-tabs__code-container .openapi-tabs__code-list-container > .openapi-tabs__code-item:not(.tabs__item--active):not([aria-selected="true"]):hover {
+.openapi-tabs__code-container .openapi-tabs__code-list-container > .openapi-tabs__code-item:not(.openapi-tabs__code-item--variant):not(.tabs__item--active):not([aria-selected="true"]):hover {
   background: var(--cr-surface-strong) !important;
 }
 
@@ -342,3 +364,9 @@ summary > .openapi-markdown__details-summary--with-control,
 .openapi-tabs__response-code-item.active {
   color: var(--cr-bg) !important;
 }
+
+.openapi-explorer__form-item > span {
+  color: var(--cr-muted);
+  opacity: 1 !important;
+}
+

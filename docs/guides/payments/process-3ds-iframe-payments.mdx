@@ -85,8 +85,8 @@ curl 'https://api.publicsquare.com/payment-intents' \
 
 In the browser, create the 3DS session from the card `token` and the Payment Intent `id`. The SDK collects the device fingerprint, registers the session with Credova, and returns:
 
-- `id` — the Credova session id. Pass this to **confirm** and **complete**.
-- `bt_session_id` — the session id used to render the challenge iframe in [Render the Challenge](#render-the-challenge).
+- `id`: the Credova session id. Pass this to **confirm** and **complete**.
+- `bt_session_id`: the session id used to render the challenge iframe in [Render the Challenge](#render-the-challenge).
 
 <Tabs className="publicsquare-tabs">
   <TabItem value="js" label="JavaScript">

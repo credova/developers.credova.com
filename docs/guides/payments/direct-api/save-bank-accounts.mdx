@@ -3,7 +3,7 @@ import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
 # Save Bank Accounts
 
-In this guide, you will send a bank account from your servers and save it to your account. The response is a `bank_account` object that you can use for payments and payouts.
+Send a bank account from your servers to save it to your account. The response is a `bank_account` object that you can use for payments and payouts.
 
 <Alert type="warning">Your servers receive and send bank account numbers in this flow. To keep them off your servers, use [Accept Bank Account Payments](/guides/payments/elements/accept-bank-account-payments).</Alert>
 
@@ -68,13 +68,13 @@ The created `bank_account` object contains the non-sensitive information about t
 }
 ```
 
-You can safely store the bank account's `id` value in your database to link it with the appropriate payment or customer association.
+Store the bank account's `id` in your database to use it in later payments and payouts.
 
 You do not have to save the bank account first. You can also [send the bank account details with the payment](/guides/payments/elements/accept-bank-account-payments#create-with-bank-account-details).
 
 ## Conclusion
 
-Following this guide, you have saved a customer's bank account. To use it, follow these guides:
+You have saved a bank account. To use it, follow these guides:
 
 - [Accept Bank Account Payments](/guides/payments/elements/accept-bank-account-payments#process-the-payment)
 - [Send Bank Account Payouts](/guides/payouts/process-ach-payouts)
