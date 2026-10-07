@@ -226,7 +226,7 @@ The response is the same as for a payment with a saved card. `payment_method.car
 }
 ```
 
-Store `payment_method.card.id`. For the next payment with this card, send `"payment_method": { "card": "<card id>" }` to `https://api.publicsquare.com/payments`, as in [Accept Card Payments](/guides/payments/elements/accept-card-payments).
+Store `payment_method.card.id`. For the next payment with this card, send `"payment_method": { "card": "<card id>" }` to `https://api.publicsquare.com/payments`, as in [Accept Card Payments](/guides/payments/elements/accept-card-payments). A saved card is a token, so this request does not need the secure hostname.
 
 ## Retries
 

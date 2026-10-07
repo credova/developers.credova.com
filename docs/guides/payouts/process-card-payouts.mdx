@@ -119,7 +119,7 @@ curl 'https://secure.payments.credova.com/payouts' \
 ```
 
 - A payout with `card_details` does not need `device_information`.
-- To use an existing customer, send `"customer": { "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ" }`.
+- To use an existing customer, send `"customer": { "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ" }`.
 - The response returns the saved card in `payment_method.card`. Use its `id` as `card` for later payouts.
 - To test, send the same request to `https://secure.payments.sbx.credova.com` with your test mode `Secret Key` and a [test card](/guides/testing#cards).
 
@@ -133,7 +133,7 @@ curl 'https://secure.payments.credova.com/payouts' \
 
 ### Create with Existing Customer
 
-If you [created a customer](/api/accounts/create-customer), then you can pass the `customer_id` when processing the payout:
+If you [created a customer](/api/accounts/create-customer), then you can pass its ID as `customer.id` when processing the payout:
 
 ```shell showLineNumbers title="Create a Payout with Customer"
 curl 'https://api.publicsquare.com/payouts' \
@@ -148,7 +148,7 @@ curl 'https://api.publicsquare.com/payouts' \
     "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
   },
   "customer": {
-    "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
   },
   "billing_details": {
     "address_line_1": "111 Test St.",

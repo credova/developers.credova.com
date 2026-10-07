@@ -159,8 +159,8 @@ async function submit (e: FormEvent<HTMLFormElement>,) {
 async function handleSubmit(e) {
   e.preventDefault();
   const account_holder_name = e.target.accountHolderName.value;
-  const routing_number = bankeAccountRef.current.routingNumber.el.value
-  const account_number = bankeAccountRef.current.accountNumber.el.value
+  const routing_number = bankAccountRef.current.routingNumber.el.value
+  const account_number = bankAccountRef.current.accountNumber.el.value
   // highlight-start
   const bankAccount = await publicsquare.bankAccounts.create({
     account_holder_name,
@@ -520,7 +520,7 @@ curl 'https://api.publicsquare.com/payments' \
 
 ### Create with Existing Customer
 
-If you [created a customer](/api/accounts/create-customer), then you can pass the `customer_id` when processing the payment:
+If you [created a customer](/api/accounts/create-customer), then you can pass its ID as `customer.id` when processing the payment:
 
 ```shell showLineNumbers title="Create a Payment with Customer"
 curl 'https://api.publicsquare.com/payments' \
@@ -535,7 +535,7 @@ curl 'https://api.publicsquare.com/payments' \
     "bank_account": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
   },
   "customer": {
-    "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
   },
   "billing_details": {
     "address_line_1": "111 Test St.",

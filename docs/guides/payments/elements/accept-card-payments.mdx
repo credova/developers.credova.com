@@ -61,7 +61,7 @@ Once installed and configured, add the Card Elements to your application.
       cardExpirationDateElement.mount('#cardExpirationDate');
 
       cardVerificationCodeElement = publicsquare.createCardVerificationCodeElement();
-      cardExpirationDateElement.mount('#cardVerificationCode');
+      cardVerificationCodeElement.mount('#cardVerificationCode');
       //highlight-end
     }
 
@@ -211,7 +211,7 @@ export default function App() {
   // highlight-end
 
   return (
-    <PublicSquareProvider bt={bt}>
+    <PublicSquareProvider apiKey={apiKey}>
       ...
       // highlight-next-line
       <button onClick={submit}>Submit</button>

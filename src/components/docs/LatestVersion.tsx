@@ -11,7 +11,9 @@ export function LatestVersion({ pkg }: Props) {
     const controller = new AbortController();
     fetch(`https://registry.npmjs.org/${pkg}/latest`, { signal: controller.signal })
       .then((response) => (response.ok ? response.json() : undefined))
-      .then((data) => setVersion(data?.version))
+      .then((data) => {
+        if (typeof data?.version === "string") setVersion(data.version);
+      })
       .catch(() => undefined);
     return () => controller.abort();
   }, [pkg]);

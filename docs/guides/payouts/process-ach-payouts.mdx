@@ -195,7 +195,7 @@ curl 'https://api.publicsquare.com/payouts' \
 
 ### Create with Existing Customer
 
-If you [created a customer](/api/accounts/create-customer), then you can pass the `customer_id` when processing the payout:
+If you [created a customer](/api/accounts/create-customer), then you can pass its ID as `customer.id` when processing the payout:
 
 ```shell showLineNumbers title="Create a Payout with Customer"
 curl 'https://api.publicsquare.com/payouts' \
@@ -210,7 +210,7 @@ curl 'https://api.publicsquare.com/payouts' \
     "bank_account": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
   },
   "customer": {
-    "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
   },
   "billing_details": {
     "address_line_1": "111 Test St.",

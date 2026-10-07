@@ -28,6 +28,6 @@ export function onRouteDidUpdate({ location }: { location: { hash: string } }) {
   if (!target) return;
   const panels = hiddenTabPanels(target);
   if (panels.length === 0) return;
-  panels.forEach((panel) => tabForPanel(panel)?.click());
+  panels.reverse().forEach((panel) => tabForPanel(panel)?.click());
   window.setTimeout(() => targetFromHash(location.hash)?.scrollIntoView(), 100);
 }

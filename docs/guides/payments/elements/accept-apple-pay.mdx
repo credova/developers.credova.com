@@ -550,7 +550,7 @@ curl 'https://api.publicsquare.com/payments' \
 
 ### Create with Existing Customer
 
-If you [created a customer](/api/accounts/create-customer), then you can pass the `customer_id` when processing the payment:
+If you [created a customer](/api/accounts/create-customer), then you can pass its ID as `customer.id` when processing the payment:
 
 ```shell showLineNumbers title="Create a Payment with Customer"
 curl 'https://api.publicsquare.com/payments' \
@@ -565,7 +565,7 @@ curl 'https://api.publicsquare.com/payments' \
     "apple_pay": "appl_Aw3U2eESBnq6DoYEFn8qaSMrA"
   },
   "customer": {
-    "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
   },
   "billing_details": {
     "address_line_1": "111 Test St.",
