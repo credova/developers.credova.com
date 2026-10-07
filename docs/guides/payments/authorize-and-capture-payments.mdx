@@ -532,7 +532,7 @@ An optional `external_id` and `IDEMPOTENCY-KEY` header can both be passed on eac
 
 ### Maximum captures per authorization
 
-Each authorization allows a limited number of captures, controlled by the account setting `max_captures_per_authorization` (default `5`). A capture beyond the limit is rejected with a `400` error: `payment has reached the maximum of {n} captures.` Contact PublicSquare support if you need this limit adjusted for your account.
+Each authorization allows a limited number of captures, controlled by the account setting `max_captures_per_authorization` (default `5`). A capture beyond the limit is rejected with a `400` error: `payment has reached the maximum of {n} captures.` [Contact support](/support) if you need this limit adjusted for your account.
 
 <Alert type="warning">American Express does not support partial capture: `'american_express' does not support partial payment capture.` This error is returned unless the capture amount equals the full capturable amount.</Alert>
 

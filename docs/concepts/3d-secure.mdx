@@ -8,7 +8,7 @@ Credova implements 3DS 2.x using [Basis Theory](https://basistheory.com) as the 
 
 **Why use it:** a successful 3DS authentication shifts chargeback liability from you to the issuer and is mandatory for Strong Customer Authentication (SCA) on in-scope EU/UK transactions.
 
-<Alert type="warning">3DS is gated per account and is off by default. Contact Credova to enable 3DS on your account before integrating.</Alert>
+<Alert type="warning">3DS is gated per account and is off by default. [Contact support](/support) to enable 3DS on your account before integrating.</Alert>
 
 ## Transports
 
@@ -147,27 +147,7 @@ When `challenge_preference` is `exemption-requested`, set `exemption_request_rea
 
 ## Testing
 
-3DS authentication is triggered automatically by the card number used. Use any future expiration date, any CVV, and any billing ZIP. These test cards are available in the `test` environment.
-
-| Scenario                   | Card number        | Brand      | Expected result             |
-|----------------------------|--------------------|------------|-----------------------------|
-| Frictionless success       | `5204247750001471` | Mastercard | `succeeded`, no challenge   |
-| Frictionless success       | `340000000004001`  | Amex       | `succeeded`, no challenge   |
-| Challenge success          | `4000020000000000` | Visa       | challenge → `succeeded`     |
-| Challenge success          | `370000000000002`  | Amex       | challenge → `succeeded`     |
-| Mandated challenge         | `4761369980320253` | Visa       | challenge → `succeeded`     |
-| Mandated challenge         | `5200000000001104` | Mastercard | challenge → `succeeded`     |
-| Out-of-band challenge      | `4000000000000341` | Visa       | challenge → `succeeded`     |
-| Authentication attempted   | `4111111111111111` | Visa       | `succeeded` (partial shift) |
-| Authentication attempted   | `5424180011113336` | Mastercard | `succeeded` (partial shift) |
-| Authentication failed      | `4264281511112228` | Visa       | `failed`                    |
-| Authentication failed      | `5424180000000171` | Mastercard | `failed`                    |
-| Authentication unavailable | `5405001111111165` | Mastercard | `failed`                    |
-| Authentication rejected    | `5405001111111116` | Mastercard | `failed`                    |
-| Failed challenge           | `4055011111111111` | Visa       | challenge → `failed`        |
-| Failed challenge           | `5427660064241339` | Mastercard | challenge → `failed`        |
-| Directory server error     | `4264281500003339` | Visa       | `failed` (error surfaced)   |
-| Internal server error      | `4264281500001119` | Visa       | `failed` (error surfaced)   |
+3DS authentication is triggered by the test card number you use. See [3D Secure test cards](/api/testing#3d-secure) for every scenario, from frictionless success to a failed challenge.
 
 ## Where to go next
 

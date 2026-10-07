@@ -152,6 +152,7 @@ const config: Config = {
           items: [
             {label: "Testing", to: "/api/testing"},
             {label: "Production checklist", to: "/guides/production-checklist"},
+            {label: "Support", to: "/support"},
             {label: "Credova Portal", href: "https://portal.publicsquare.com/"},
           ],
         },

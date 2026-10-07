@@ -5,7 +5,7 @@ import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
 In this guide, you will post a card from your servers to `https://collect.publicsquare.com` and save it to your account. The response is a `card` object that you can use for payments and payouts.
 
-<Alert type="warning">Accepting or transmitting cardholder data requires the merchant to be PCI certified. If you are unsure, please [reach out for support](mailto:support@publicsquare.com). To keep card data out of your servers, use [Accept Card Payments](/guides/payments/elements/accept-card-payments).</Alert>
+<Alert type="warning">Accepting or transmitting cardholder data requires the merchant to be PCI certified. If you are unsure, please [contact support](/support). To keep card data out of your servers, use [Accept Card Payments](/guides/payments/elements/accept-card-payments).</Alert>
 
 ## Before you start
 
@@ -68,7 +68,7 @@ curl -L 'https://collect.publicsquare.com' \
 
 ## Test Mode
 
-<Alert>To test card collection in test mode, use the `https://collect-test.publicsquare.com` endpoint instead of `https://collect.publicsquare.com`, along with your **test mode** `Publishable Key`. This lets you exercise the collect card flow without submitting live cardholder data.</Alert>
+<Alert>To test card collection in test mode, use the `https://collect-test.publicsquare.com` endpoint instead of `https://collect.publicsquare.com`, along with your **test mode** `Publishable Key`. This lets you exercise the collect card flow without submitting live cardholder data. See [Testing](/api/testing#test-environment) for every test hostname.</Alert>
 
 ```shell showLineNumbers
 curl -L 'https://collect-test.publicsquare.com' \

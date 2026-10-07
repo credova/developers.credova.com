@@ -103,7 +103,7 @@ const sidebars: SidebarsConfig = {
       customProps: {
         icon: "/img/icons/ballot-check-light.svg",
       },
-      items: ["guides/production-checklist/index", {type: "link", label: "Testing", href: "/api/testing"}],
+      items: ["guides/production-checklist/index", {type: "link", label: "Testing", href: "/api/testing"}, "support"],
     },
     {
       type: "html",
@@ -132,26 +132,6 @@ const sidebars: SidebarsConfig = {
         "concepts/webhooks",
         "concepts/onboarding"
       ],
-    },
-    {
-      type: "html",
-      value: "<hr />",
-    },
-    {
-      type: "link",
-      label: "API Reference",
-      href: "/api",
-      customProps: {
-        icon: "/img/icons/developers.svg",
-      },
-    },
-    {
-      type: "link",
-      label: "SDKs",
-      href: "/sdks",
-      customProps: {
-        icon: "/img/icons/cube.svg",
-      },
     },
   ],
   api: [
@@ -209,26 +189,6 @@ const sidebars: SidebarsConfig = {
       },
       items: financialApiSidebar,
     },
-    {
-      type: "html",
-      value: "<hr />",
-    },
-    {
-      type: "link",
-      label: "Guides",
-      href: "/guides",
-      customProps: {
-        icon: "/img/icons/book.svg",
-      },
-    },
-    {
-      type: "link",
-      label: "SDKs",
-      href: "/sdks",
-      customProps: {
-        icon: "/img/icons/cube.svg",
-      },
-    },
   ],
   sdk: [
     "sdks/index",
@@ -274,26 +234,6 @@ const sidebars: SidebarsConfig = {
           type: "doc",
         },
       ],
-    },
-    {
-      type: "html",
-      value: "<hr />",
-    },
-    {
-      type: "link",
-      label: "Guides",
-      href: "/guides",
-      customProps: {
-        icon: "/img/icons/book.svg",
-      },
-    },
-    {
-      type: "link",
-      label: "API Reference",
-      href: "/api",
-      customProps: {
-        icon: "/img/icons/developers.svg",
-      },
     },
   ],
 };

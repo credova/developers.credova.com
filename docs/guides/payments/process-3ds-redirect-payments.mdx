@@ -16,7 +16,7 @@ The redirect transport requires **no JavaScript SDK** on your checkout page, whi
 This guide assumes you have:
 
 - A saved card. Save one with [Accept Card Payments](/guides/payments/elements/accept-card-payments) from your web app or [Save Cards](/guides/payments/direct-api/save-cards) from your servers to get a `card_…` payment method.
-- 3DS enabled on your account. 3DS is off by default — contact Credova to enable it.
+- 3DS enabled on your account. 3DS is off by default — [contact support](/support) to enable it.
 - Two callback routes you control — a success URL and a failure URL — that Basis Theory will return the cardholder to after the challenge.
 
 <Alert type="warning">Basis Theory strips query strings when it returns the cardholder. Carry any state you need (such as the payment intent id) in the URL **path**, not the query string — e.g. `https://merchant.example.com/3ds/success/pi_2YKewBonG4tgk12MheY3PiHDy`.</Alert>
@@ -115,7 +115,7 @@ The response is the final `PaymentIntent`, `succeeded` when authentication and a
 
 ## Testing
 
-Use the test cards in [3D Secure → Testing](/concepts/3d-secure#testing) to exercise frictionless, challenge, and failure scenarios in the `test` environment.
+Use the [3D Secure test cards](/api/testing#3d-secure) to exercise frictionless, challenge, and failure scenarios in the `test` environment.
 
 ## Conclusion
 

@@ -38,7 +38,7 @@ export const BeforeYouStart = ({ keys = ["secret"], children }: PropsWithChildre
     {children && <div className={styles.note}>{children}</div>}
     <div className={styles.actions}>
       <Link href="https://portal.publicsquare.com/developers/api-keys">Copy your keys from the Portal</Link>
-      <Link to="/api/testing">Test and live keys</Link>
+      <Link to="/api/testing#test-environment">Test and live keys</Link>
     </div>
   </div>
 );

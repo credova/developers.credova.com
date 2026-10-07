@@ -77,7 +77,7 @@ curl 'https://api.publicsquare.com/payouts' \
 
 If you have not saved the card yet, you can send its details with the payout. The API saves the card to the customer, sends the payout in the same request and returns the card `id` for later payouts.
 
-<Alert type="warning">Your servers receive and send cardholder data in this flow, so your organization must be PCI certified. If you are unsure, please [reach out for support](mailto:support@publicsquare.com). To keep card data out of your servers, use a saved card as shown in [Create a Payout](#create-a-payout).</Alert>
+<Alert type="warning">Your servers receive and send cardholder data in this flow, so your organization must be PCI certified. If you are unsure, please [contact support](/support). To keep card data out of your servers, use a saved card as shown in [Create a Payout](#create-a-payout).</Alert>
 
 A restricted API key must have the `payment-method:write` or `payment-method:capture` permission in addition to `payout:write`. Secret keys have all permissions.
 
