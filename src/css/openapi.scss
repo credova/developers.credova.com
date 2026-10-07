@@ -1,6 +1,14 @@
 .openapi-left-panel__container .tabs-container {
   padding-left: 1em;
   padding-right: 1em;
+  background: var(--cr-surface);
+}
+
+.openapi-left-panel__container > .openapi-markdown__details {
+  padding: 14px 1em 12px;
+  background: var(--cr-surface);
+  border: 1px solid var(--cr-border) !important;
+  border-radius: 6px;
 }
 
 .menu__link--sublist, .menu__link--active, .menu__link:hover, .menu__list-item-collapsible {
