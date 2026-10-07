@@ -5,6 +5,8 @@ import Link from "@docusaurus/Link";
 import ThemedImage from "@theme/ThemedImage";
 import styles from "./index.module.css";
 
+import JavaScriptLogo from "@site/static/img/sdk/logos/javascript.svg";
+import ReactLogo from "@site/static/img/sdk/logos/react.svg";
 import Shopify from "@site/static/img/plugins/platforms/shopify.svg";
 import WooCommerce from "@site/static/img/plugins/platforms/woocommerce.svg";
 import Magento from "@site/static/img/plugins/platforms/magento.svg";
@@ -15,6 +17,7 @@ type Integration = {
   name: string;
   description: string;
   links?: LinkItem[];
+  sdks?: { label: string; to: string; Logo: React.ComponentType<React.SVGProps<SVGSVGElement>> }[];
   platforms?: boolean;
 };
 
@@ -27,15 +30,20 @@ const integrations: Integration[] = [
       { label: "Accept bank account payments", to: "/guides/payments/elements/accept-bank-account-payments" },
       { label: "Accept Apple Pay", to: "/guides/payments/elements/accept-apple-pay" },
       { label: "Accept Google Pay", to: "/guides/payments/elements/accept-google-pay" },
-      { label: "Elements SDK reference", to: "/sdks" },
+    ],
+    sdks: [
+      { label: "JavaScript", to: "/sdks/web/javascript", Logo: JavaScriptLogo },
+      { label: "React", to: "/sdks/web/react", Logo: ReactLogo },
     ],
   },
   {
     name: "Direct API",
-    description: "Send cards from your own servers. Requires PCI certification.",
+    description: "Create and manage payments by calling the API from your own servers.",
     links: [
       { label: "Create a payment with card details", to: "/guides/payments/direct-api/payment-with-card-details" },
-      { label: "Save a card, then charge it", to: "/guides/payments/direct-api/save-cards" },
+      { label: "Save a card", to: "/guides/payments/direct-api/save-cards" },
+      { label: "Save a bank account", to: "/guides/payments/direct-api/save-bank-accounts" },
+      { label: "Payment Intents", to: "/concepts/payment-intents" },
       { label: "Payments API reference", to: "/api/financial/payments" },
     ],
   },
@@ -64,9 +72,9 @@ const products = [
     name: "Payouts",
     description: "Send money to cards and bank accounts.",
     links: [
-      { label: "Send payouts", to: "/guides/payouts/send-payouts" },
-      { label: "Send a payout with card details", to: "/guides/payouts/payout-with-card-details" },
-      { label: "Cancel a payout", to: "/guides/payouts/send-payouts#cancel-a-payout" },
+      { label: "Send card payouts", to: "/guides/payouts/process-card-payouts" },
+      { label: "Send bank account payouts", to: "/guides/payouts/process-ach-payouts" },
+      { label: "Cancel a payout", to: "/guides/payouts/cancel-payouts" },
     ],
   },
   {
@@ -76,8 +84,6 @@ const products = [
       { label: "Onboard sellers", to: "/guides/marketplaces/onboard-sellers" },
       { label: "Transfer funds to sellers", to: "/guides/marketplaces/transfer-funds-to-sellers" },
       { label: "Transfer funds from sellers", to: "/guides/marketplaces/transfer-funds-from-sellers" },
-      { label: "Payment transfer intents", to: "/concepts/payment-transfer-intents" },
-      { label: "Accounts API reference", to: "/category/accounts" },
     ],
   },
 ];
@@ -150,7 +156,6 @@ export default function Home() {
           <section className={styles.payments} aria-labelledby="payments">
             <div className={styles.sectionHead}>
               <h2 id="payments">Payments</h2>
-              <p>Where do the card details come from?</p>
             </div>
             <div className={styles.integrations}>
               {integrations.map((integration) => (
@@ -158,6 +163,18 @@ export default function Home() {
                   <h3>{integration.name}</h3>
                   <p>{integration.description}</p>
                   {integration.platforms ? <Platforms /> : <LinkList links={integration.links} />}
+                  {integration.sdks && (
+                    <ul className={styles.sdks} aria-label="Elements SDKs">
+                      {integration.sdks.map(({ label, to, Logo }) => (
+                        <li key={to}>
+                          <Link to={to}>
+                            <Logo aria-hidden="true" />
+                            {label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </article>
               ))}
             </div>

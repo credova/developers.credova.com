@@ -85,7 +85,6 @@
   margin: 0 0 4px;
 }
 
-.sectionHead p,
 .product > p {
   margin: 0;
   font-size: 16px;
@@ -120,10 +119,12 @@
   list-style: none;
   margin: 0;
   padding: 0;
+  font-size: 15px;
+  line-height: 1.4;
 }
 
 .links li + li {
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
 .links a {
@@ -131,21 +132,65 @@
   font-size: 15px;
 }
 
+.sdks {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  width: max-content;
+  max-width: 100%;
+  margin: auto 0 0;
+  padding: 16px 0 0;
+  list-style: none;
+}
+
+.sdks a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 12px 6px 10px;
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius);
+  background: var(--cr-bg);
+  color: var(--cr-heading);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sdks a:hover {
+  border-color: var(--cr-accent);
+  color: var(--cr-heading);
+  text-decoration: none;
+}
+
+.sdks svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
 .platforms {
+  flex: 1;
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+}
+
+.platforms li {
+  flex: 1 1 0;
+  min-height: 40px;
+  max-height: 56px;
 }
 
 .platforms a {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  height: 100%;
   color: var(--cr-heading);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 500;
 }
 
@@ -156,8 +201,8 @@
 
 .platforms svg,
 .platforms img {
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   flex: none;
 }
 
@@ -197,7 +242,7 @@
   .integrations > .integration:first-child .links {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px 24px;
+    gap: 8px 24px;
   }
 
   .integrations > .integration:first-child .links li + li {

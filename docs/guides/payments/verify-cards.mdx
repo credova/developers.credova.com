@@ -11,7 +11,9 @@ Common use cases include:
 - **Pre-order validation** - Confirm card validity without immediate payment
 - **Card-on-file updates** - Verify a new card before replacing an existing one
 
-Now that you have completed the [Collect Cards](/guides/payments/elements/accept-card-payments) guide, let's verify a card with a zero-dollar authorization.
+Let's verify a card with a zero-dollar authorization.
+
+You need a saved card for this guide. Save one from your web app with [Accept Card Payments](/guides/payments/elements/accept-card-payments), or from your servers with [Save Cards](/guides/payments/direct-api/save-cards). Either way you get a card `id` that starts with `card_`.
 
 ## Before you start
 
@@ -19,9 +21,9 @@ Now that you have completed the [Collect Cards](/guides/payments/elements/accept
 
 ## Create a Verification Payment
 
-We will use the information from the previously collected card to create a verification payment.
+We will use a saved card to create a verification payment.
 
-For example, given you have a previously collected card:
+For example, given this saved card:
 
 ```json showLineNumbers title=card.json
 {
@@ -368,6 +370,6 @@ Zero-dollar authorizations provide a secure way to validate payment cards withou
 
 Follow these guides to learn more:
 
-- [Process Card Payments](/guides/payments/elements/accept-card-payments) - Charge verified cards
+- [Accept Card Payments](/guides/payments/elements/accept-card-payments) - Charge verified cards
 - [Authorize and Capture Payments](/guides/payments/authorize-and-capture-payments) - Pre-authorize payments
 - [Search and View Transactions](/guides/transactions/search-and-view-transactions) - Monitor verification transactions

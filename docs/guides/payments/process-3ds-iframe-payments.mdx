@@ -20,7 +20,11 @@ This guide assumes you have:
 - 3DS enabled on your account. 3DS is off by default — contact Credova to enable it.
 - The Elements SDK initialized with your `Publishable Key`. See the [JavaScript](/sdks/web/javascript) or [React](/sdks/web/react) SDK docs.
 
-## Step 1 — Tokenize the card
+## Process a 3DS Payment
+
+Complete these in order. The browser steps use the Elements SDK. The server steps call the Credova API with your `Secret Key`.
+
+### Tokenize the Card
 
 Collect the card with Elements and tokenize it. The response includes the card `id` (used to create the payment) and `token` (used to create the 3DS session).
 
@@ -49,7 +53,7 @@ const card = await publicsquare.cards.create({
   </TabItem>
 </Tabs>
 
-## Step 2 — Create a Payment Intent
+### Create a Payment Intent
 
 From your backend, call [Create Payment Intent](/api/financial/create-payment-intent) with the tokenized card. Return the intent `id` to the browser.
 
@@ -77,12 +81,12 @@ curl 'https://api.publicsquare.com/payment-intents' \
 }'
 ```
 
-## Step 3 — Create a 3DS session
+### Create a 3DS Session
 
 In the browser, create the 3DS session from the card `token` and the Payment Intent `id`. The SDK collects the device fingerprint, registers the session with Credova, and returns:
 
 - `id` — the Credova session id. Pass this to **confirm** and **complete**.
-- `bt_session_id` — the session id used to render the challenge iframe in Step 5.
+- `bt_session_id` — the session id used to render the challenge iframe in [Render the Challenge](#render-the-challenge).
 
 <Tabs className="publicsquare-tabs">
   <TabItem value="js" label="JavaScript">
@@ -109,9 +113,9 @@ const session = await publicsquare.threeDs.createSession({
   </TabItem>
 </Tabs>
 
-## Step 4 — Confirm the Payment Intent
+### Confirm the Payment Intent
 
-From your backend, call [Confirm Payment Intent](/api/financial/confirm-payment-intent) with `transport: "iframe"` and the session `id` from Step 3.
+From your backend, call [Confirm Payment Intent](/api/financial/confirm-payment-intent) with `transport: "iframe"` and the session `id` from [Create a 3DS Session](#create-a-3ds-session).
 
 ```shell showLineNumbers title="Confirm with 3DS (iframe)"
 curl 'https://api.publicsquare.com/payment-intents/pi_2YKewBonG4tgk12MheY3PiHDy/confirm' \
@@ -162,16 +166,16 @@ The response is a `PaymentIntent`. There are two outcomes:
 
 Return `next_action.three_d_secure` to the browser to render the challenge.
 
-## Step 5 — Render the challenge
+### Render the Challenge
 
 When the intent is `requires_action`, present the ACS challenge using the values from `next_action.three_d_secure`.
 
-<Alert type="warning">Use the session's <code>bt_session_id</code> (from Step 3) as the challenge <code>sessionId</code>, not the Credova session id. Keep the Credova <code>session_id</code> for the <code>complete</code> call in Step 6.</Alert>
+<Alert type="warning">Use the session's <code>bt_session_id</code> (from [Create a 3DS Session](#create-a-3ds-session)) as the challenge <code>sessionId</code>, not the Credova session id. Keep the Credova <code>session_id</code> for the <code>complete</code> call in [Complete the Payment Intent](#complete-the-payment-intent).</Alert>
 
 <Tabs className="publicsquare-tabs">
   <TabItem value="react" label="React">
 
-Mount the `ThreeDSChallenge` element. It must be rendered inside your `PublicSquareProvider`. `onComplete` fires once the cardholder finishes the challenge (success, failure, or cancellation alike) — the authentication outcome is resolved server-side in Step 6.
+Mount the `ThreeDSChallenge` element. It must be rendered inside your `PublicSquareProvider`. `onComplete` fires once the cardholder finishes the challenge (success, failure, or cancellation alike) — the authentication outcome is resolved server-side in [Complete the Payment Intent](#complete-the-payment-intent).
 
 ```jsx showLineNumbers title="Render the challenge"
 import { ThreeDSChallenge } from "@publicsquare/elements-react";
@@ -208,7 +212,7 @@ await completePayment(nextAction.session_id);
 
 <Alert type="warning">Your checkout page's Content Security Policy must allow the challenge iframe. Add <code>frame-src https://*.basistheory.com</code> to your CSP.</Alert>
 
-## Step 6 — Complete the Payment Intent
+### Complete the Payment Intent
 
 After the challenge resolves, call [Complete Payment Intent 3DS Challenge](/api/financial/complete-payment-intent-3-ds-challenge) from your backend with the Credova `session_id` (from `next_action.three_d_secure.session_id`). Credova retrieves the authentication result and submits the payment to the processor.
 

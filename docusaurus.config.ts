@@ -30,6 +30,7 @@ const config: Config = {
   },
 
   themes: ["@docusaurus/theme-mermaid", "docusaurus-theme-openapi-docs"],
+  clientModules: [require.resolve("./src/client/revealTabAnchor.ts")],
 
   headTags: [
     {tagName: "link", attributes: {rel: "preconnect", href: "https://fonts.googleapis.com"}},
@@ -111,9 +112,9 @@ const config: Config = {
       },
       options: {
         themeVariables: {
-          primaryColor: "var(--cr-mermaid-process-fill)",
-          primaryBorderColor: "var(--cr-mermaid-process-border)",
-          primaryTextColor: "var(--cr-mermaid-text-color)",
+          primaryColor: "#e6f1f5",
+          primaryBorderColor: "#006f91",
+          primaryTextColor: "#0e2a33",
           textColor: "var(--cr-mermaid-text-color)",
           actorTextColor: "var(--cr-mermaid-actor-color)",
           nodeTextColor: "var(--cr-mermaid-text-color)",
@@ -198,11 +199,8 @@ const config: Config = {
           {from: "/guides/payment-methods/collect-verified-bank-accounts", to: "/guides/payments/elements/accept-bank-account-payments"},
           {from: "/guides/payments/process-ach-payments", to: "/guides/payments/elements/accept-bank-account-payments"},
           {from: "/guides/payments/process-inline-card-payments", to: "/guides/payments/direct-api/payment-with-card-details"},
-          {from: "/guides/payouts/process-inline-card-payouts", to: "/guides/payouts/payout-with-card-details"},
+          {from: "/guides/payouts/process-inline-card-payouts", to: "/guides/payouts/process-card-payouts"},
           {from: "/guides/refunds/cancel-refunds", to: "/guides/refunds/refund-payments"},
-          {from: "/guides/payouts/process-card-payouts", to: "/guides/payouts/send-payouts"},
-          {from: "/guides/payouts/process-ach-payouts", to: "/guides/payouts/send-payouts"},
-          {from: "/guides/payouts/cancel-payouts", to: "/guides/payouts/send-payouts"},
           {from: "/guides/transactions/view-settlements", to: "/guides/transactions/search-and-view-transactions"},
         ],
       },

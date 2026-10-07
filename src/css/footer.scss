@@ -54,7 +54,7 @@
 }
 
 .footer__title {
-  margin-bottom: 10px;
+  margin-bottom: 14px;
   font-family: var(--ifm-heading-font-family);
   font-size: 18px;
   font-weight: 600;
@@ -63,14 +63,15 @@
 
 .footer__item {
   font-size: 15px;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .footer__item + .footer__item {
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
 .footer__link-item {
+  line-height: 1.4;
   color: var(--cr-text);
 }
 

@@ -220,6 +220,11 @@ export default function App() {
 }
 ```
   </TabItem>
+  <TabItem value="shell" label="cURL">
+
+To save a card from your servers, follow [Save Cards](/guides/payments/direct-api/save-cards). It posts the card to `https://collect.publicsquare.com` with your `Publishable Key` and needs a PCI-certified organization. To save a card without a CVC, see [Saving a card without a CVC](/guides/payments/direct-api/save-cards#saving-a-card-without-a-cvc).
+
+  </TabItem>
 </Tabs>
 
 The created `card` object contains the non-sensitive information about the card, including the `bin`:

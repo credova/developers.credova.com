@@ -10,6 +10,8 @@ In some scenarios, your checkout process may collect and pre-authorize a purchas
 
 Both Payment Intents and the direct Payments API support authorize-and-capture. Both approaches result in a `Payment` object on success.
 
+You need a saved card for this guide. Save one from your web app with [Accept Card Payments](/guides/payments/elements/accept-card-payments), or from your servers with [Save Cards](/guides/payments/direct-api/save-cards). Either way you get a card `id` that starts with `card_`.
+
 ## Before you start
 
 <BeforeYouStart keys={["secret"]} />
@@ -190,7 +192,7 @@ You can capture up to, but not exceeding, the original authorized amount. If no 
 
 The direct Payments API supports authorize-and-capture by passing `"capture": false` when creating the payment.
 
-For example, given you have a previously collected card:
+For example, given this saved card:
 
 ```json showLineNumbers title="card.json"
 {
@@ -556,7 +558,7 @@ To know what the customer paid, read `amount_charged`. Do not read `amount`, whi
 Authorize and capturing payments also works with ACH payments using a bank account payment method.
 See our [Accept Bank Account Payments](/guides/payments/elements/accept-bank-account-payments) guide to see how to collect bank accounts and process ACH payments following similar steps in this guide.
 
-Now that we have seen how to authorize and capture payments with a collected card, we may need to manage the payment or view information about the payment.
+Now that we have seen how to authorize and capture payments with a saved card, we may need to manage the payment or view information about the payment.
 Follow these guides to learn more:
 
 - [Issue a Refund](/guides/refunds/refund-payments)

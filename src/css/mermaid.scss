@@ -1,4 +1,4 @@
-/* Mermaid theme overrides.
+/* Mermaid theme overrides. */
 /* ── Node label text ────────────────────────────────────────────── */
 g.node .nodeLabel,
 g.node foreignObject span,
@@ -50,4 +50,35 @@ span.edgeLabel,
 .edgeLabel p {
   fill: var(--cr-mermaid-text-color) !important;
   color: var(--cr-mermaid-text-color) !important;
+}
+
+/* ── Node and cluster fills (theme variables cannot hold var()) ─── */
+g.node rect,
+g.node polygon,
+g.node circle,
+g.node ellipse,
+g.node path:not(.flowchart-link) {
+  fill: var(--cr-mermaid-process-fill) !important;
+  stroke: var(--cr-mermaid-process-border) !important;
+}
+
+g.node.exceptionNode rect,
+g.node.exceptionNode polygon,
+g.node.exceptionNode circle,
+g.node.exceptionNode path:not(.flowchart-link) {
+  fill: var(--cr-mermaid-exception-fill) !important;
+  stroke: var(--cr-mermaid-exception-border) !important;
+}
+
+g.node.terminalNode rect,
+g.node.terminalNode polygon,
+g.node.terminalNode circle,
+g.node.terminalNode path:not(.flowchart-link) {
+  fill: var(--cr-mermaid-terminal-fill) !important;
+  stroke: var(--cr-mermaid-terminal-border) !important;
+}
+
+.cluster rect {
+  fill: var(--cr-mermaid-cluster-bg) !important;
+  stroke: var(--cr-mermaid-cluster-border) !important;
 }

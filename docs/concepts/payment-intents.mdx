@@ -10,7 +10,7 @@ Payment Intents are recommended for all new integrations. They provide two key a
 
 **Async-safe outcomes.** When a processor takes longer to respond, confirm returns `202 processing` instead of timing out. The final result arrives via webhook, so your integration never has to guess.
 
-For step-by-step implementation, see the [Process Card Payments](/guides/payments/elements/accept-card-payments) guide.
+For step-by-step implementation, see the [Accept Card Payments](/guides/payments/elements/accept-card-payments) guide.
 
 ## Payment Intents vs Legacy
 
@@ -107,9 +107,9 @@ flowchart TB
     CANCELED:::exceptionNode
     End:::terminalNode
 
-    classDef spineNode fill:#5CC8DD22,stroke:#5CC8DD,stroke-width:2px
-    classDef exceptionNode fill:#EF535022,stroke:#EF5350,stroke-width:2px
-    classDef terminalNode fill:#A0A8B822,stroke:#A0A8B8,stroke-width:2px
+    classDef spineNode stroke-width:2px
+    classDef exceptionNode stroke-width:2px
+    classDef terminalNode stroke-width:2px
 ```
 
 | Status | Description |
@@ -214,7 +214,7 @@ See [Webhooks](/concepts/webhooks) for delivery guarantees, retry behavior, and 
 
 ## Where to go next
 
-- [Process Card Payments](/guides/payments/elements/accept-card-payments) — step-by-step guide for create and confirm
+- [Accept Card Payments](/guides/payments/elements/accept-card-payments) — step-by-step guide for create and confirm
 - [Authorize and Capture Payments](/guides/payments/authorize-and-capture-payments) — guide for `capture_method: manual`
 - [Create Payment Intent](/api/financial/create-payment-intent) — API reference
 - [Confirm Payment Intent](/api/financial/confirm-payment-intent) — API reference

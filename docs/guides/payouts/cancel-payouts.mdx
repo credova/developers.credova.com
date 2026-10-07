@@ -1,0 +1,89 @@
+import { Alert } from "@site/src/components/shared/Alert";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
+
+# Cancel Payouts
+
+There may be scenarios in which you need to cancel a payout, such as paying a customer or vendor by mistake.
+
+Credova API offers the ability to cancel a payout before it is settled.
+
+## Before you start
+
+<BeforeYouStart keys={["secret"]} />
+
+## Cancel the Payout
+
+In order to cancel a payout, we will need the ID of a recently created payout. Assuming you have a payout similar to:
+
+```json showLineNumbers title="Payout"
+{
+  // highlight-next-line
+  "id": "pyt_24NFPd3jSZFTxiaH9UwjuqNdP",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  "status": "pending",
+  ...
+}
+```
+
+We need to make a call to [Cancel Payout](/api/financial/cancels-a-payout) endpoint:
+
+```shell showLineNumbers title="Cancel a Payout"
+curl 'https://api.publicsquare.com/payouts/cancel' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'Content-Type: application/json' \
+-d '{
+  "payout_id": "pyt_24NFPd3jSZFTxiaH9UwjuqNdP"
+}'
+```
+
+## Payout Response
+
+Given the above examples, you should see a cancelled payout result similar to:
+
+```json showLineNumbers
+{
+  "id": "pyt_24NFPd3jSZFTxiaH9UwjuqNdP",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+   // highlight-next-line
+  "status": "cancelled",
+  "transaction_id": "trx_6QgmXzQzk3S5K5EsR3DfEiMRj",
+  "amount": 1000,
+  ...
+  "transaction": {
+    "id": "trx_6QgmXzQzk3S5K5EsR3DfEiMRj",
+    "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+    "environment": "test",
+    // highlight-next-line
+    "status": "cancelled",
+    "amount": -1000,
+    "fee_amount": 0,
+    "net_amount": -1000,
+    ...
+  },
+  ...
+}
+```
+
+## Handling Cancellation Failures
+
+If a payout cannot be cancelled because the payout has already been settled, an error response will be returned:
+
+```shell showLineNumbers
+{
+  "title": "Error",
+  "status": 400,
+  "detail": "payout cancellation failed."
+}
+```
+
+## Conclusion
+
+Now that we have seen how to cancel a payout, we may need to view information about it or send another payout.
+Follow these guides to learn more:
+
+- [Send Card Payouts](/guides/payouts/process-card-payouts)
+- [Send Bank Account Payouts](/guides/payouts/process-ach-payouts)
+- [Search and View Transactions](/guides/transactions/search-and-view-transactions)

@@ -14,9 +14,9 @@ Send the card details in the same request that creates the payment. You do not n
 
 <Alert type="warning">Your servers receive and send cardholder data in this flow, so your organization must be PCI certified. If you are unsure, please [reach out for support](mailto:support@publicsquare.com). To keep card data out of your servers, use [Accept Card Payments](/guides/payments/elements/accept-card-payments).</Alert>
 
-<Alert>`card_details` works with [Create Payment](/api/financial/create-payment). Payment Intents do not accept `card_details`.</Alert>
+<Alert>We recommend [Payment Intents](/concepts/payment-intents) for new integrations. They retry safely and report slow processors by webhook. Payment Intents do not accept `card_details`, so [save the card](/guides/payments/direct-api/save-cards) first and [create the intent](/guides/payments/elements/accept-card-payments#create-a-payment-intent) with the card `id`. Use `card_details` with [Create Payment](/api/financial/create-payment) when you want to send the card and charge it in one request.</Alert>
 
-To send a payout with card details, see [Send a Payout with Card Details](/guides/payouts/payout-with-card-details).
+To send a payout with card details, see [Send Card Payouts](/guides/payouts/process-card-payouts#create-with-card-details).
 
 ## Before you start
 

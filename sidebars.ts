@@ -45,7 +45,11 @@ const sidebars: SidebarsConfig = {
         {
           type: "category",
           label: "Direct API",
-          items: ["guides/payments/direct-api/payment-with-card-details", "guides/payments/direct-api/save-cards"],
+          items: [
+            "guides/payments/direct-api/payment-with-card-details",
+            "guides/payments/direct-api/save-cards",
+            "guides/payments/direct-api/save-bank-accounts",
+          ],
         },
         {
           type: "category",
@@ -79,7 +83,11 @@ const sidebars: SidebarsConfig = {
       customProps: {
         icon: "/img/icons/money-bill-wave.svg",
       },
-      items: ["guides/payouts/send-payouts", "guides/payouts/payout-with-card-details"],
+      items: [
+        "guides/payouts/process-card-payouts",
+        "guides/payouts/process-ach-payouts",
+        "guides/payouts/cancel-payouts",
+      ],
     },
     {
       type: "category",
