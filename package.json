@@ -20,6 +20,7 @@
     "postinstall": "patch-package"
   },
   "overrides": {
+    "shell-quote": "^1.11.0",
     "source-map-js": "^1.2.2",
     "tinypool": "^2.1.2",
     "serialize-javascript": "^7.0.5",
