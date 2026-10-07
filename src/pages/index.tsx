@@ -1,177 +1,191 @@
-import Layout from "@theme/Layout";
 import React from "react";
 import clsx from "clsx";
-import { Card } from "../components/shared/Card";
+import Layout from "@theme/Layout";
+import Link from "@docusaurus/Link";
 import ThemedImage from "@theme/ThemedImage";
 import styles from "./index.module.css";
 
-import ReactSvg from "@site/static/img/sdk/logos/react.svg";
-import JavaScript from "@site/static/img/sdk/logos/javascript.svg";
 import Shopify from "@site/static/img/plugins/platforms/shopify.svg";
 import WooCommerce from "@site/static/img/plugins/platforms/woocommerce.svg";
 import Magento from "@site/static/img/plugins/platforms/magento.svg";
 
-import GettingStartedImage from "@site/static/img/icons/rocket-gradient.svg";
-import CollectCardsImage from "@site/static/img/icons/hand-holding-card-gradient.svg";
-import ProcessCardPaymentsImage from "@site/static/img/icons/process-card-gradient.svg";
+type LinkItem = { label: string; to: string };
 
-import DevelopersImage from "@site/static/img/icons/developers-gradient.svg";
-import ConceptsImage from "@site/static/img/icons/graduation-cap-gradient.svg";
-import GuidesImage from "@site/static/img/icons/book-gradient.svg";
-import useBaseUrl from "@docusaurus/useBaseUrl";
+type Integration = {
+  name: string;
+  description: string;
+  links?: LinkItem[];
+  platforms?: boolean;
+};
+
+const integrations: Integration[] = [
+  {
+    name: "Credova Elements",
+    description: "Customers pay in your web app, and card data never reaches your servers.",
+    links: [
+      { label: "Accept card payments", to: "/guides/payments/elements/accept-card-payments" },
+      { label: "Accept bank account payments", to: "/guides/payments/elements/accept-bank-account-payments" },
+      { label: "Accept Apple Pay", to: "/guides/payments/elements/accept-apple-pay" },
+      { label: "Accept Google Pay", to: "/guides/payments/elements/accept-google-pay" },
+      { label: "Elements SDK reference", to: "/sdks" },
+    ],
+  },
+  {
+    name: "Direct API",
+    description: "Send cards from your own servers. Requires PCI certification.",
+    links: [
+      { label: "Create a payment with card details", to: "/guides/payments/direct-api/payment-with-card-details" },
+      { label: "Save a card, then charge it", to: "/guides/payments/direct-api/save-cards" },
+      { label: "Payments API reference", to: "/api/financial/payments" },
+    ],
+  },
+  {
+    name: "eCommerce plugins",
+    description: "Install a plugin on your store platform. No code needed.",
+    platforms: true,
+  },
+];
+
+const paymentOptions: LinkItem[] = [
+  { label: "Authorize now, capture later", to: "/guides/payments/authorize-and-capture-payments" },
+  { label: "Verify the card first", to: "/guides/payments/verify-cards" },
+  { label: "Add 3D Secure with Elements", to: "/concepts/3d-secure" },
+];
+
+const afterPayment: LinkItem[] = [
+  { label: "Cancel", to: "/guides/payments/cancel-payments" },
+  { label: "Refund", to: "/guides/refunds/refund-payments" },
+  { label: "Transactions and settlements", to: "/guides/transactions/search-and-view-transactions" },
+  { label: "Webhooks", to: "/concepts/webhooks" },
+];
+
+const products = [
+  {
+    name: "Payouts",
+    description: "Send money to cards and bank accounts.",
+    links: [
+      { label: "Send payouts", to: "/guides/payouts/send-payouts" },
+      { label: "Send a payout with card details", to: "/guides/payouts/payout-with-card-details" },
+      { label: "Cancel a payout", to: "/guides/payouts/send-payouts#cancel-a-payout" },
+    ],
+  },
+  {
+    name: "Marketplaces",
+    description: "Onboard sellers and move funds to and from them.",
+    links: [
+      { label: "Onboard sellers", to: "/guides/marketplaces/onboard-sellers" },
+      { label: "Transfer funds to sellers", to: "/guides/marketplaces/transfer-funds-to-sellers" },
+      { label: "Transfer funds from sellers", to: "/guides/marketplaces/transfer-funds-from-sellers" },
+      { label: "Payment transfer intents", to: "/concepts/payment-transfer-intents" },
+      { label: "Accounts API reference", to: "/category/accounts" },
+    ],
+  },
+];
+
+const LinkList = ({ links }: { links: LinkItem[] }) => (
+  <ul className={styles.links}>
+    {links.map((link) => (
+      <li key={link.to}>
+        <Link to={link.to}>{link.label}</Link>
+      </li>
+    ))}
+  </ul>
+);
+
+const Platforms = () => (
+  <ul className={styles.platforms}>
+    <li>
+      <Link to="/plugins/shopify-payments">
+        <Shopify />
+        Shopify
+      </Link>
+    </li>
+    <li>
+      <Link to="/plugins/woocommerce-payments">
+        <WooCommerce />
+        WooCommerce
+      </Link>
+    </li>
+    <li>
+      <Link to="/plugins/magento-payments">
+        <Magento />
+        Magento
+      </Link>
+    </li>
+    <li>
+      <Link to="/plugins/bigcommerce-payments">
+        <ThemedImage
+          alt=""
+          sources={{
+            light: "/img/plugins/platforms/bigcommerce-light.svg",
+            dark: "/img/plugins/platforms/bigcommerce-dark.svg",
+          }}
+        />
+        BigCommerce
+      </Link>
+    </li>
+  </ul>
+);
 
 export default function Home() {
   return (
-    <Layout>
-      <div className={clsx(["col", styles.container])}>
-        <header>
-          <h1>Credova Docs</h1>
-          <p>Credova will guide you on how to safely collect payment methods and process transactions.</p>
-        </header>
-        <main>
-          <div className={styles["explore-cards-container"]}>
-            <h2>Start Building</h2>
-            <div className={styles["explore-cards"]}>
-              <Card
-                href="/guides"
-                heading={<Card.PrimaryHeader>Getting Started</Card.PrimaryHeader>}
-                column
-                raised
-                className={styles["explore-card"]}
-                img={
-                  <div className="card-img-container">
-                    <GettingStartedImage />
-                  </div>
-                }
-              >
-                A quick overview of how Credova works and key concepts.
-              </Card>
-
-              <Card
-                href="/guides/payment-methods/collect-cards"
-                heading={<Card.PrimaryHeader>Collect Cards</Card.PrimaryHeader>}
-                column
-                raised
-                className={styles["explore-card"]}
-                img={
-                  <div className="card-img-container">
-                    <CollectCardsImage />
-                  </div>
-                }
-              >
-                Integrate Credova Elements to securely collect cards from your customers.
-              </Card>
-
-              <Card
-                href="/guides/payments/process-card-payments"
-                heading={<Card.PrimaryHeader>Process Payments</Card.PrimaryHeader>}
-                column
-                raised
-                className={styles["explore-card"]}
-                img={
-                  <div className="card-img-container">
-                    <ProcessCardPaymentsImage />
-                  </div>
-                }
-              >
-                Learn how to process card payments.
-              </Card>
-            </div>
-          </div>
-
-          <div className={styles["sdks"]}>
-            <h2>Credova SDKs</h2>
-            <div className={styles["sdks-container"]}>
-              <div>
-                Web SDKs
-                <div className={styles["sdk-column"]}>
-                  <Card href="/sdks/web/react" img={<ReactSvg />} className={styles.sdk}>
-                    React
-                  </Card>
-                  <Card href="/sdks/web/javascript" img={<JavaScript />} className={styles.sdk}>
-                    Javascript
-                  </Card>
-                </div>
-              </div>
-
-              <div>
-                eCommerce Plugins
-                <div className={styles["sdk-column"]}>
-                  <Card href="/plugins/magento-payments" img={<Magento />} className={styles.sdk}>
-                    Magento
-                  </Card>
-                  <Card href="/plugins/shopify-payments" img={<Shopify />} className={styles.sdk}>
-                    Shopify
-                  </Card>
-                  <Card href="/plugins/woocommerce-payments" img={<WooCommerce />} className={styles.sdk}>
-                    WooCommerce
-                  </Card>
-                  <Card
-                    href="/plugins/bigcommerce-payments"
-                    img={
-                      <div className={styles["logo-container"]}>
-                        <ThemedImage
-                          sources={{
-                            light: "/img/plugins/platforms/bigcommerce-light.svg",
-                            dark: "/img/plugins/platforms/bigcommerce-dark.svg",
-                          }}
-                        />
-                      </div>
-                    }
-                    className={styles.sdk}
-                  >
-                    BigCommerce
-                  </Card>
-                </div>
+    <Layout description="Accept payments, send payouts and move marketplace funds with the Credova API.">
+      <div className={styles.home}>
+        <main className={styles.page}>
+          <header className={styles.hero}>
+            <div>
+              <h1>Build with Credova</h1>
+              <p>Accept payments, send payouts and move marketplace funds with one API.</p>
+              <div className={styles.actions}>
+                <Link className={clsx(styles.button, styles.primary)} to="/guides">
+                  Get started
+                </Link>
+                <Link className={clsx(styles.button, styles.secondary)} to="/api">
+                  API reference
+                </Link>
               </div>
             </div>
-          </div>
+          </header>
 
-          <div className={styles["explore-cards-container"]}>
-            <h2>Explore Credova</h2>
-            <div className={styles["explore-cards"]}>
-              <Card
-                href="/api"
-                heading={<Card.PrimaryHeader>API Reference</Card.PrimaryHeader>}
-                column
-                className={styles["explore-card"]}
-                img={
-                  <div className="card-img-container">
-                    <DevelopersImage />
-                  </div>
-                }
-              >
-                API endpoints to manage your account and process transactions with Credova.
-              </Card>
-              <Card
-                href="/concepts"
-                heading={<Card.PrimaryHeader>Concepts</Card.PrimaryHeader>}
-                column
-                className={styles["explore-card"]}
-                img={
-                  <div className="card-img-container">
-                    <ConceptsImage />
-                  </div>
-                }
-              >
-                Learn about key concepts of Credova's platform.
-              </Card>
-              <Card
-                href="/guides"
-                heading={<Card.PrimaryHeader>Guides</Card.PrimaryHeader>}
-                column
-                className={styles["explore-card"]}
-                img={
-                  <div className="card-img-container">
-                    <GuidesImage />
-                  </div>
-                }
-              >
-                Step-by-step guides to integrate with Credova.
-              </Card>
+          <section className={styles.payments} aria-labelledby="payments">
+            <div className={styles.sectionHead}>
+              <h2 id="payments">Payments</h2>
+              <p>Where do the card details come from?</p>
             </div>
+            <div className={styles.integrations}>
+              {integrations.map((integration) => (
+                <article className={styles.integration} key={integration.name}>
+                  <h3>{integration.name}</h3>
+                  <p>{integration.description}</p>
+                  {integration.platforms ? <Platforms /> : <LinkList links={integration.links} />}
+                </article>
+              ))}
+            </div>
+            <div className={styles.lifecycle}>
+              <article className={styles.integration}>
+                <h3>Payment options</h3>
+                <p>Choose these when you create the payment.</p>
+                <LinkList links={paymentOptions} />
+              </article>
+              <article className={styles.integration}>
+                <h3>After the payment</h3>
+                <p>Act on a payment that already exists.</p>
+                <LinkList links={afterPayment} />
+              </article>
+            </div>
+          </section>
+
+          <div className={styles.products}>
+            {products.map((product) => (
+              <section className={styles.product} key={product.name} aria-labelledby={product.name.toLowerCase()}>
+                <h2 id={product.name.toLowerCase()}>{product.name}</h2>
+                <p>{product.description}</p>
+                <LinkList links={product.links} />
+              </section>
+            ))}
           </div>
         </main>
+
       </div>
     </Layout>
   );

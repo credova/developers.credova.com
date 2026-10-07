@@ -2,7 +2,7 @@ import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
 import { Alert } from "@site/src/components/shared/Alert";
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
 # Recollect a CVC for a Saved Card
 
@@ -17,19 +17,15 @@ In this guide, we will use Credova Elements SDKs to recollect a CVC for a saved 
 3. PublicSquare confirms the card belongs to your account, then the CVC is attached directly from the customer's browser — it never touches your servers or PublicSquare's, so your PCI scope doesn't change.
 4. The CVC is attached to the card and is ready for the next charge. Call `updateCvc()` right before you charge the card.
 
-## Getting Started
+## Before you start
 
-<GettingStartedSection />
-
-### Get your Publishable Key
-
-This uses the same `Publishable Key` as [Collect Cards](/guides/payment-methods/collect-cards). [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Publishable Key` and copy the value.
-
-<Alert>This guide assumes you've already completed [Collect Cards](/guides/payment-methods/collect-cards) and have a saved card's `id` to work with.</Alert>
+<BeforeYouStart keys={["publishable"]}>
+This guide uses the same `Publishable Key` as [Collect Cards](/guides/payments/elements/accept-card-payments). Complete that guide first. You need the `id` of a saved card.
+</BeforeYouStart>
 
 ## Mount the CVC Element
 
-Mount a standalone `CardVerificationCodeElement` — the same element used in [Collect Cards](/guides/payment-methods/collect-cards), just on its own, without the rest of the card form.
+Mount a standalone `CardVerificationCodeElement` — the same element used in [Collect Cards](/guides/payments/elements/accept-card-payments), just on its own, without the rest of the card form.
 
 <Tabs className="publicsquare-tabs" queryString="sdk">
   <TabItem value="javascript" label="JavaScript">
@@ -176,13 +172,13 @@ The recollected CVC is attached to the card for the next charge. The card does n
 
 Call `updateCvc()` immediately before you charge the card. If time passes between the update and the charge, prompt the customer for their CVC again and call `updateCvc()` a second time. Treat an earlier update as if it never happened rather than relying on it.
 
-<Alert>A CVC is optional for a saved card. You can save and charge a card without one. See [Saving a card without a CVC](/guides/payment-methods/collect-cards?sdk=shell#saving-a-card-without-a-cvc).</Alert>
+A CVC is optional for a saved card. You can save and charge a card without one. See [Saving a card without a CVC](/guides/payments/direct-api/save-cards).
 
 ## Verification happens at authorization, not at update
 
 <Alert type="warning">A successful `updateCvc()` response is **not** an approved card. It only confirms the CVC was attached to the card — the card issuer doesn't check it until you actually charge the card.</Alert>
 
-`updateCvc()` never contacts the card network — it just attaches the CVC. The CVC is only validated when the next charge on that card goes through [Process Card Payments](/guides/payments/process-card-payments) or [Authorize and Capture Payments](/guides/payments/authorize-and-capture-payments) and reaches the issuer. Just like a first-time card charge, a `succeeded` payment status doesn't guarantee the CVC matched — read `cvv2_reply` on the resulting card, or `verification.result.card_security_code` if you ran a [verification](/guides/payments/verify-cards), to see whether the issuer confirmed it. See [Read the Verification Result](/guides/payments/verify-cards#read-the-verification-result) for the full set of values that field can return.
+`updateCvc()` never contacts the card network — it just attaches the CVC. The CVC is only validated when the next charge on that card goes through [Process Card Payments](/guides/payments/elements/accept-card-payments) or [Authorize and Capture Payments](/guides/payments/authorize-and-capture-payments) and reaches the issuer. Just like a first-time card charge, a `succeeded` payment status doesn't guarantee the CVC matched — read `cvv2_reply` on the resulting card, or `verification.result.card_security_code` if you ran a [verification](/guides/payments/verify-cards), to see whether the issuer confirmed it. See [Read the Verification Result](/guides/payments/verify-cards#read-the-verification-result) for the full set of values that field can return.
 
 ## Security
 
@@ -190,4 +186,4 @@ The CVC goes directly from the customer's browser to Basis Theory. It never reac
 
 ## Conclusion
 
-Following this guide, you've attached a freshly collected CVC to a saved card. Charge the card right after the update using [Process Card Payments](/guides/payments/process-card-payments), and check the resulting `cvv2_reply` to confirm the issuer accepted it.
+Following this guide, you've attached a freshly collected CVC to a saved card. Charge the card right after the update using [Process Card Payments](/guides/payments/elements/accept-card-payments), and check the resulting `cvv2_reply` to confirm the issuer accepted it.

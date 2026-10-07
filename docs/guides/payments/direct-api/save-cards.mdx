@@ -1,0 +1,123 @@
+import { Alert } from "@site/src/components/shared/Alert";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
+
+# Save Cards
+
+In this guide, you will post a card from your servers to `https://collect.publicsquare.com` and save it to your account. The response is a `card` object that you can use for payments and payouts.
+
+<Alert type="warning">Accepting or transmitting cardholder data requires the merchant to be PCI certified. If you are unsure, please [reach out for support](mailto:support@publicsquare.com). To keep card data out of your servers, use [Accept Card Payments](/guides/payments/elements/accept-card-payments).</Alert>
+
+## Before you start
+
+<BeforeYouStart keys={["publishable"]} />
+
+## Save a Card
+
+Send the card in a `POST` request to `https://collect.publicsquare.com`:
+
+```shell showLineNumbers
+curl -L 'https://collect.publicsquare.com' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-H 'X-API-KEY: <PUBLISHABLE_API_KEY>' \
+-d '{
+  "cardholder_name": "John Smith",
+  "card": {
+    "number": "4242424242424242",
+    "expiration_month": 12,
+    "expiration_year": 2030,
+    "cvc": "123"
+  }
+}'
+
+```
+
+The request body accepts these fields:
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `cardholder_name` | Yes | Name on the card. |
+| `card.number` | Yes | Card number. |
+| `card.expiration_month` | Yes | Expiration month, from `1` to `12`. |
+| `card.expiration_year` | Yes | Four-digit expiration year. The expiration date must be in the future. |
+| `card.cvc` | No | Card security code. If you send it, PublicSquare still validates it. |
+| `customer_id` | No | ID of an existing customer to associate with the card. |
+| `billing_details` | No | Billing address for the card. |
+
+## Saving a card without a CVC
+
+The `cvc` field is optional. Leave it out when you save a card that you will charge later without the customer present, for example a card on file or a card that you move from another vault.
+
+<Alert type="warning">A card saved without a CVC can decline more often on its first charge. Its `cvv2_reply` cannot show a match (`M`), so do not use a missing CVV as a reason to decline these payments. See [Fraud Details and Prevention](/concepts/fraud-details-and-prevention#card-verification-value-cvv).</Alert>
+
+```shell showLineNumbers
+curl -L 'https://collect.publicsquare.com' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-H 'X-API-KEY: <PUBLISHABLE_API_KEY>' \
+-d '{
+  "cardholder_name": "John Smith",
+  "card": {
+    "number": "4242424242424242",
+    "expiration_month": 12,
+    "expiration_year": 2030
+  }
+}'
+
+```
+
+## Test Mode
+
+<Alert>To test card collection in test mode, use the `https://collect-test.publicsquare.com` endpoint instead of `https://collect.publicsquare.com`, along with your **test mode** `Publishable Key`. This lets you exercise the collect card flow without submitting live cardholder data.</Alert>
+
+```shell showLineNumbers
+curl -L 'https://collect-test.publicsquare.com' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-H 'X-API-KEY: <TEST_PUBLISHABLE_API_KEY>' \
+-d '{
+  "cardholder_name": "John Smith",
+  "card": {
+    "number": "4242424242424242",
+    "expiration_month": 12,
+    "expiration_year": 2030,
+    "cvc": "123"
+  }
+}'
+
+```
+
+## Card Response
+
+The created `card` object contains the non-sensitive information about the card, including the `bin`:
+
+```json showLineNumbers title="card.json"
+{
+  "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  "cardholder_name": "John Smith",
+  "last4": "4242",
+  "bin": "424242",
+  "exp_month": "12",
+  "exp_year": "2030",
+  "brand": "visa",
+  "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL",
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z"
+}
+```
+
+<Alert>Displaying the card's first 6 digits (`bin`) alongside the last 4 (`last4`) is PCI compliant per PCI DSS Requirement 3.3.</Alert>
+
+You can safely store the card's `id` value in your database to link it with the appropriate payment or customer association.
+
+You can optionally pass in a `customer_id` to associate with an existing [Created Customer](/api/accounts/create-customer) and `billing_details` to remove the requirement to pass them when [Creating a Payment](/api/financial/create-payment).
+
+## Conclusion
+
+Following this guide, you have saved a customer's credit card. To use this card, follow these guides:
+
+- [Create a Payment with Card Details](/guides/payments/direct-api/payment-with-card-details)
+- [Authorize and Capture Payments](/guides/payments/authorize-and-capture-payments)
+- [Payouts](/guides/payouts/send-payouts)

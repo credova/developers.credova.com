@@ -1,5 +1,5 @@
 import { Alert } from "@site/src/components/shared/Alert";
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
 # Onboard Sellers
 
@@ -7,15 +7,9 @@ As a marketplace, you will need to create and onboard your sellers to be able to
 
 This guide will walk you through how to create and onboard seller accounts.
 
-## Getting Started
+## Before you start
 
-<GettingStartedSection />
-
-### Get your Secret Key
-
-Next you will need your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Secret Key` and copy the value.
-
-<Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
+<BeforeYouStart keys={["secret"]} />
 
 ## Create a Seller Account
 
@@ -69,7 +63,7 @@ Credova exposes several endpoints to enable you to submit all of the required bu
 * [Create Ultimate Beneficial Owner](/api/accounts/create-ultimate-beneficial-owner)
 * [Upload Business Document](/api/accounts/upload-business-document)
 
-<Alert>For all of the endpoints listed above, be sure to replace the `accountId` field with the seller's account ID from the previous step.</Alert>
+In all of these endpoints, replace `accountId` with the seller's account ID from the previous step.
 
 ## Collect Business Bank Account
 
@@ -204,6 +198,7 @@ This will save the business bank account for the seller and return the resulting
   "modified_at": "2024-06-30T01:02:29.212Z"
 }
 ```
+
 <Alert>If Credova has not yet received a response back from Flinks, we will return a `202 - Accepted` HTTP status code. Please retry the request.</Alert>
 
 ## Submit Onboarding
@@ -330,6 +325,6 @@ Following this guide, you have successfully onboarded a seller. Next, we need to
 Follow these guides to learn more:
 
 - [Transfer Funds to Sellers](/guides/marketplaces/transfer-funds-to-sellers)
-- [Collect Cards](/guides/payment-methods/collect-cards)
-- [Process Card Payments](/guides/payments/process-card-payments)
+- [Collect Cards](/guides/payments/elements/accept-card-payments)
+- [Process Card Payments](/guides/payments/elements/accept-card-payments)
 - [Webhooks](/concepts/webhooks)

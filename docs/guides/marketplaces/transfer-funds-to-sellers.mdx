@@ -1,5 +1,5 @@
 import { Alert } from "@site/src/components/shared/Alert";
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
 # Transfer Funds to Sellers
 
@@ -7,21 +7,15 @@ In this guide we will show how marketplaces and other exchanges can use Payment 
 
 The intent pattern gives you a pre-generated transfer ID before any funds move, and lets you confirm or cancel the transfer as a separate step. See [Payment Transfer Intents](/concepts/payment-transfer-intents) for a full explanation of states, concurrency rules, and webhook events.
 
-## Getting Started
+## Before you start
 
-<GettingStartedSection />
-
-### Get your Secret Key
-
-Next you will need your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Secret Key` and copy the value.
-
-<Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
+<BeforeYouStart keys={["secret"]} />
 
 ## Prerequisites
 
 This guide assumes you have already completed:
 
-- [Process Card Payments](/guides/payments/process-card-payments) — you will need a captured payment ID.
+- [Process Card Payments](/guides/payments/elements/accept-card-payments) — you will need a captured payment ID.
 - [Onboard Sellers](/guides/marketplaces/onboard-sellers) — you will need one or more seller account IDs.
 
 Grab the payment `id`:

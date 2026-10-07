@@ -23,45 +23,55 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: "category",
-      label: "Payment Methods",
-      customProps: {
-        icon: "/img/icons/payment-methods.svg",
-      },
-      items: [
-        "guides/payment-methods/collect-cards",
-        "guides/payment-methods/recollect-cvc",
-        "guides/payment-methods/collect-apple-pay",
-        "guides/payment-methods/collect-google-pay",
-        "guides/payment-methods/collect-bank-accounts",
-        "guides/payment-methods/collect-verified-bank-accounts"
-      ],
-    },
-    {
-      type: "category",
       label: "Payments",
+      collapsed: false,
       customProps: {
         icon: "/img/icons/credit-card.svg",
       },
       items: [
-        "guides/payments/process-card-payments",
-        "guides/payments/process-inline-card-payments",
-        "guides/payments/process-apple-pay-payments",
-        "guides/payments/process-google-pay-payments",
-        "guides/payments/process-3ds-iframe-payments",
-        "guides/payments/process-3ds-redirect-payments",
-        "guides/payments/authorize-and-capture-payments",
-        "guides/payments/verify-cards",
-        "guides/payments/process-ach-payments",
-        "guides/payments/cancel-payments"
+        {
+          type: "category",
+          label: "Credova Elements",
+          items: [
+            "guides/payments/elements/accept-card-payments",
+            "guides/payments/elements/accept-bank-account-payments",
+            "guides/payments/elements/accept-apple-pay",
+            "guides/payments/elements/accept-google-pay",
+            "guides/payments/process-3ds-iframe-payments",
+            "guides/payments/process-3ds-redirect-payments",
+            "guides/payment-methods/recollect-cvc"
+          ],
+        },
+        {
+          type: "category",
+          label: "Direct API",
+          items: ["guides/payments/direct-api/payment-with-card-details", "guides/payments/direct-api/save-cards"],
+        },
+        {
+          type: "category",
+          label: "eCommerce Plugins",
+          items: [
+            {type: "link", label: "Shopify", href: "/plugins/shopify-payments"},
+            {type: "link", label: "WooCommerce", href: "/plugins/woocommerce-payments"},
+            {type: "link", label: "Magento", href: "/plugins/magento-payments"},
+            {type: "link", label: "BigCommerce", href: "/plugins/bigcommerce-payments"}
+          ],
+        },
+        {
+          type: "category",
+          label: "Payment Options",
+          items: ["guides/payments/authorize-and-capture-payments", "guides/payments/verify-cards"],
+        },
+        {
+          type: "category",
+          label: "After the Payment",
+          items: [
+            "guides/payments/cancel-payments",
+            "guides/refunds/refund-payments",
+            "guides/transactions/search-and-view-transactions"
+          ],
+        },
       ],
-    },
-    {
-      type: "category",
-      label: "Refunds",
-      customProps: {
-        icon: "/img/icons/light-receipt-rotate-left.svg",
-      },
-      items: ["guides/refunds/refund-payments", "guides/refunds/cancel-refunds"],
     },
     {
       type: "category",
@@ -69,15 +79,7 @@ const sidebars: SidebarsConfig = {
       customProps: {
         icon: "/img/icons/money-bill-wave.svg",
       },
-      items: ["guides/payouts/process-card-payouts", "guides/payouts/process-inline-card-payouts", "guides/payouts/process-ach-payouts", "guides/payouts/cancel-payouts"],
-    },
-    {
-      type: "category",
-      label: "Transactions",
-      customProps: {
-        icon: "/img/icons/money-bill-transfer.svg",
-      },
-      items: ["guides/transactions/search-and-view-transactions", "guides/transactions/view-settlements"],
+      items: ["guides/payouts/send-payouts", "guides/payouts/payout-with-card-details"],
     },
     {
       type: "category",
@@ -88,11 +90,12 @@ const sidebars: SidebarsConfig = {
       items: ["guides/marketplaces/onboard-sellers", "guides/marketplaces/transfer-funds-to-sellers", "guides/marketplaces/transfer-funds-from-sellers"],
     },
     {
-      id: "guides/production-checklist/index",
-      type: "doc",
+      type: "category",
+      label: "Go Live",
       customProps: {
         icon: "/img/icons/ballot-check-light.svg",
       },
+      items: ["guides/production-checklist/index", {type: "link", label: "Testing", href: "/api/testing"}],
     },
     {
       type: "html",

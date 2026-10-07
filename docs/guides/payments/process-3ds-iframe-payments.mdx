@@ -1,7 +1,7 @@
 import { Alert } from "@site/src/components/shared/Alert";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
 # Process 3DS Payments (Iframe)
 
@@ -9,15 +9,9 @@ This guide walks through authenticating a card payment with 3D Secure using the 
 
 The flow has six steps: tokenize the card → create a Payment Intent → create a 3DS session → confirm → (if challenged) render the challenge → complete. The SDK runs in the browser with your `Publishable Key`; the Payment Intent `confirm` and `complete` calls run on your server with your `Secret Key`.
 
-## Getting Started
+## Before you start
 
-<GettingStartedSection />
-
-### Get your Secret Key
-
-Your backend needs your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys), click `Reveal` for your `Secret Key`, and copy the value.
-
-<Alert>The `confirm` and `complete` calls below run on your server. Never expose your Secret Key in the browser.</Alert>
+<BeforeYouStart keys={["secret"]} />
 
 ## Prerequisites
 

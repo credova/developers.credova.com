@@ -1,19 +1,3 @@
-:root {
-  --gh-card-background-color: linear-gradient(
-    100.66deg,
-    rgba(183, 236, 243, .2) 18.43%,
-    rgba(183, 236, 243, .2) 120.94%
-  );
-}
-
-[data-theme="dark"] {
-  --gh-card-background-color: linear-gradient(
-    273.61deg,
-    rgba(21, 56, 73, .7) 19.2%,
-    rgba(21, 56, 73, .7) 82.55%
-  );
-}
-
 .metadata {
   display: inline-flex;
   align-items: center;
@@ -29,13 +13,16 @@
 .gh-card {
   display: flex !important;
   place-items: center;
-  background: var(--gh-card-background-color) !important;
+  background: var(--cr-surface) !important;
 }
 
 .gh-card--logo {
-  background: #fff !important;
-  width: 100px !important;
-  height: 100px !important;
+  background: var(--cr-bg) !important;
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius);
+  padding: 12px;
+  width: 80px !important;
+  height: 80px !important;
 }
 
 .gh-button {

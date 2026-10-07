@@ -1,5 +1,5 @@
 import { Alert } from "@site/src/components/shared/Alert";
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
 # Process 3DS Payments (Redirect)
 
@@ -7,21 +7,15 @@ This guide walks through authenticating a card payment with 3D Secure using the 
 
 The redirect transport requires **no JavaScript SDK** on your checkout page, which makes it a good fit for native mobile webviews and server-rendered checkouts.
 
-## Getting Started
+## Before you start
 
-<GettingStartedSection />
-
-### Get your Secret Key
-
-Your backend will need your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys), click `Reveal` for your `Secret Key`, and copy the value.
-
-<Alert>Save the Secret Key — it is used for the `confirm` and `complete` calls below.</Alert>
+<BeforeYouStart keys={["secret"]} />
 
 ## Prerequisites
 
 This guide assumes you have:
 
-- A collected card. Follow [Collect Cards](/guides/payment-methods/collect-cards) to obtain a `card_…` payment method.
+- A collected card. Follow [Collect Cards](/guides/payments/elements/accept-card-payments) to obtain a `card_…` payment method.
 - 3DS enabled on your account. 3DS is off by default — contact Credova to enable it.
 - Two callback routes you control — a success URL and a failure URL — that Basis Theory will return the cardholder to after the challenge.
 
@@ -102,7 +96,7 @@ curl 'https://api.publicsquare.com/payment-intents/pi_2YKewBonG4tgk12MheY3PiHDy/
 }'
 ```
 
-<Alert>If you didn't capture the `session_id` from the confirm response, retrieve it from the intent's `next_action.three_d_secure.session_id` via [Get Payment Intent by ID](/api/financial/get-payment-intent-by-id) before calling `complete`.</Alert>
+If you did not save the `session_id` from the confirm response, get it from `next_action.three_d_secure.session_id` on the intent. Use [Get Payment Intent by ID](/api/financial/get-payment-intent-by-id). Do this before you call `complete`.
 
 The response is the final `PaymentIntent`, `succeeded` when authentication and authorization both pass, or `failed` with a `last_payment_error` otherwise.
 

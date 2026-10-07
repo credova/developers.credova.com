@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
     <linearGradient id="gradient" x1="0" x2="800" y1="0" y2="0" gradientUnits="userSpaceOnUse">
-      <stop stop-color="var(--psq-icon-gradient-start)" offset="4.43%" />
-      <stop stop-color="var(--psq-icon-gradient-stop)" offset="98.07%" />
+      <stop stop-color="var(--cr-icon-gradient-start)" offset="4.43%" />
+      <stop stop-color="var(--cr-icon-gradient-stop)" offset="98.07%" />
     </linearGradient>
   </defs>
   <path fill="url(#gradient)"
