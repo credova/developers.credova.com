@@ -121,7 +121,7 @@ curl 'https://secure.payments.credova.com/payouts' \
 - A payout with `card_details` does not need `device_information`.
 - To use an existing customer, send `"customer": { "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ" }`.
 - The response returns the saved card in `payment_method.card`. Use its `id` as `card` for later payouts.
-- To test, send the same request to `https://secure.payments.sbx.credova.com` with your test mode `Secret Key` and a [test card](/api/testing#cards).
+- To test, send the same request to `https://secure.payments.sbx.credova.com` with your test mode `Secret Key` and a [test card](/guides/testing#cards).
 
 #### Retries
 

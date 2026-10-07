@@ -150,7 +150,7 @@ const config: Config = {
         {
           title: "Go live",
           items: [
-            {label: "Testing", to: "/api/testing"},
+            {label: "Testing", to: "/guides/testing"},
             {label: "Production checklist", to: "/guides/production-checklist"},
             {label: "Support", to: "/support"},
             {label: "Credova Portal", href: "https://portal.publicsquare.com/"},
@@ -206,6 +206,7 @@ const config: Config = {
           {from: "/guides/payments/process-ach-payments", to: "/guides/payments/elements/accept-bank-account-payments"},
           {from: "/guides/payments/process-inline-card-payments", to: "/guides/payments/direct-api/payment-with-card-details"},
           {from: "/guides/payouts/process-inline-card-payouts", to: "/guides/payouts/process-card-payouts"},
+          {from: "/api/testing", to: "/guides/testing"},
           {from: "/guides/refunds/cancel-refunds", to: "/guides/refunds/refund-payments"},
           {from: "/guides/transactions/view-settlements", to: "/guides/transactions/search-and-view-transactions"},
         ],

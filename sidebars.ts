@@ -103,7 +103,7 @@ const sidebars: SidebarsConfig = {
       customProps: {
         icon: "/img/icons/ballot-check-light.svg",
       },
-      items: ["guides/production-checklist/index", {type: "link", label: "Testing", href: "/api/testing"}, "support"],
+      items: ["guides/production-checklist/index", "guides/testing", "support"],
     },
     {
       type: "html",
@@ -165,10 +165,6 @@ const sidebars: SidebarsConfig = {
     },
     {
       id: "api/idempotency",
-      type: "doc",
-    },
-    {
-      id: "api/testing",
       type: "doc",
     },
     {
