@@ -1,3 +1,10 @@
+# [1.61.0](https://github.com/credova/developers.credova.com/compare/v1.60.0...v1.61.0) (2026-10-08)
+
+
+### Features
+
+* add inline card payment and payout guides [sc-89873] ([#28](https://github.com/credova/developers.credova.com/issues/28)) ([4fbf836](https://github.com/credova/developers.credova.com/commit/4fbf83663fc86a1e7ca6afcacdbfca6f406ced75))
+
 # [1.60.0](https://github.com/credova/developers.credova.com/compare/v1.59.0...v1.60.0) (2026-10-01)
 
 
