@@ -5,7 +5,7 @@ Send the request to the secure hostname for the mode of your API key. The secure
 | Mode | Hostname | API key |
 |------|----------|---------|
 | Live | `https://secure.payments.credova.com` | Live `Secret Key` |
-| Test | `https://secure-test.payments.credova.com` | Test mode `Secret Key` |
+| Test | `https://secure.payments.sbx.credova.com` | Test mode `Secret Key` |
 
 <Alert type="warning">Use the hostname that matches the mode of your API key. Each hostname saves the card for its own mode, so a key from the other mode makes the request fail.</Alert>
 
@@ -19,4 +19,4 @@ Put the card in `payment_method.card_details`:
 | `expiration_year` | Yes | Four-digit expiration year. |
 | `cvc` | No | Card security code. A card sent without a CVC can decline more often. |
 
-The request also needs `customer` (or `customer.customer_id`) and `billing_details`. The rest of the body is the same as a request to `https://api.publicsquare.com`.
+The request also needs `customer` (or `customer.id`) and `billing_details`. The rest of the body is the same as a request to `https://api.publicsquare.com`.

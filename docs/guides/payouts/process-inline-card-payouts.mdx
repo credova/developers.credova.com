@@ -22,6 +22,8 @@ Next you will need your `Secret Key`. [Go to your Developers section](https://po
 
 ## Process the Payout
 
+A payout with `card_details` does not need `device_information`.
+
 <InlineCardDetailsSection />
 
 ### Create a Payout
@@ -63,11 +65,11 @@ curl 'https://secure.payments.credova.com/payouts' \
 
 <Alert>The amount is provided in cents. 1000 is the equivalent of $10.00</Alert>
 
-To test, send the same request to `https://secure-test.payments.credova.com` with your test mode `Secret Key` and a [test card](/api/testing#cards).
+To test, send the same request to `https://secure.payments.sbx.credova.com` with your test mode `Secret Key` and a [test card](/api/testing#cards).
 
 ### Create with Existing Customer
 
-If you [created a customer](/api/accounts/create-customer), pass the `customer_id`:
+If you [created a customer](/api/accounts/create-customer), pass its ID as `customer.id`:
 
 ```shell showLineNumbers title="Create a Payout with Customer"
 curl 'https://secure.payments.credova.com/payouts' \
@@ -89,7 +91,7 @@ curl 'https://secure.payments.credova.com/payouts' \
   },
   "customer": {
     // highlight-next-line
-    "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
   },
   "billing_details": {
     "address_line_1": "111 Test St.",
@@ -133,6 +135,8 @@ The response is the same as for a payout with a saved card. `payment_method.card
       "exp_month": "12",
       "exp_year": "2030",
       "brand": "visa",
+      "avs_code": "Y",
+      "cvv2_reply": "M",
       "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL"
     }
   },
@@ -170,7 +174,7 @@ The response is the same as for a payout with a saved card. `payment_method.card
 }
 ```
 
-Store `payment_method.card.id`. For the next payout to this card, send `"payment_method": { "card": "<card id>" }` to `https://api.publicsquare.com/payouts`, as in [Process Card Payouts](/guides/payouts/process-card-payouts).
+Store `payment_method.card.id`. For the next payout to this card, send `"payment_method": { "card": "<card id>" }` to `https://api.publicsquare.com/payouts`, as in [Process Card Payouts](/guides/payouts/process-card-payouts). A saved card is a token, so this request does not need the secure hostname.
 
 ## Conclusion
 
