@@ -87,6 +87,11 @@ const sidebars: SidebarsConfig = {
         "guides/payouts/process-card-payouts",
         "guides/payouts/process-ach-payouts",
         "guides/payouts/cancel-payouts",
+        {
+          type: "category",
+          label: "Direct API",
+          items: ["guides/payouts/direct-api/payout-with-card-details"],
+        },
       ],
     },
     {

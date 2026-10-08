@@ -205,7 +205,7 @@ const config: Config = {
           {from: "/guides/payment-methods/collect-verified-bank-accounts", to: "/guides/payments/elements/accept-bank-account-payments"},
           {from: "/guides/payments/process-ach-payments", to: "/guides/payments/elements/accept-bank-account-payments"},
           {from: "/guides/payments/process-inline-card-payments", to: "/guides/payments/direct-api/payment-with-card-details"},
-          {from: "/guides/payouts/process-inline-card-payouts", to: "/guides/payouts/process-card-payouts"},
+          {from: "/guides/payouts/process-inline-card-payouts", to: "/guides/payouts/direct-api/payout-with-card-details"},
           {from: "/api/testing", to: "/guides/testing"},
           {from: "/guides/refunds/cancel-refunds", to: "/guides/refunds/refund-payments"},
           {from: "/guides/transactions/view-settlements", to: "/guides/transactions/search-and-view-transactions"},

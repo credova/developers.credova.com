@@ -16,7 +16,7 @@ Send the card details in the same request that creates the payment. You do not n
 
 <Alert>We recommend [Payment Intents](/concepts/payment-intents) for new integrations. They retry safely and report slow processors by webhook. Payment Intents do not accept `card_details`, so [save the card](/guides/payments/direct-api/save-cards) first and [create the intent](/guides/payments/elements/accept-card-payments#create-a-payment-intent) with the card `id`. Use `card_details` with [Create Payment](/api/financial/create-payment) when you want to send the card and charge it in one request.</Alert>
 
-To send a payout with card details, see [Send Card Payouts](/guides/payouts/process-card-payouts#create-with-card-details).
+To send a payout with card details, see [Send a Payout with Card Details](/guides/payouts/direct-api/payout-with-card-details).
 
 ## Before you start
 

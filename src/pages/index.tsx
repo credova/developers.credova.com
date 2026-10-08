@@ -73,6 +73,7 @@ const products = [
     description: "Send money to cards and bank accounts.",
     links: [
       { label: "Send card payouts", to: "/guides/payouts/process-card-payouts" },
+      { label: "Send a payout with card details", to: "/guides/payouts/direct-api/payout-with-card-details" },
       { label: "Send bank account payouts", to: "/guides/payouts/process-ach-payouts" },
       { label: "Cancel a payout", to: "/guides/payouts/cancel-payouts" },
     ],

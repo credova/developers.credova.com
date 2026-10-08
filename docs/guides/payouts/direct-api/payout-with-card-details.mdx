@@ -1,0 +1,189 @@
+---
+sidebar_label: Payout with Card Details
+---
+
+import { Alert } from "@site/src/components/shared/Alert";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
+import InlineCardDetailsSection from "@site/src/components/docs/_inline-card-details-section.mdx";
+import InlineCardRetriesSection from "@site/src/components/docs/_inline-card-retries-section.mdx";
+import InlineCardErrorsSection from "@site/src/components/docs/_inline-card-errors-section.mdx";
+
+# Send a Payout with Card Details
+
+Send the card details in the same request that creates the payout. You do not need to save the card first. The API saves the card to the customer and returns its `id` for later payouts.
+
+<Alert type="warning">Your servers receive and send cardholder data in this flow, so your organization must be PCI certified. If you are unsure, please [contact support](/support). To keep card data out of your servers, use a saved card as shown in [Send Card Payouts](/guides/payouts/process-card-payouts).</Alert>
+
+To create a payment with card details, see [Create a Payment with Card Details](/guides/payments/direct-api/payment-with-card-details).
+
+## Before you start
+
+<BeforeYouStart keys={["secret"]}>
+A restricted key needs the `payment-method:write` or `payment-method:capture` permission, in addition to `payout:write`.
+</BeforeYouStart>
+
+## Send Card Details
+
+<InlineCardDetailsSection />
+
+## Process a Payout
+
+A payout with `card_details` does not need `device_information`.
+
+### Create a Payout
+
+```shell showLineNumbers title="Create a Payout with Card Details"
+curl 'https://secure.payments.credova.com/payouts' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    // highlight-start
+    "card_details": {
+      "cardholder_name": "John Smith",
+      "number": "4242424242424242",
+      "expiration_month": 12,
+      "expiration_year": 2030,
+      "cvc": "123"
+    }
+    // highlight-end
+  },
+  "customer": {
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+<Alert>The amount is provided in cents. 1000 is the equivalent of $10.00</Alert>
+
+To test, send the same request to `https://secure.payments.sbx.credova.com` with your test mode `Secret Key` and a [test card](/guides/testing#cards).
+
+### Create with Existing Customer
+
+If you [created a customer](/api/accounts/create-customer), pass its ID as `customer.id`:
+
+```shell showLineNumbers title="Create a Payout with Customer"
+curl 'https://secure.payments.credova.com/payouts' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "card_details": {
+      "cardholder_name": "John Smith",
+      "number": "4242424242424242",
+      "expiration_month": 12,
+      "expiration_year": 2030,
+      "cvc": "123"
+    }
+  },
+  "customer": {
+    // highlight-next-line
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+### Payout Response
+
+The response is the same as for a payout with a saved card. `payment_method.card` describes the card that the request saved:
+
+```json showLineNumbers title="Payout Response"
+{
+  "id": "pyt_24NFPd3jSZFTxiaH9UwjuqNdP",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "succeeded",
+  "transaction_id": "trx_6QgmXzQzk3S5K5EsR3DfEiMRj",
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "card": {
+      // highlight-next-line
+      "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
+      "cardholder_name": "John Smith",
+      "last4": "4242",
+      "bin": "424242",
+      "exp_month": "12",
+      "exp_year": "2030",
+      "brand": "visa",
+      "avs_code": "Y",
+      "cvv2_reply": "M",
+      "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL"
+    }
+  },
+  "customer": {
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "transaction": {
+    "id": "trx_6QgmXzQzk3S5K5EsR3DfEiMRj",
+    "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+    "environment": "test",
+    "status": "succeeded",
+    "amount": -1000,
+    "fee_amount": 0,
+    "net_amount": -1000,
+    "currency": "USD",
+    "type_id": "pyt_24NFPd3jSZFTxiaH9UwjuqNdP",
+    "type": "payout",
+    "processor": "nuvei",
+    "processor_id": "7110000000010554769",
+    "created_at": "2024-06-30T01:02:29.212Z",
+    "modified_at": "2024-06-30T01:02:29.212Z"
+  },
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z"
+}
+```
+
+Store `payment_method.card.id`. For the next payout with this card, send `"payment_method": { "card": "<card id>" }` to `https://api.publicsquare.com/payouts`, as in [Send Card Payouts](/guides/payouts/process-card-payouts). A saved card is a token, so this request does not need the secure hostname.
+
+## Retries
+
+<InlineCardRetriesSection />
+
+## Errors
+
+<InlineCardErrorsSection />
+
+## Conclusion
+
+Now that we have sent a payout with card details, we may need to cancel it or view information about it.
+Follow these guides to learn more:
+
+- [Cancel Payouts](/guides/payouts/cancel-payouts)
+- [Search and View Transactions](/guides/transactions/search-and-view-transactions)
