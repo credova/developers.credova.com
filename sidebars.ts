@@ -51,6 +51,7 @@ const sidebars: SidebarsConfig = {
         "guides/payments/process-3ds-redirect-payments",
         "guides/payments/authorize-and-capture-payments",
         "guides/payments/verify-cards",
+        "guides/payments/card-on-file-and-recurring-payments",
         "guides/payments/process-ach-payments",
         "guides/payments/cancel-payments"
       ],

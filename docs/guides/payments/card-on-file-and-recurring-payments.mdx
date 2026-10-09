@@ -1,0 +1,321 @@
+import { Alert } from "@site/src/components/shared/Alert";
+import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+
+# Card on File and Recurring Payments
+
+Card on file means you save a customer's card and charge it later, without the customer present. Subscriptions, installment plans, and loan payments all work this way.
+
+Card networks require you to label each of these charges. You do this with the `recurring` object on the payment request. The label tells the issuer whether the customer agreed to this charge in person, as part of a schedule, or as a one-off that you start yourself.
+
+This guide covers how to save a card, how to send the first charge, and how to send every charge after it.
+
+Now that you have completed the [Collect Cards](/guides/payment-methods/collect-cards) guide, let's charge a stored card.
+
+## Getting Started
+
+<GettingStartedSection />
+
+### Get your Secret Key
+
+Next you will need your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Secret Key` and copy the value.
+
+<Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
+
+## The Flow
+
+1. **Save the card.** Collect the card and store its `id`. See [Collect Cards](/guides/payment-methods/collect-cards#storing-cards).
+2. **Optional: verify the card.** Run a zero-dollar verification with `verification.type` set to `recurring`. See [Verify Cards](/guides/payments/verify-cards).
+3. **Send the first charge as `initial`.** The customer is present and agrees to store the card for later charges.
+4. **Send later charges as `subsequent` or `unscheduled`.** The customer is not present.
+
+## Choose a Recurring Type
+
+The `recurring.type` field takes one of three values:
+
+| Type | Use it for | Customer present |
+|------|------------|------------------|
+| `initial` | The first charge on a card you intend to charge again | Yes |
+| `subsequent` | A later charge on a fixed schedule with a fixed amount | No |
+| `unscheduled` | A later charge where the amount or the timing varies | No |
+
+How to choose between `subsequent` and `unscheduled`:
+
+- A monthly subscription at the same price is `subsequent`. The amount and the date are both known in advance.
+- A loan payment is `unscheduled`. The amount and the timing change from one payment to the next, so it does not follow a fixed schedule.
+
+When in doubt, ask whether the customer agreed to a fixed amount on a fixed schedule. If yes, use `subsequent`. If not, use `unscheduled`.
+
+<Alert type="warning">Omit `recurring` entirely for a normal one-time payment. Do not send `recurring` when the customer is checking out and paying once.</Alert>
+
+## Send the Initial Charge
+
+The first charge is the one where the customer is present and agrees to let you store and reuse the card. Send `recurring.type` as `initial`.
+
+Given a previously collected card:
+
+```shell showLineNumbers title="Initial Charge"
+curl 'https://api.publicsquare.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 3a1f6f5e-9c1d-4c0e-8c62-1d1c2b6a7e01' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "capture": true,
+  // highlight-start
+  "recurring": {
+    "type": "initial"
+  },
+  // highlight-end
+  "payment_method": {
+    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
+  },
+  "customer": {
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+The response echoes the `recurring` object. Save the payment `id`. You will use it as `initial_payment_id` on later charges.
+
+```json showLineNumbers title="Initial Charge Response"
+{
+  // highlight-next-line
+  "id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  "status": "succeeded",
+  "amount": 1000,
+  "amount_charged": 1000,
+  "currency": "USD",
+  // highlight-start
+  "recurring": {
+    "type": "initial"
+  },
+  // highlight-end
+  "payment_method": {
+    "card": {
+      "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
+      "last4": "4242",
+      "brand": "visa"
+    }
+  },
+  ...
+}
+```
+
+### Send Initial More Than Once
+
+Sending `initial` again on the same card is allowed. Do this when the customer returns and agrees to a new arrangement, for example a new subscription on the same card. Each `initial` payment starts a new series, and the card's `recurring_initial` points to the most recent one that succeeded.
+
+### Subscription Changes and Upsells
+
+If you handle subscription changes, such as upsells, send `initial` for the upsell payment. Treating the change as the first charge of a new series is the safe default.
+
+## Send a Subsequent Charge
+
+Later charges reference the initial payment with `initial_payment_id`.
+
+```shell showLineNumbers title="Subsequent Charge"
+curl 'https://api.publicsquare.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 5b2e7a1c-4d3f-4e8a-9f10-2a3b4c5d6e02' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "capture": true,
+  // highlight-start
+  "recurring": {
+    "type": "subsequent",
+    "initial_payment_id": "pmt_2YKewBonG4tgk12MheY3PiHDy"
+  },
+  // highlight-end
+  "payment_method": {
+    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
+  }
+}'
+```
+
+```json showLineNumbers title="Subsequent Charge Response"
+{
+  "id": "pmt_4AMgxDqoI6vlm34PjgA5RQOal",
+  "status": "succeeded",
+  "amount": 1000,
+  "amount_charged": 1000,
+  "currency": "USD",
+  // highlight-start
+  "recurring": {
+    "type": "subsequent",
+    "initial_payment_id": "pmt_2YKewBonG4tgk12MheY3PiHDy"
+  },
+  // highlight-end
+  ...
+}
+```
+
+## Send an Unscheduled Charge
+
+Use `unscheduled` when the amount or the timing varies. The request has the same shape. Only the `type` changes:
+
+```shell showLineNumbers title="Unscheduled Charge"
+curl 'https://api.publicsquare.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 7c3f8b2d-5e4a-4f9b-a021-3b4c5d6e7f03' \
+-H 'Content-Type: application/json' \
+-d '{
+  // highlight-next-line
+  "amount": 24350,
+  "currency": "USD",
+  "capture": true,
+  // highlight-start
+  "recurring": {
+    "type": "unscheduled",
+    "initial_payment_id": "pmt_2YKewBonG4tgk12MheY3PiHDy"
+  },
+  // highlight-end
+  "payment_method": {
+    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
+  }
+}'
+```
+
+```json showLineNumbers title="Unscheduled Charge Response"
+{
+  "id": "pmt_5BNhyErpJ7wmn45QkhB6SRPbm",
+  "status": "succeeded",
+  "amount": 24350,
+  "amount_charged": 24350,
+  "currency": "USD",
+  // highlight-start
+  "recurring": {
+    "type": "unscheduled",
+    "initial_payment_id": "pmt_2YKewBonG4tgk12MheY3PiHDy"
+  },
+  // highlight-end
+  ...
+}
+```
+
+## Rules
+
+### Send Initial First
+
+You must send `initial` on a card before you send `subsequent` or `unscheduled` on it. If you send `subsequent` or `unscheduled` on a card that has no succeeded `initial` payment, the API returns `400`.
+
+```json showLineNumbers title="Order Rule Violation"
+{
+  "title": "One or more validation errors occurred.",
+  "status": 400,
+  "errors": {
+    "type": [
+      "'type' cannot be 'subsequent' because this card has no succeeded 'initial' recurring payment. Send 'initial' first."
+    ]
+  }
+}
+```
+
+The error is keyed on `type`, and the message names the type you sent (`subsequent` or `unscheduled`). The body follows the standard [Errors](/api/errors) format. Do not match on the exact message text.
+
+<Alert type="warning">A payment with `recurring.type` of `initial` that is declined does not count. The card has no `initial` payment until one succeeds.</Alert>
+
+### A Recurring Charge Must Be a Sale
+
+A payment with `recurring` must have `capture` set to `true`, which is the default. An authorization-only payment (`capture` set to `false`) with `recurring` returns `400`.
+
+```json showLineNumbers title="Authorization With Recurring"
+{
+  "amount": 1000,
+  "currency": "USD",
+  // highlight-next-line
+  "capture": false,
+  // highlight-next-line
+  "recurring": { "type": "initial" },
+  "payment_method": { "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj" }
+}
+```
+
+### Rules Summary
+
+| Rule | Result when broken |
+|------|--------------------|
+| Send `initial` before `subsequent` or `unscheduled` on a card | `400` |
+| `capture` must be `true` when `recurring` is present | `400` |
+| Sending `initial` again on the same card | Allowed |
+
+## Read 'recurring_initial' on the Card
+
+You do not have to store the initial payment ID yourself. The card carries it. Get the card:
+
+```shell showLineNumbers title="Get Card"
+curl 'https://api.publicsquare.com/cards/card_AjkCFKAYiTsjghXWMzoXFPMxj' \
+-H 'X-API-KEY: <SECRET_API_KEY>'
+```
+
+```json showLineNumbers title="Card With recurring_initial"
+{
+  "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  "cardholder_name": "John Smith",
+  "last4": "4242",
+  "exp_month": "12",
+  "exp_year": "2030",
+  "brand": "visa",
+  // highlight-start
+  "recurring_initial": {
+    "payment_id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+    "created_at": "2024-06-30T01:02:29.212Z"
+  },
+  // highlight-end
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z"
+}
+```
+
+`recurring_initial.payment_id` is the ID of the most recent succeeded payment on this card with type `initial`. Pass it as `recurring.initial_payment_id` on later charges.
+
+If the card has never had a succeeded `initial` payment, `recurring_initial` has no `payment_id`. Send an `initial` charge first.
+
+## Where Processors Differ
+
+Whether you must send `initial_payment_id` depends on the payment processor on your account. Some processors require it on `subsequent` and `unscheduled` charges. Others treat it as optional.
+
+Send `initial_payment_id` on every `subsequent` and `unscheduled` charge regardless of your processor. It is accepted everywhere, and your integration keeps working if your account moves to another processor.
+
+`initial_payment_id` is never needed on an `initial` charge.
+
+## Cards Imported From Another Vault
+
+If you moved cards from another vault, those cards have no `initial` payment on PublicSquare. The first charge after the import must be `initial`, even if the customer agreed to recurring charges with your previous provider.
+
+Recurring series cannot be imported. You cannot carry the old series over by passing an old transaction ID. Send `initial` once per imported card, then continue with `subsequent` or `unscheduled`.
+
+## Optional: Verify the Card First
+
+To confirm a card works before you charge it, run a zero-dollar verification with type `recurring`. Verification does not replace the `initial` charge. You still send `initial` on your first real charge.
+
+See [Verify Cards](/guides/payments/verify-cards#verify-card-for-recurring-payments) for the request.
+
+## Conclusion
+
+You can now save a card, send the first charge as `initial`, and charge the card later with `subsequent` or `unscheduled`.
+
+Follow these guides to learn more:
+
+- [Collect Cards](/guides/payment-methods/collect-cards) - Save a card
+- [Verify Cards](/guides/payments/verify-cards) - Run a zero-dollar verification
+- [Process Card Payments](/guides/payments/process-card-payments) - Charge cards
+- [Refund Payments](/guides/refunds/refund-payments) - Refund a recurring charge
