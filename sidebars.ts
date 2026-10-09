@@ -51,16 +51,7 @@ const sidebars: SidebarsConfig = {
             "guides/payments/direct-api/save-bank-accounts",
           ],
         },
-        {
-          type: "category",
-          label: "eCommerce Plugins",
-          items: [
-            {type: "link", label: "Shopify", href: "/plugins/shopify-payments"},
-            {type: "link", label: "WooCommerce", href: "/plugins/woocommerce-payments"},
-            {type: "link", label: "Magento", href: "/plugins/magento-payments"},
-            {type: "link", label: "BigCommerce", href: "/plugins/bigcommerce-payments"}
-          ],
-        },
+        {type: "link", label: "eCommerce Plugins", href: "/plugins"},
         {
           type: "category",
           label: "Payment Options",
