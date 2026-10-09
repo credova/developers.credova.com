@@ -64,7 +64,11 @@ const sidebars: SidebarsConfig = {
         {
           type: "category",
           label: "Payment Options",
-          items: ["guides/payments/authorize-and-capture-payments", "guides/payments/verify-cards"],
+          items: [
+            "guides/payments/authorize-and-capture-payments",
+            "guides/payments/verify-cards",
+            "guides/payments/card-on-file-and-recurring-payments",
+          ],
         },
         {
           type: "category",

@@ -250,6 +250,8 @@ The created `card` object contains the non-sensitive information about the card,
 
 You can safely store the card's `id` value in your database to link it with the appropriate payment or customer association.
 
+To charge a stored card later without the customer present, see [Card on File and Recurring Payments](/guides/payments/card-on-file-and-recurring-payments).
+
 You can optionally pass in a `customer_id` to associate with an existing [Created Customer](/api/accounts/create-customer) and `billing_details` to remove the requirement to pass them when [Creating a Payment](/api/financial/create-payment).
 
 ## Creating a Payment

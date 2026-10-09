@@ -1,3 +1,10 @@
+# [1.62.0](https://github.com/credova/developers.credova.com/compare/v1.61.0...v1.62.0) (2026-10-09)
+
+
+### Features
+
+* add card on file and recurring payments guide [sc-89427] ([#30](https://github.com/credova/developers.credova.com/issues/30)) ([9aaaa06](https://github.com/credova/developers.credova.com/commit/9aaaa066dba238cde5dadef576f89668821a945b))
+
 # [1.61.0](https://github.com/credova/developers.credova.com/compare/v1.60.0...v1.61.0) (2026-10-08)
 
 
