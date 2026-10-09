@@ -1,40 +1,41 @@
-/*
-* Sidebar items hover/selected states
-*/
-
 .theme-doc-sidebar-container {
-  background-color: var(--psq-sidebar-background-color);
-  border: 1px solid var(--psq-default-border-color);
+  background-color: var(--cr-sidebar-background-color);
+  border-right: 1px solid var(--cr-border) !important;
 }
 
-.theme-doc-sidebar-item-category-level-1:not(:last-of-type)
-  > ul
-  > li:last-of-type {
-  padding-bottom: 24px;
+.theme-doc-sidebar-item-category-level-1:not(:last-of-type) > ul > li:last-of-type {
+  padding-bottom: 16px;
 }
 
 .theme-doc-sidebar-item-link,
 .theme-doc-sidebar-item-link-level-1,
 .theme-doc-sidebar-item-category > div {
-  border-radius: var(--ifm-global-radius);
+  border-radius: var(--cr-radius);
   margin-top: 0 !important;
-  padding: 2px 8px 2px 0px;
+  padding: 1px 8px 1px 0;
   font-size: 14px;
+  align-items: center;
+}
+
+.menu__link {
+  color: var(--cr-text);
 }
 
 .theme-doc-sidebar-item-link > .menu__link--active,
 .theme-doc-sidebar-item-category > .menu__list-item-collapsible--active {
-  color: var(--ifm-color-primary-lighter);
+  color: var(--cr-accent);
   background: var(--ifm-menu-color-background-active);
+  font-weight: 500;
 }
 
 .theme-doc-sidebar-item-link > .menu__link--active:hover,
 .theme-doc-sidebar-item-category > .menu__list-item-collapsible--active:hover {
-  background: var(--psq-menu-color-background-active-hover);
+  background: var(--cr-menu-color-background-active-hover);
 }
 
-.menu__link--active, .menu__link--active:hover {
-  color: var(--ifm-color-primary-lighter);
+.menu__link--active,
+.menu__link--active:hover {
+  color: var(--cr-accent);
 }
 
 .menu__caret:hover {
@@ -42,9 +43,63 @@
 }
 
 .menu__list .menu__list {
-  padding-left: calc(var(--ifm-menu-link-padding-horizontal) * 2.25);
+  border-left: 1px solid var(--cr-border);
+  margin-left: 18px;
+  padding-left: 8px;
 }
 
-.theme-doc-sidebar-item-link, .theme-doc-sidebar-item-link-level-1, .theme-doc-sidebar-item-category > div {
-  align-items: center;
+.menu__list-item.api-method > .menu__link {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+
+  &::before {
+    flex: none;
+    box-sizing: border-box;
+    width: 44px;
+    padding: 1px 0;
+    border-radius: 4px;
+    background: var(--cr-method-color);
+    color: var(--cr-on-brand);
+    font-family: var(--ifm-font-family-monospace);
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+    text-align: center;
+  }
+}
+
+.menu__list-item.api-method {
+  &.get {
+    --cr-method-color: var(--cr-method-get);
+
+    > .menu__link::before {
+      content: "GET";
+    }
+  }
+
+  &.post {
+    --cr-method-color: var(--cr-method-post);
+
+    > .menu__link::before {
+      content: "POST";
+    }
+  }
+
+  &.put {
+    --cr-method-color: var(--cr-method-put);
+
+    > .menu__link::before {
+      content: "PUT";
+    }
+  }
+
+  &.delete {
+    --cr-method-color: var(--cr-method-delete);
+
+    > .menu__link::before {
+      content: "DELETE";
+    }
+  }
 }

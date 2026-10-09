@@ -16,11 +16,9 @@ import { SDK } from "@site/src/components/types";
 
 <GithubCard heading="JavaScript Elements SDK" icon={SDK.JAVASCRIPT} organization="publicsquare-financial" repository="publicsquare-elements" />
 
-###
-
 The PublicSquare JavaScript SDK makes it easy to build secure web applications that collect cardholder data using Elements.
 
-Get started with our [guide](/guides/payment-methods/collect-cards).
+Get started with our [guide](/guides/payments/elements/accept-card-payments).
 
 ## Before You Begin
 
@@ -28,7 +26,7 @@ This SDK requires the use of a Publishable API Key. [Go to your Developers secti
 
 ## Installation
 
-<Tabs className="publicsquare-tabs">
+<Tabs className="publicsquare-tabs" groupId="package-manager">
   <TabItem value="npm" label="npm">
 ```shell showLineNumbers
 npm install --save @publicsquare/elements-js
@@ -38,6 +36,18 @@ npm install --save @publicsquare/elements-js
   <TabItem value="yarn" label="yarn">
 ```shell showLineNumbers
 yarn add @publicsquare/elements-js
+```
+  </TabItem>
+
+  <TabItem value="pnpm" label="pnpm">
+```shell showLineNumbers
+pnpm add @publicsquare/elements-js
+```
+  </TabItem>
+
+  <TabItem value="bun" label="bun">
+```shell showLineNumbers
+bun add @publicsquare/elements-js
 ```
   </TabItem>
 </Tabs>

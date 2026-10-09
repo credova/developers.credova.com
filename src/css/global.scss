@@ -1,38 +1,105 @@
+html {
+  background-color: var(--cr-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-style: var(--cr-heading-font-style);
+  letter-spacing: var(--cr-heading-letter-spacing);
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  &[id] {
+    scroll-margin-top: calc(var(--ifm-navbar-height) + 16px);
+  }
+}
+
+a,
+button,
+[role="tab"] {
+  touch-action: manipulation;
+}
+
+.theme-doc-markdown :is(p, li, td, dd) a:not(.hash-link):not([class*="button"]),
+[class*="contentText"] a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+
+  &:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
 h1 {
-  font-size: 48px;
-  font-style: var(--psq-heading-font-style);
-  letter-spacing: var(--psq-heading-letter-spacing);
+  font-size: 40px;
 }
 
 h2 {
-  font-size: 32px;
-  font-style: var(--psq-heading-font-style);
-  letter-spacing: var(--psq-heading-letter-spacing);
+  font-size: 28px;
+  margin-top: 48px;
 }
 
 h3 {
   display: flex;
-  font-size: 24px;
-  font-style: var(--psq-heading-font-style);
-  letter-spacing: var(--psq-heading-letter-spacing);
+  font-size: 21px;
+  margin-top: 32px;
+}
+
+h4 {
+  font-size: 17px;
+}
+
+.markdown > h2:first-child,
+.markdown > header + h2 {
+  margin-top: 0;
 }
 
 p {
-  line-height: 160%;
-  letter-spacing: -0.1px;
+  letter-spacing: 0;
 }
 
 code {
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  color: var(--ifm-font-color-base);
-  font-weight: 500 !important;
-  font-size: 14px !important;
+  border: 1px solid var(--cr-border);
+  background-color: var(--cr-surface);
+  color: var(--cr-heading);
+  font-weight: 400;
+}
+
+a code {
+  color: inherit;
+}
+
+table {
+  font-size: 15px;
 }
 
 table th {
-  border-bottom: 0px;
-  font-size: 18px;
-  padding: 8px;
+  border-bottom: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cr-heading);
+  text-align: left;
+  padding: 8px 12px;
+}
+
+table td {
+  padding: 8px 12px;
 }
 
 table thead tr {
@@ -41,4 +108,17 @@ table thead tr {
 
 .docusaurus-mermaid-container {
   text-align: center;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cr-accent);
+  outline-offset: 2px;
+}
+
+hr {
+  color: var(--cr-border);
+}
+
+.navbar-sidebar__backdrop {
+  background-color: color-mix(in srgb, var(--cr-bg) 70%, transparent);
 }

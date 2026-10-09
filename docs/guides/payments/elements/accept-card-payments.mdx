@@ -1,23 +1,267 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
 import { Alert } from "@site/src/components/shared/Alert";
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
+import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
 
-# Process Card Payments
+# Accept Card Payments
 
-You can process card payments using either Payment Intents or the direct Payments API. Both approaches result in a `Payment` object. Payment Intents are recommended for new integrations — they provide a durable, stateful lifecycle with built-in support for async outcomes and safe retries.
+In this guide, we will set up Credova Elements SDKs to capture cards in a frontend application and securely store the cardholder data while avoiding PCI requirements. Then we will use the stored card to create a payment from your server.
 
-Now that you have completed the [Collect Cards](/guides/payment-methods/collect-cards) guide, let's process a card payment.
+<Alert>PCI-certified merchants that send cards from their servers should see [Save Cards](/guides/payments/direct-api/save-cards) and [Create a Payment with Card Details](/guides/payments/direct-api/payment-with-card-details).</Alert>
 
-## Getting Started
+## Before you start
 
-<GettingStartedSection />
+<BeforeYouStart keys={["publishable", "secret"]} />
 
-### Get your Secret Key
+## Configuring Credova Elements
 
-Next you will need your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Secret Key` and copy the value.
+<ConfigureElementsSection />
 
-<Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
+## Adding Card Elements
 
-## Payment Intents
+Once installed and configured, add the Card Elements to your application.
+
+<Tabs className="publicsquare-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+    ```html showLineNumbers title="index.html"
+    <input
+      type="text"
+      id="cardholderName"
+      placeholder="Cardholder name"
+      style={{ display: 'flex', width: '100%' }}
+    />
+
+    <div id="cardNumber"></div>
+
+    <div style="display: flex;">
+      <div id="cardExpirationDate" style="width: 100%;"></div>
+      <div id="cardVerificationCode" style="width: 100%;"></div>
+    </div>
+    ```
+
+    ```javascript showLineNumbers title="index.js"
+    import { PublicSquare } from '@publicsquare/elements-js';
+
+    let publicsquare;
+    let cardNumberElement;
+    let cardExpirationDateElement;
+    let cardVerificationCodeElement;
+
+    async function init() {
+      publicsquare = await new PublicSquare().init('<PUBLISHABLE_API_KEY>');
+
+      //highlight-start
+      // Creates Elements instances
+      cardNumberElement = publicsquare.createCardNumberElement();
+      cardNumberElement.mount('#cardNumber');
+
+      cardExpirationDateElement = publicsquare.createCardExpirationDateElement();
+      cardExpirationDateElement.mount('#cardExpirationDate');
+
+      cardVerificationCodeElement = publicsquare.createCardVerificationCodeElement();
+      cardVerificationCodeElement.mount('#cardVerificationCode');
+      //highlight-end
+    }
+
+    init();
+    ```
+  </TabItem>
+
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title="App.jsx"
+import React, { useRef, useState } from 'react';
+import {
+  PublicSquareProvider,
+  // highlight-start
+  CardNumberElement,
+  CardExpirationDateElement,
+  CardVerificationCodeElement,
+  //highlight-end
+  usePublicSquare,
+} from '@publicsquare/elements-react';
+
+export default function App() {
+  const { publicsquare } = usePublicSquare();
+  // highlight-start
+  // Refs to get access to the Elements instance
+  const cardholderNameRef = useRef(null);
+  const cardNumberRef = useRef(null);
+  const cardExpirationRef = useRef(null);
+  const cardVerificationRef = useRef(null);
+  // highlight-end
+
+  return (
+    <PublicSquareProvider apiKey={apiKey}>
+      <input
+        type="text"
+        id="cardholderName"
+        placeholder="Cardholder name"
+        ref={cardholderNameRef}
+        style={{ display: 'flex', width: '100%' }}
+      />
+
+      // highlight-start
+      <CardNumberElement
+        id="cardNumber"
+        ref={cardNumberRef}
+      />
+      // highlight-end
+      <div style={{ display: 'flex' }}>
+        <div style={{ width: '100%' }}>
+          // highlight-start
+          <CardExpirationDateElement
+            id="cardExpirationDate"
+            ref={cardExpirationRef}
+          />
+          // highlight-end
+        </div>
+        <div style={{ width: '100%' }}>
+          // highlight-start
+          <CardVerificationCodeElement
+            id="cardVerificationCode"
+            ref={cardVerificationRef}
+            cardBrand={cardBrand}
+          />
+          // highlight-end
+        </div>
+      </div>
+    </PublicSquareProvider>
+  );
+}
+```
+  </TabItem>
+</Tabs>
+
+
+## Storing Cards
+
+Now that you are capturing cardholder data in your web application, it is time to store the card in your account.
+
+To do this, we will call the `create card` method from the SDK, passing the Card Elements as data points in the payload.
+
+Add a submit function along with a button to trigger it:
+
+<Tabs className="publicsquare-tabs" queryString="sdk">
+  <TabItem value="javascript" label="JavaScript">
+
+```html showLineNumbers title="index.html"
+<!-- Form from above -->
+// highlight-next-line
+<button id="submit">Submit</button>
+```
+
+```javascript showLineNumbers title="index.js"
+async function init () {
+  ...
+  //highlight-next-line
+  document.getElementById("submit").addEventListener("click", submit);
+}
+
+// highlight-start
+async function submit (e: FormEvent<HTMLFormElement>,) {
+  try {
+    const formData = new FormData(e.currentTarget)
+
+    const card = await publicsquare.cards.create({
+      cardholder_name: formData.cardholderName,
+      card: {
+        number: cardNumberElement,
+        expirationMonth: cardExpirationDateElement.month(),
+        expirationYear: cardExpirationDateElement.year(),
+        cvc: cardVerificationCodeElement,
+      }
+    });
+    // store card.id in your database
+  } catch (error) {
+    console.error(error);
+  }
+}
+// highlight-end
+
+init();
+```
+  </TabItem>
+  <TabItem value="react" label="React">
+
+```jsx showLineNumbers title="App.jsx"
+export default function App() {
+  // highlight-start
+  const submit = async () => {
+    try {
+      const card = await publicsquare.cards.create({
+        // This can be any string text from the dom
+        cardholder_name: cardholderNameRef.current.el.value,
+        card: {
+          // cardNumberRef.current is the CardNumberElement instance that will be decrypted within the secure
+          // iFrame on the DOM so that the client never sees the card information.
+          number: cardNumberRef.current,
+          expirationMonth: cardExpirationRef.current.month(),
+          expirationYear: cardExpirationRef.current.year(),
+          cvc: cardVerificationRef.current,
+        }
+      });
+      // store card.id in your database
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  // highlight-end
+
+  return (
+    <PublicSquareProvider apiKey={apiKey}>
+      ...
+      // highlight-next-line
+      <button onClick={submit}>Submit</button>
+    </PublicSquareProvider>
+  );
+}
+```
+  </TabItem>
+  <TabItem value="shell" label="cURL">
+
+To save a card from your servers, follow [Save Cards](/guides/payments/direct-api/save-cards). It posts the card to `https://collect.publicsquare.com` with your `Publishable Key` and needs a PCI-certified organization. To save a card without a CVC, see [Saving a card without a CVC](/guides/payments/direct-api/save-cards#saving-a-card-without-a-cvc).
+
+  </TabItem>
+</Tabs>
+
+The created `card` object contains the non-sensitive information about the card, including the `bin`:
+
+```json showLineNumbers title="card.json"
+{
+  "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  "cardholder_name": "John Smith",
+  "last4": "4242",
+  "bin": "424242",
+  "exp_month": "12",
+  "exp_year": "2030",
+  "brand": "visa",
+  "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL",
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z"
+}
+```
+
+<Alert>Displaying the card's first 6 digits (`bin`) alongside the last 4 (`last4`) is PCI compliant per PCI DSS Requirement 3.3.</Alert>
+
+You can safely store the card's `id` value in your database to link it with the appropriate payment or customer association.
+
+To charge a stored card later without the customer present, see [Card on File and Recurring Payments](/guides/payments/card-on-file-and-recurring-payments).
+
+You can optionally pass in a `customer_id` to associate with an existing [Created Customer](/api/accounts/create-customer) and `billing_details` to remove the requirement to pass them when [Creating a Payment](/api/financial/create-payment).
+
+## Creating a Payment
+
+Now that you have a card, create the payment from your server using your `Secret Key`.
+
+You can create card payments using either Payment Intents or the direct Payments API. Both approaches result in a `Payment` object. We recommend Payment Intents for new integrations. They keep state across the whole lifecycle, report slow outcomes by webhook and retry safely.
+
+<Tabs className="publicsquare-tabs" groupId="api-style" queryString="api">
+  <TabItem value="payment-intents" label="Payment Intents" default>
 
 A Payment Intent represents your intent to collect funds from a customer. It tracks the full lifecycle of a charge — creation, confirmation, processing, and the final `succeeded` state — and creates a `Payment` record on success.
 
@@ -229,32 +473,14 @@ If the card is hard-declined, the intent returns to `requires_confirmation` and 
 }
 ```
 
-## Legacy
+  </TabItem>
+  <TabItem value="legacy" label="Legacy">
 
 The direct Payments API provides a synchronous, single-request charge. The response contains the final payment result.
 
-For example, given you have a previously collected card:
+<h3 id="create-a-payment">Create a Payment</h3>
 
-```json showLineNumbers title="card.json"
-{
-  // highlight-next-line
-  "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
-  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
-  "environment": "test",
-  "cardholder_name": "John Smith",
-  "last4": "4242",
-  "bin": "424242",
-  "exp_month": "12",
-  "exp_year": "2025",
-  "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL",
-  "created_at": "2024-06-30T01:02:29.212Z",
-  "modified_at": "2024-06-30T01:02:29.212Z"
-}
-```
-
-### Create a Payment
-
-We need to make a call to [Create Payment](/api/financial/create-payment) endpoint:
+Use the `id` of the card you collected above. Make a call to the [Create Payment](/api/financial/create-payment) endpoint:
 
 ```shell showLineNumbers title="Create a Payment"
 curl 'https://api.publicsquare.com/payments' \
@@ -283,11 +509,11 @@ curl 'https://api.publicsquare.com/payments' \
 }'
 ```
 
-<Alert>The amount is provided in cents. 1000 is the equivalent of $10.00</Alert>
+The amount is in cents. `1000` is $10.00.
 
 <Alert type="warning">The IDEMPOTENCY-KEY header can be passed to protect against duplicate payments being processed.</Alert>
 
-### Payment Response
+<h3 id="payment-response">Payment Response</h3>
 
 Given the above example, you should see a payment result similar to:
 
@@ -353,9 +579,12 @@ Given the above example, you should see a payment result similar to:
 }
 ```
 
+  </TabItem>
+</Tabs>
+
 ## Conclusion
 
-Now that we have seen how to process payments with a collected card, we may need to manage the payment or view information about the payment.
+Following this guide, you have collected a customer's card and created a payment with it. Now we may need to manage the payment or view information about it.
 Follow these guides to learn more:
 
 - [Authorize and Capture Payments](/guides/payments/authorize-and-capture-payments)

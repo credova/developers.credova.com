@@ -23,46 +23,54 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: "category",
-      label: "Payment Methods",
-      customProps: {
-        icon: "/img/icons/payment-methods.svg",
-      },
-      items: [
-        "guides/payment-methods/collect-cards",
-        "guides/payment-methods/recollect-cvc",
-        "guides/payment-methods/collect-apple-pay",
-        "guides/payment-methods/collect-google-pay",
-        "guides/payment-methods/collect-bank-accounts",
-        "guides/payment-methods/collect-verified-bank-accounts"
-      ],
-    },
-    {
-      type: "category",
       label: "Payments",
+      collapsed: false,
       customProps: {
         icon: "/img/icons/credit-card.svg",
       },
       items: [
-        "guides/payments/process-card-payments",
-        "guides/payments/process-inline-card-payments",
-        "guides/payments/process-apple-pay-payments",
-        "guides/payments/process-google-pay-payments",
-        "guides/payments/process-3ds-iframe-payments",
-        "guides/payments/process-3ds-redirect-payments",
-        "guides/payments/authorize-and-capture-payments",
-        "guides/payments/verify-cards",
-        "guides/payments/card-on-file-and-recurring-payments",
-        "guides/payments/process-ach-payments",
-        "guides/payments/cancel-payments"
+        {
+          type: "category",
+          label: "Credova Elements",
+          items: [
+            "guides/payments/elements/accept-card-payments",
+            "guides/payments/elements/accept-bank-account-payments",
+            "guides/payments/elements/accept-apple-pay",
+            "guides/payments/elements/accept-google-pay",
+            "guides/payments/process-3ds-iframe-payments",
+            "guides/payments/process-3ds-redirect-payments",
+            "guides/payment-methods/recollect-cvc"
+          ],
+        },
+        {
+          type: "category",
+          label: "Direct API",
+          items: [
+            "guides/payments/direct-api/payment-with-card-details",
+            "guides/payments/direct-api/save-cards",
+            "guides/payments/direct-api/save-bank-accounts",
+          ],
+        },
+        {type: "link", label: "eCommerce Plugins", href: "/plugins"},
+        {
+          type: "category",
+          label: "Payment Options",
+          items: [
+            "guides/payments/authorize-and-capture-payments",
+            "guides/payments/verify-cards",
+            "guides/payments/card-on-file-and-recurring-payments",
+          ],
+        },
+        {
+          type: "category",
+          label: "After the Payment",
+          items: [
+            "guides/payments/cancel-payments",
+            "guides/refunds/refund-payments",
+            "guides/transactions/search-and-view-transactions"
+          ],
+        },
       ],
-    },
-    {
-      type: "category",
-      label: "Refunds",
-      customProps: {
-        icon: "/img/icons/light-receipt-rotate-left.svg",
-      },
-      items: ["guides/refunds/refund-payments", "guides/refunds/cancel-refunds"],
     },
     {
       type: "category",
@@ -70,15 +78,16 @@ const sidebars: SidebarsConfig = {
       customProps: {
         icon: "/img/icons/money-bill-wave.svg",
       },
-      items: ["guides/payouts/process-card-payouts", "guides/payouts/process-inline-card-payouts", "guides/payouts/process-ach-payouts", "guides/payouts/cancel-payouts"],
-    },
-    {
-      type: "category",
-      label: "Transactions",
-      customProps: {
-        icon: "/img/icons/money-bill-transfer.svg",
-      },
-      items: ["guides/transactions/search-and-view-transactions", "guides/transactions/view-settlements"],
+      items: [
+        "guides/payouts/process-card-payouts",
+        "guides/payouts/process-ach-payouts",
+        "guides/payouts/cancel-payouts",
+        {
+          type: "category",
+          label: "Direct API",
+          items: ["guides/payouts/direct-api/payout-with-card-details"],
+        },
+      ],
     },
     {
       type: "category",
@@ -89,11 +98,12 @@ const sidebars: SidebarsConfig = {
       items: ["guides/marketplaces/onboard-sellers", "guides/marketplaces/transfer-funds-to-sellers", "guides/marketplaces/transfer-funds-from-sellers"],
     },
     {
-      id: "guides/production-checklist/index",
-      type: "doc",
+      type: "category",
+      label: "Go Live",
       customProps: {
         icon: "/img/icons/ballot-check-light.svg",
       },
+      items: ["guides/production-checklist/index", "guides/testing", "support"],
     },
     {
       type: "html",
@@ -122,26 +132,6 @@ const sidebars: SidebarsConfig = {
         "concepts/webhooks",
         "concepts/onboarding"
       ],
-    },
-    {
-      type: "html",
-      value: "<hr />",
-    },
-    {
-      type: "link",
-      label: "API Reference",
-      href: "/api",
-      customProps: {
-        icon: "/img/icons/developers.svg",
-      },
-    },
-    {
-      type: "link",
-      label: "SDKs",
-      href: "/sdks",
-      customProps: {
-        icon: "/img/icons/cube.svg",
-      },
     },
   ],
   api: [
@@ -178,10 +168,6 @@ const sidebars: SidebarsConfig = {
       type: "doc",
     },
     {
-      id: "api/testing",
-      type: "doc",
-    },
-    {
       type: "category",
       label: "Accounts",
       link: {
@@ -199,26 +185,6 @@ const sidebars: SidebarsConfig = {
       },
       items: financialApiSidebar,
     },
-    {
-      type: "html",
-      value: "<hr />",
-    },
-    {
-      type: "link",
-      label: "Guides",
-      href: "/guides",
-      customProps: {
-        icon: "/img/icons/book.svg",
-      },
-    },
-    {
-      type: "link",
-      label: "SDKs",
-      href: "/sdks",
-      customProps: {
-        icon: "/img/icons/cube.svg",
-      },
-    },
   ],
   sdk: [
     "sdks/index",
@@ -235,6 +201,11 @@ const sidebars: SidebarsConfig = {
           id: "sdks/web/react/index",
           type: "doc",
           label: "React Elements",
+        },
+        {
+          id: "sdks/web/changelog",
+          type: "doc",
+          label: "Changelog",
         },
       ],
     },
@@ -259,26 +230,6 @@ const sidebars: SidebarsConfig = {
           type: "doc",
         },
       ],
-    },
-    {
-      type: "html",
-      value: "<hr />",
-    },
-    {
-      type: "link",
-      label: "Guides",
-      href: "/guides",
-      customProps: {
-        icon: "/img/icons/book.svg",
-      },
-    },
-    {
-      type: "link",
-      label: "API Reference",
-      href: "/api",
-      customProps: {
-        icon: "/img/icons/developers.svg",
-      },
     },
   ],
 };

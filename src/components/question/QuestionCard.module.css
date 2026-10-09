@@ -32,7 +32,7 @@
   font-style: normal;
   font-weight: 500;
   padding: 0;
-  color: var(--ifm-font-color-secondary);
+  color: var(--cr-heading);
   > p {
     margin: 0;
     padding: 0;
@@ -42,7 +42,7 @@
 
 .content {
   grid-area: content;
-  color: var(--ifm-font-color-secondary);
+  color: var(--cr-text);
 }
 
 .button-group {
@@ -51,10 +51,6 @@
   justify-self: end;
 }
 
-[data-theme="dark"] .card {
-  border: 1px solid var(--Neutral-400, #515151);
-  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.20);
-}
 
 @media only screen and (max-width: 800px) {
   .grid {

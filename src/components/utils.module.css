@@ -1,18 +1,10 @@
-:root {
-  --sdk-logo-background-color: #fff;
-}
-
-[data-theme="dark"] {
-  --sdk-logo-background-color: var(--psq-sidebar-background-color);
-}
-
 .round-border {
-  border: 1px solid var(--psq-default-border-color);
-  border-radius: 50%;
-  width: 74px;
-  height: 74px;
-  padding: 5px;
-  background: var(--sdk-logo-background-color);
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius);
+  width: 56px;
+  height: 56px;
+  padding: 10px;
+  background: var(--cr-surface);
 }
 .round-border svg {
   width: 100%;
@@ -25,11 +17,12 @@
 }
 
 .plugin-platform-icon svg {
-  border: 1px solid var(--psq-default-border-color);
-  border-radius: 50%;
-  width: 74px;
-  height: 74px;
-  padding: 5px;
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius);
+  width: 56px;
+  height: 56px;
+  padding: 10px;
+  background: var(--cr-surface);
 }
 
 .repository {

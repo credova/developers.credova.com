@@ -1,0 +1,80 @@
+import { Alert } from "@site/src/components/shared/Alert";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
+
+# Save Bank Accounts
+
+Send a bank account from your servers to save it to your account. The response is a `bank_account` object that you can use for payments and payouts.
+
+<Alert type="warning">Your servers receive and send bank account numbers in this flow. To keep them off your servers, use [Accept Bank Account Payments](/guides/payments/elements/accept-bank-account-payments).</Alert>
+
+## Before you start
+
+<BeforeYouStart keys={["secret"]}>
+A restricted key needs the `payment-method:write` or `payment-method:capture` permission.
+</BeforeYouStart>
+
+Your account also needs the `payment-methods:bank-accounts:manual-creation` account setting. See [Request Account Setting Access](/guides/payments/elements/accept-bank-account-payments#request-account-setting-access).
+
+## Save a Bank Account
+
+Send the bank account in a `POST` request to [Create Bank Account](/api/financial/create-bank-account):
+
+```shell showLineNumbers title="Save a Bank Account"
+curl 'https://api.publicsquare.com/payment-methods/bank-accounts' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'Content-Type: application/json' \
+-d '{
+  "account_holder_name": "John Doe",
+  "account_holder_type": "individual",
+  "account_type": "checking",
+  "routing_number": "110000000",
+  "account_number": "000123456789",
+  "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+}'
+```
+
+The request body accepts these fields:
+
+| Field | Description |
+|-------|-------------|
+| `account_holder_name` | Name on the bank account. |
+| `account_holder_type` | `individual` or `company`. |
+| `account_type` | `checking` or `savings`. |
+| `routing_number` | Routing number. |
+| `account_number` | Account number. |
+| `customer_id` | ID of an existing customer to associate with the bank account. |
+| `billing_details` | Billing address for the bank account. |
+
+Send `account_holder_name` and `account_holder_type`. Some processors require them.
+
+## Bank Account Response
+
+The created `bank_account` object contains the non-sensitive information about the bank account:
+
+```json showLineNumbers title="bank-account.json"
+{
+  "id": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "production",
+  "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z",
+  "account_holder_name": "John Doe",
+  "account_holder_type": "individual",
+  "account_type": "checking",
+  "routing_number": "110000000",
+  "account_number_last4": "6789"
+}
+```
+
+Store the bank account's `id` in your database to use it in later payments and payouts.
+
+You do not have to save the bank account first. You can also [send the bank account details with the payment](/guides/payments/elements/accept-bank-account-payments#create-with-bank-account-details).
+
+## Conclusion
+
+You have saved a bank account. To use it, follow these guides:
+
+- [Accept Bank Account Payments](/guides/payments/elements/accept-bank-account-payments#process-the-payment)
+- [Send Bank Account Payouts](/guides/payouts/process-ach-payouts)

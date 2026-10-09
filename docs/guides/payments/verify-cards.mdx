@@ -1,5 +1,5 @@
 import { Alert } from "@site/src/components/shared/Alert";
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
 # Verify Cards (Zero-Dollar Authorization)
 
@@ -11,23 +11,19 @@ Common use cases include:
 - **Pre-order validation** - Confirm card validity without immediate payment
 - **Card-on-file updates** - Verify a new card before replacing an existing one
 
-Now that you have completed the [Collect Cards](/guides/payment-methods/collect-cards) guide, let's verify a card with a zero-dollar authorization.
+This guide verifies a card with a zero-dollar authorization.
 
-## Getting Started
+You need a saved card for this guide. Save one from your web app with [Accept Card Payments](/guides/payments/elements/accept-card-payments), or from your servers with [Save Cards](/guides/payments/direct-api/save-cards). Either way you get a card `id` that starts with `card_`.
 
-<GettingStartedSection />
+## Before you start
 
-### Get your Secret Key
-
-Next you will need your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Secret Key` and copy the value.
-
-<Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
+<BeforeYouStart keys={["secret"]} />
 
 ## Create a Verification Payment
 
-We will use the information from the previously collected card to create a verification payment.
+We will use a saved card to create a verification payment.
 
-For example, given you have a previously collected card:
+For example, given this saved card:
 
 ```json showLineNumbers title=card.json
 {
@@ -215,7 +211,7 @@ You should see a payment response with a `succeeded` status:
 }
 ```
 
-<Alert>Unlike standard authorizations that require capture, verification payments return a `succeeded` status immediately since there is no amount to capture.</Alert>
+Standard authorizations need a capture. Verification payments do not, because there is no amount to capture. They return a `succeeded` status immediately.
 
 ## Read the Verification Result
 
@@ -374,6 +370,6 @@ Zero-dollar authorizations provide a secure way to validate payment cards withou
 
 Follow these guides to learn more:
 
-- [Process Card Payments](/guides/payments/process-card-payments) - Charge verified cards
+- [Accept Card Payments](/guides/payments/elements/accept-card-payments) - Charge verified cards
 - [Authorize and Capture Payments](/guides/payments/authorize-and-capture-payments) - Pre-authorize payments
 - [Search and View Transactions](/guides/transactions/search-and-view-transactions) - Monitor verification transactions

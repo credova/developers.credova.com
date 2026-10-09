@@ -1,19 +1,13 @@
 import { Alert } from "@site/src/components/shared/Alert";
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
 # Refund Payments
 
-After completing the [Process Payments](/guides/payments/process-card-payments) guide, you may need to issue a full or partial refund to the customer.
+To issue a full or partial refund, you need the `id` of a succeeded payment. Create one with [Accept Card Payments](/guides/payments/elements/accept-card-payments) or [Create a Payment with Card Details](/guides/payments/direct-api/payment-with-card-details). You can also cancel a refund before it is settled.
 
-## Getting Started
+## Before you start
 
-<GettingStartedSection />
-
-### Get your Secret Key
-
-Next you will need your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Secret Key` and copy the value.
-
-<Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
+<BeforeYouStart keys={["secret"]} />
 
 ## Issue a Refund
 
@@ -235,8 +229,83 @@ curl 'https://api.publicsquare.com/refunds' \
 
 The refund amount is validated against that capture's settled amount minus any prior refunds against it, rather than against the payment's total.
 
+## Cancel a Refund
+
+There may be scenarios in which you need to cancel a refund, such as a refund issued in error or a customer decides to keep a product or service.
+
+Credova API offers the ability to cancel a refund before it is settled.
+
+### Cancel the Refund
+
+In order to cancel a refund, we will need the ID of a refund. Assuming you have a refund similar to:
+
+```json showLineNumbers title="Refund"
+{
+  // highlight-next-line
+  "id": "rfd_2YKewBonG4tgk12MheY3PiHDy",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  "status": "succeeded",
+  ...
+}
+```
+
+We need to make a call to [Cancel Refund](/api/financial/cancels-a-refund) endpoint:
+
+```shell showLineNumbers title="Cancel a Refund"
+curl 'https://api.publicsquare.com/refunds/cancel' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'Content-Type: application/json' \
+-d '{
+  "refund_id": "rfd_2YKewBonG4tgk12MheY3PiHDy"
+}'
+```
+
+### Cancelled Refund Response
+
+Given the above examples, you should see a cancelled refund result similar to:
+
+```json showLineNumbers
+{
+  "id": "rfd_2YKewBonG4tgk12MheY3PiHDy",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+   // highlight-next-line
+  "status": "cancelled",
+  "transaction_id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
+  "amount": 1000,
+  ...
+  "transaction": {
+    "id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
+    "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+    "environment": "test",
+    // highlight-next-line
+    "status": "cancelled",
+    "amount": -1000,
+    "fee_amount": 0,
+    "net_amount": -1000,
+    ...
+  },
+  ...
+}
+```
+
+### Handling Cancellation Failures
+
+If a refund cannot be cancelled because the refund has already been settled, an error response will be returned:
+
+```shell showLineNumbers
+{
+  "title": "Error",
+  "status": 400,
+  "detail": "refund cancellation failed."
+}
+```
+
 ## Conclusion
 
-This guide showed you how to issue a refund for a payment.
+This guide showed you how to issue a refund for a payment and how to cancel a refund before it is settled.
 You can issue multiple refunds towards the original payment as long as the total refunded amount does not exceed the original payment amount.
+To learn more, see [Search and View Transactions](/guides/transactions/search-and-view-transactions).
 

@@ -2,9 +2,9 @@
   margin-left: 0.5rem;
   width: 22px;
   height: 22px;
-  filter: var(--psq-sidebar-icon-color);
+  filter: var(--cr-sidebar-icon-color);
 }
 
 .active {
-  filter: var(--psq-sidebar-icon-active-color) !important;
+  filter: var(--cr-sidebar-icon-active-color) !important;
 }

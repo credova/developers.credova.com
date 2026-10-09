@@ -1,19 +1,13 @@
 import { Alert } from "@site/src/components/shared/Alert";
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
 # Transfer Funds from Sellers
 
 After refunding a customer, you may need to retrieve funds from a seller back into your account using a refund transfer. Each refund may have exactly **one** refund transfer, whose total amount cannot exceed the refund amount.
 
-## Getting Started
+## Before you start
 
-<GettingStartedSection />
-
-### Get your Secret Key
-
-Next you will need your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Secret Key` and copy the value.
-
-<Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
+<BeforeYouStart keys={["secret"]} />
 
 ## Prerequisites
 
@@ -119,7 +113,7 @@ You should see a refund transfer result similar to:
 }
 ```
 
-<Alert>For each `item` in the refund transfer, a refund transaction will be created in the seller's account.</Alert>
+Credova creates a refund transaction in the seller's account for each `item` in the refund transfer.
 
 ## Conclusion
 

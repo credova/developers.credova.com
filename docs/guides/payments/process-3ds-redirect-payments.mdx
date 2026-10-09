@@ -1,5 +1,5 @@
 import { Alert } from "@site/src/components/shared/Alert";
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
 # Process 3DS Payments (Redirect)
 
@@ -7,27 +7,25 @@ This guide walks through authenticating a card payment with 3D Secure using the 
 
 The redirect transport requires **no JavaScript SDK** on your checkout page, which makes it a good fit for native mobile webviews and server-rendered checkouts.
 
-## Getting Started
+## Before you start
 
-<GettingStartedSection />
-
-### Get your Secret Key
-
-Your backend will need your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys), click `Reveal` for your `Secret Key`, and copy the value.
-
-<Alert>Save the Secret Key — it is used for the `confirm` and `complete` calls below.</Alert>
+<BeforeYouStart keys={["secret"]} />
 
 ## Prerequisites
 
 This guide assumes you have:
 
-- A collected card. Follow [Collect Cards](/guides/payment-methods/collect-cards) to obtain a `card_…` payment method.
-- 3DS enabled on your account. 3DS is off by default — contact Credova to enable it.
+- A saved card. Save one with [Accept Card Payments](/guides/payments/elements/accept-card-payments) from your web app or [Save Cards](/guides/payments/direct-api/save-cards) from your servers to get a `card_…` payment method.
+- 3DS enabled on your account. 3DS is off by default — [contact support](/support) to enable it.
 - Two callback routes you control — a success URL and a failure URL — that Basis Theory will return the cardholder to after the challenge.
 
 <Alert type="warning">Basis Theory strips query strings when it returns the cardholder. Carry any state you need (such as the payment intent id) in the URL **path**, not the query string — e.g. `https://merchant.example.com/3ds/success/pi_2YKewBonG4tgk12MheY3PiHDy`.</Alert>
 
-## Step 1 — Confirm the Payment Intent
+## Process a 3DS Payment
+
+Complete these in order.
+
+### Confirm the Payment Intent
 
 From your backend, call [Confirm Payment Intent](/api/financial/confirm-payment-intent) with the `three_d_secure` block set to the `redirect` transport and your callback URLs. The session is created server-side, so no `session_id` is supplied here.
 
@@ -77,7 +75,7 @@ The response is a `PaymentIntent`. There are two outcomes:
 }
 ```
 
-## Step 2 — Redirect the cardholder
+### Redirect the Cardholder
 
 When the intent is `requires_action`, navigate the browser to `next_action.three_d_secure.redirect_url`. The hosted page handles the challenge and then returns the cardholder to your `success_url` or `failure_url`.
 
@@ -85,7 +83,7 @@ When the intent is `requires_action`, navigate the browser to `next_action.three
 window.location.href = nextAction.redirect_url;
 ```
 
-## Step 3 — Handle the callback and complete
+### Handle the Callback and Complete
 
 When the cardholder lands on your callback route, read the session id (from your stored state or the path) and call [Complete Payment Intent 3DS Challenge](/api/financial/complete-payment-intent-3-ds-challenge) from your backend. Credova retrieves the authentication result and submits the payment to the processor.
 
@@ -102,7 +100,7 @@ curl 'https://api.publicsquare.com/payment-intents/pi_2YKewBonG4tgk12MheY3PiHDy/
 }'
 ```
 
-<Alert>If you didn't capture the `session_id` from the confirm response, retrieve it from the intent's `next_action.three_d_secure.session_id` via [Get Payment Intent by ID](/api/financial/get-payment-intent-by-id) before calling `complete`.</Alert>
+If you did not save the `session_id` from the confirm response, get it from `next_action.three_d_secure.session_id` on the intent. Use [Get Payment Intent by ID](/api/financial/get-payment-intent-by-id). Do this before you call `complete`.
 
 The response is the final `PaymentIntent`, `succeeded` when authentication and authorization both pass, or `failed` with a `last_payment_error` otherwise.
 
@@ -117,7 +115,7 @@ The response is the final `PaymentIntent`, `succeeded` when authentication and a
 
 ## Testing
 
-Use the test cards in [3D Secure → Testing](/concepts/3d-secure#testing) to exercise frictionless, challenge, and failure scenarios in the `test` environment.
+Use the [3D Secure test cards](/guides/testing#3d-secure) to exercise frictionless, challenge, and failure scenarios in the `test` environment.
 
 ## Conclusion
 

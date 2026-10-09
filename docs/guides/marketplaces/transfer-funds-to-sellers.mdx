@@ -1,5 +1,5 @@
 import { Alert } from "@site/src/components/shared/Alert";
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
 # Transfer Funds to Sellers
 
@@ -7,21 +7,15 @@ In this guide we will show how marketplaces and other exchanges can use Payment 
 
 The intent pattern gives you a pre-generated transfer ID before any funds move, and lets you confirm or cancel the transfer as a separate step. See [Payment Transfer Intents](/concepts/payment-transfer-intents) for a full explanation of states, concurrency rules, and webhook events.
 
-## Getting Started
+## Before you start
 
-<GettingStartedSection />
-
-### Get your Secret Key
-
-Next you will need your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Secret Key` and copy the value.
-
-<Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
+<BeforeYouStart keys={["secret"]} />
 
 ## Prerequisites
 
 This guide assumes you have already completed:
 
-- [Process Card Payments](/guides/payments/process-card-payments) — you will need a captured payment ID.
+- [Accept Card Payments](/guides/payments/elements/accept-card-payments). You need a captured payment ID.
 - [Onboard Sellers](/guides/marketplaces/onboard-sellers) — you will need one or more seller account IDs.
 
 Grab the payment `id`:
@@ -48,7 +42,11 @@ And your seller account IDs:
 }
 ```
 
-## Step 1 — Create the Intent
+## Make a Transfer
+
+Complete these in order.
+
+### Create the Intent
 
 Call [Create Payment Transfer Intent](/api/financial/create-payment-transfer-intent) to initialize the transfer. The response is returned in `pending` status and includes a pre-generated `payment_transfer_id` you can store in your system before committing.
 
@@ -108,7 +106,7 @@ You should see a response similar to:
 
 Store the `id` (`trnf_int_*`) and optionally the `payment_transfer_id` (`trnf_*`) in your system before proceeding.
 
-## Step 2 — Confirm the Intent
+### Confirm the Intent
 
 Call [Confirm Payment Transfer Intent](/api/financial/confirm-payment-transfer-intent) to submit the transfer. No request body is required.
 
@@ -138,7 +136,7 @@ A successful response returns the intent in `succeeded` status in most cases:
 
 If the transfer is not yet confirmed, the intent returns in `processing` status instead. Final status will arrive via the `transfer_intent:update` webhook.
 
-## Step 3 — Listen for Completion
+### Listen for Completion
 
 Credova sends a `transfer_intent:update` [webhook](/concepts/webhooks) on every status transition. The `entity.status` field in the webhook payload reflects the final state — use it to confirm completion regardless of what the `confirm` response returned.
 

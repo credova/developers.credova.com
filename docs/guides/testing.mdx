@@ -17,6 +17,18 @@ Test payment methods let you simulate several scenarios:
 
 When you're ready to take your integration live, replace your `Test` publishable and secret API keys with `Production` ones. You can't process live payments if your integration is still using your test API keys.
 
+## Test environment
+
+Each account has a `Test` and a `Production` environment. See [Accounts](/concepts/accounts). Test mode uses the same API host as production, and your `Test` API keys select the test environment. Card collection and card details sent with a payment have their own test hostnames:
+
+| Use                                                                                          | Host                                      | Key                    |
+|----------------------------------------------------------------------------------------------|-------------------------------------------|------------------------|
+| API requests                                                                                 | `https://api.publicsquare.com`            | Test `Secret Key`      |
+| [Save a card](/guides/payments/direct-api/save-cards)                                        | `https://collect-test.publicsquare.com`   | Test `Publishable Key` |
+| [Send card details with a payment](/guides/payments/direct-api/payment-with-card-details) or [payout](/guides/payouts/direct-api/payout-with-card-details) | `https://secure.payments.sbx.credova.com` | Test `Secret Key`      |
+
+Elements SDK version 1.16.1 and later work with test keys against a production account. See the [SDK versions](/sdks/web/javascript#version-compatibility).
+
 ## Cards
 
 The following card numbers can be used for testing your integration while in `Test` environment.
@@ -66,6 +78,31 @@ The following card numbers can be used for testing your integration while in `Te
 | Address check fails       | `4000000000000010` | `rejected`     | `reject`       | `N`      | `M`        |
 
 
+### 3D Secure
+
+3DS authentication is triggered by the card number. Use any future expiration date, any CVV and any billing ZIP. See [3D Secure](/concepts/3d-secure) for how authentication works.
+
+| Scenario                   | Card number        | Brand      | Expected result             |
+|----------------------------|--------------------|------------|-----------------------------|
+| Frictionless success       | `5204247750001471` | Mastercard | `succeeded`, no challenge   |
+| Frictionless success       | `340000000004001`  | Amex       | `succeeded`, no challenge   |
+| Challenge success          | `4000020000000000` | Visa       | challenge → `succeeded`     |
+| Challenge success          | `370000000000002`  | Amex       | challenge → `succeeded`     |
+| Mandated challenge         | `4761369980320253` | Visa       | challenge → `succeeded`     |
+| Mandated challenge         | `5200000000001104` | Mastercard | challenge → `succeeded`     |
+| Out-of-band challenge      | `4000000000000341` | Visa       | challenge → `succeeded`     |
+| Authentication attempted   | `4111111111111111` | Visa       | `succeeded` (partial shift) |
+| Authentication attempted   | `5424180011113336` | Mastercard | `succeeded` (partial shift) |
+| Authentication failed      | `4264281511112228` | Visa       | `failed`                    |
+| Authentication failed      | `5424180000000171` | Mastercard | `failed`                    |
+| Authentication unavailable | `5405001111111165` | Mastercard | `failed`                    |
+| Authentication rejected    | `5405001111111116` | Mastercard | `failed`                    |
+| Failed challenge           | `4055011111111111` | Visa       | challenge → `failed`        |
+| Failed challenge           | `5427660064241339` | Mastercard | challenge → `failed`        |
+| Directory server error     | `4264281500003339` | Visa       | `failed` (error surfaced)   |
+| Internal server error      | `4264281500001119` | Visa       | `failed` (error surfaced)   |
+
+
 ## Bank accounts
 
 The following bank accounts can be used for testing your integration while in `Test` environment. The payment/payment status will initially be `pending`. For payments, after a short period of time, the payment status will be updated and
@@ -98,7 +135,7 @@ You can use specific payment amounts to trigger different responses during proce
 
 ## Dispute cases
 
-You can use specific card payment amounts to trigger the generation of dipute cases to simulate chargebacks and inquries from the credit card networks. The test amount will be evaluated **only** for card payments, and generate
+You can use specific card payment amounts to trigger the generation of dispute cases to simulate chargebacks and inquiries from the credit card networks. The test amount will be evaluated **only** for card payments, and generate
 a dispute with the defined status. Adjustments to simulate the flow of back-and-forth of funds during a chargeback process will also be created:
 
 | Amount($) | Status                   | Evidence Submitted | # of Adjustments |

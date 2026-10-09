@@ -9,7 +9,7 @@ Card networks require you to label each of these charges. You do this with the `
 
 This guide covers how to save a card, how to send the first charge, and how to send every charge after it.
 
-Now that you have completed the [Collect Cards](/guides/payment-methods/collect-cards) guide, let's charge a stored card.
+Now that you have completed the [Accept Card Payments](/guides/payments/elements/accept-card-payments) guide, let's charge a stored card.
 
 ## Getting Started
 
@@ -23,7 +23,7 @@ Next you will need your `Secret Key`. [Go to your Developers section](https://po
 
 ## The Flow
 
-1. **Save the card.** Collect the card and store its `id`. See [Collect Cards](/guides/payment-methods/collect-cards#storing-cards).
+1. **Save the card.** Collect the card and store its `id`. See [Accept Card Payments](/guides/payments/elements/accept-card-payments#storing-cards).
 2. **Optional: verify the card.** Run a zero-dollar verification with `verification.type` set to `recurring`. See [Verify Cards](/guides/payments/verify-cards).
 3. **Send the first charge as `initial`.** The customer is present and agrees to store the card for later charges.
 4. **Send later charges as `subsequent` or `unscheduled`.** The customer is not present.
@@ -315,7 +315,7 @@ You can now save a card, send the first charge as `initial`, and charge the card
 
 Follow these guides to learn more:
 
-- [Collect Cards](/guides/payment-methods/collect-cards) - Save a card
+- [Save Cards](/guides/payments/direct-api/save-cards) - Save a card
 - [Verify Cards](/guides/payments/verify-cards) - Run a zero-dollar verification
-- [Process Card Payments](/guides/payments/process-card-payments) - Charge cards
+- [Accept Card Payments](/guides/payments/elements/accept-card-payments) - Charge cards
 - [Refund Payments](/guides/refunds/refund-payments) - Refund a recurring charge

@@ -11,16 +11,15 @@ import TabItem from "@theme/TabItem";
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
 import { GithubCard } from "@site/src/components/sdks/GithubCard";
 import { SDK } from "@site/src/components/types";
+import { LatestVersion } from "@site/src/components/docs/LatestVersion";
 
 # JavaScript Elements SDK
 
 <GithubCard heading="JavaScript Elements SDK" icon={SDK.JAVASCRIPT} organization="credova" repository="elements" />
 
-###
-
 The PublicSquare JavaScript SDK makes it easy to build secure web applications that collect cardholder data using Elements.
 
-Get started with our [guide](/guides/payment-methods/collect-cards).
+Get started with our [guide](/guides/payments/elements/accept-card-payments).
 
 ## Before You Begin
 
@@ -28,7 +27,7 @@ This SDK requires the use of a Publishable API Key. [Go to your Developers secti
 
 ## Installation
 
-<Tabs className="publicsquare-tabs">
+<Tabs className="publicsquare-tabs" groupId="package-manager">
   <TabItem value="npm" label="npm">
 ```shell showLineNumbers
 npm install --save @publicsquare/elements-js
@@ -40,34 +39,36 @@ npm install --save @publicsquare/elements-js
 yarn add @publicsquare/elements-js
 ```
   </TabItem>
+
+  <TabItem value="pnpm" label="pnpm">
+```shell showLineNumbers
+pnpm add @publicsquare/elements-js
+```
+  </TabItem>
+
+  <TabItem value="bun" label="bun">
+```shell showLineNumbers
+bun add @publicsquare/elements-js
+```
+  </TabItem>
 </Tabs>
 
 ## Versions
 
-Recommended version: **1.16.1**.
-
-If you're testing against a production sandbox (test-mode transactions using a production account), you need to be on **1.16.1** specifically — older versions will not work for this scenario.
-
-<Alert type={Alerts.WARNING}>1.16.1 is the current fix, not the start of a version range. There is no confirmed compatibility beyond 1.16.1 yet — this section will be updated as new versions are released, rather than assumed to extend automatically.</Alert>
+Install the latest version unless you need to pin one. The current release is <LatestVersion pkg="@publicsquare/elements-js" />. See the [changelog](/sdks/web/changelog) for release notes.
 
 ### Version compatibility
 
-| Version   | Test mode against staging | Test mode against production                                                                                         |
-| --------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| < 1.16.0  | Works                       | Not supported                                                                                                            |
-| 1.16.0    | Works                       | Works, but requires an additional configuration parameter to route correctly. Not recommended — upgrade to 1.16.1 instead. |
-| 1.16.1    | Works                       | Works automatically, no extra configuration needed                                                                      |
-
-Starting in 1.16.1, Elements automatically detects your environment by inspecting your Publishable Key and routes accordingly. No additional setup is required beyond using the correct key for your environment.
+Version 1.16.1 and later work with test mode against a production account. Earlier versions do not support it. From 1.16.1, Elements detects your environment from your Publishable Key, so use the key that matches your environment.
 
 ### If using the CDN
 
-Elements is also available via CDN at `https://js.publicsquare.com/index.js`. This URL always serves the latest release, so once 1.16.1 is deployed, CDN users need no action to pick it up.
+Elements is also available via CDN at `https://js.publicsquare.com/index.js`. This URL always serves the latest release.
 
-To pin to a specific version instead, reference it by its versioned path:
+To pin a version instead, replace `<version>` with a release number such as `1.16.1`:
 
 ```html showLineNumbers
-<script src="https://js.publicsquare.com/v1.16.1/index.js"></script>
+<script src="https://js.publicsquare.com/v<version>/index.js"></script>
 ```
 
 ### If using npm
@@ -78,13 +79,38 @@ Check your installed version:
 npm list @publicsquare/elements-js
 ```
 
-Upgrade to the confirmed fix version:
+To pin a version, replace `<version>` with a release number such as `1.16.1`:
+
+<Tabs className="publicsquare-tabs" groupId="package-manager">
+  <TabItem value="npm" label="npm">
 
 ```shell showLineNumbers
-npm install --save @publicsquare/elements-js@1.16.1
+npm install --save @publicsquare/elements-js@<version>
 ```
 
-<Alert type={Alerts.INFO}>Install the specific version above rather than <code>@latest</code> — 1.16.1 is the confirmed fix, not necessarily the newest published version. Always confirm the actual latest version before installing it.</Alert>
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```shell showLineNumbers
+yarn add @publicsquare/elements-js@<version>
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```shell showLineNumbers
+pnpm add @publicsquare/elements-js@<version>
+```
+
+  </TabItem>
+  <TabItem value="bun" label="bun">
+
+```shell showLineNumbers
+bun add @publicsquare/elements-js@<version>
+```
+
+  </TabItem>
+</Tabs>
 
 See the [GitHub Releases page](https://github.com/credova/elements/releases) for the full version history and changelog.
 

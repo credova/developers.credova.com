@@ -1,9 +1,17 @@
 import { Alert } from "@site/src/components/shared/Alert";
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
-# Process ACH Payouts
+# Send Bank Account Payouts
 
-Now that you have completed the [Collect Bank Accounts](/guides/payment-methods/collect-bank-accounts) guide, let's process an ACH payout with the newly captured bank account.
+This guide sends a payout to a bank account over the ACH network or real-time payment rails.
+
+You need a saved bank account for this guide. Save one from your web app with [Accept Bank Account Payments](/guides/payments/elements/accept-bank-account-payments), or from your servers with [Save Bank Accounts](/guides/payments/direct-api/save-bank-accounts). Either way you get a bank account `id` that starts with `ba_`.
+
+You can also skip saving the bank account and send its details in the payout request. See [Create with Bank Account Details](#create-with-bank-account-details).
+
+## Before you start
+
+<BeforeYouStart keys={["secret"]} />
 
 ## Payout Types
 
@@ -13,30 +21,11 @@ Payouts made to a bank account travel over the ACH network and support three spe
 - **`same_day`** — A same-day ACH transfer. Settles the same business day.
 - **`instant`** — Sent over real-time payment rails instead of ACH batch processing, and typically settles within minutes. Requires the `payouts:instant` account setting to be enabled — see [Request Account Setting Access](#request-account-setting-access) below.
 
-## Getting Started
-
-<GettingStartedSection />
-
-### Get your Secret Key
-
-Next you will need your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Secret Key` and copy the value.
-
-<Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
-
-## Request Account Setting Access
-
-<Alert type="warning">This section only applies if you plan to use `instant` payouts. Skip it if you're using the default `standard` or `same_day` payout types.</Alert>
-
-To use `instant` payouts, you will need to request access to the `payouts:instant` account setting type.
-
-To do this, go to the [merchant portal](https://portal.publicsquare.com/settings/features) and click on the `Request this feature` button next to the `Instant Payouts` setting.
-Alternatively, you can request access via the [API](/api/accounts/request-account-setting-access).
-
 ## Process the Payout
 
-We will need to use the information from the previously collected bank account to create a new payout. A verified bank account is the more reliable choice if you plan to send an `instant` payout — if you haven't already, complete the [Collect Verified Bank Accounts](/guides/payment-methods/collect-verified-bank-accounts) guide first.
+We will use a saved bank account to create a new payout. A verified bank account is the more reliable choice if you plan to send an `instant` payout. See [Instant Verification](/guides/payments/elements/accept-bank-account-payments#instant-verification).
 
-For example, given you have a previously collected bank account:
+For example, given this saved bank account:
 
 ```json showLineNumbers title=bankAccount.json
 {
@@ -62,6 +51,15 @@ For example, given you have a previously collected bank account:
   "modified_at": "2024-06-30T01:02:29.212Z"
 }
 ```
+
+### Request Account Setting Access
+
+<Alert type="warning">This section only applies if you plan to use `instant` payouts. Skip it if you're using the default `standard` or `same_day` payout types.</Alert>
+
+To use `instant` payouts, you will need to request access to the `payouts:instant` account setting type.
+
+To do this, go to the [merchant portal](https://portal.publicsquare.com/settings/features) and click on the `Request this feature` button next to the `Instant Payouts` setting.
+Alternatively, you can request access via the [API](/api/accounts/request-account-setting-access).
 
 ### Create a Payout
 
@@ -94,7 +92,7 @@ curl 'https://api.publicsquare.com/payouts' \
 }'
 ```
 
-<Alert>The amount is provided in cents. 1000 is the equivalent of $10.00</Alert>
+The amount is in cents. `1000` is $10.00.
 
 <Alert type="warning">The IDEMPOTENCY-KEY header can be passed to protect against duplicate payouts being processed.</Alert>
 
@@ -104,7 +102,7 @@ If you have not saved the bank account yet, you can send its details with the pa
 
 Before you use `bank_account_details`:
 
-- Your account must have the `payment-methods:bank-accounts:manual-creation` account setting. See [Request Account Setting Access](/guides/payment-methods/collect-bank-accounts#request-account-setting-access).
+- Your account must have the `payment-methods:bank-accounts:manual-creation` account setting. See [Request Account Setting Access](/guides/payments/elements/accept-bank-account-payments#request-account-setting-access).
 - A restricted API key must have the `payment-method:write` permission in addition to `payout:write`. Secret keys have all permissions.
 
 ```shell showLineNumbers title="Create a Payout with Bank Account Details"
@@ -197,7 +195,7 @@ curl 'https://api.publicsquare.com/payouts' \
 
 ### Create with Existing Customer
 
-If you [created a customer](/api/accounts/create-customer), then you can pass the `customer_id` when processing the payout:
+If you [created a customer](/api/accounts/create-customer), then you can pass its ID as `customer.id` when processing the payout:
 
 ```shell showLineNumbers title="Create a Payout with Customer"
 curl 'https://api.publicsquare.com/payouts' \
@@ -212,7 +210,7 @@ curl 'https://api.publicsquare.com/payouts' \
     "bank_account": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
   },
   "customer": {
-    "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
   },
   "billing_details": {
     "address_line_1": "111 Test St.",
@@ -273,7 +271,7 @@ Each of these request variants works the same way for `same_day` and `instant` p
 
 ## Payout Response
 
-Given the above examples, you should see a payout result similar to:
+Given the bank account payout examples, you should see a payout result similar to:
 
 ```json showLineNumbers
 {
@@ -338,9 +336,8 @@ If a payout is declined, the response's `declined_reason` will contain the reaso
 
 ## Conclusion
 
-Now that we have seen how to process payouts with a collected bank account, we may need to manage the payout or view information about the payout.
+Now that we have sent a payout to a bank account, we may need to cancel it or view information about it.
 Follow these guides to learn more:
 
-- [Collect Verified Bank Accounts](/guides/payment-methods/collect-verified-bank-accounts)
-- [Cancel a Payout](/guides/payouts/cancel-payouts)
+- [Cancel Payouts](/guides/payouts/cancel-payouts)
 - [Search and View Transactions](/guides/transactions/search-and-view-transactions)

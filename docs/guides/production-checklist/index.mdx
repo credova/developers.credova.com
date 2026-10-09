@@ -34,15 +34,15 @@ import { Tooltip } from "@site/src/components/shared/Tooltip";
 
 ## Collect Payment Methods
 
-<QuestionCard question="Do you collect [credit cards](/guides/payments/process-card-payments)?" showNA={false}>
+<QuestionCard question="Do you collect [credit cards](/guides/payments/elements/accept-card-payments)?" showNA={false}>
   <Content type="yes">
-    <Alert type="neutral">You can test your integration using these [test cards](/api/testing#cards).</Alert>
+    <Alert type="neutral">You can test your integration using these [test cards](/guides/testing#cards).</Alert>
   </Content>
 </QuestionCard>
 
-<QuestionCard question="Do you collect [bank accounts](/guides/payments/process-ach-payments)?" showNA={false}>
+<QuestionCard question="Do you collect [bank accounts](/guides/payments/elements/accept-bank-account-payments)?" showNA={false}>
   <Content type="yes">
-    <Alert type="neutral">You can test your integration using these [test accounts](/api/testing#bank-accounts).</Alert>
+    <Alert type="neutral">You can test your integration using these [test accounts](/guides/testing#bank-accounts).</Alert>
   </Content>
       <Content type="yes">
     <Alert type="neutral">You can request access to other payment methods in your portal [account settings](https://portal.publicsquare.com/settings/features).</Alert>

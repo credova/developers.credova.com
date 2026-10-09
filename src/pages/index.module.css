@@ -1,217 +1,278 @@
-:root {
-  --psq-card-text-color: var(--ifm-font-color-base);
-
-  --psq-card-gradient-background: linear-gradient(99.18deg, #ffffff 12.27%, #fafbff 71.38%);
-
-  --psq-step-getting-started-default-box-shadow: 0px 2px 4px -2px rgba(7, 10, 27, 0.05), 0px 4px 6px -1px rgba(7, 10, 27, 0.05), inset 0px 0px 0px 1px #9fd8e0;
-  --psq-step-getting-started-border-hover: 2px solid #10c0d9;
-  --psq-step-getting-started-box-shadow-hover: 0px 0px 6px rgba(16, 192, 217, 0.3), 0px 2px 4px -2px rgba(7, 10, 27, 0.05), 0px 4px 6px -1px rgba(7, 10, 27, 0.05), inset 0px 0px 0px 1px #9fd8e0;
+.home {
+  width: 100%;
 }
 
-[data-theme="dark"] {
-  --psq-card-text-color: var(--ifm-heading-color);
-  --psq-card-gradient-background: linear-gradient(104.37deg, #1c2036 10.89%, #0d1025 83.51%);
-
-  --psq-step-getting-started-default-box-shadow: 0px 2px 4px -2px rgba(7, 10, 27, 0.2), 0px 4px 6px -1px rgba(7, 10, 27, 0.1), inset 0px 0px 0px 1px rgba(159, 216, 224, 0.2);
-  --psq-step-getting-started-border-hover: 2px solid #10c0d9;
-  --psq-step-getting-started-box-shadow-hover: 0px 0px 10px rgba(16, 192, 217, 0.4), 0px 2px 4px -2px rgba(7, 10, 27, 0.5), 0px 4px 6px -1px rgba(7, 10, 27, 0.1), inset 0px 0px 0px 1px rgba(159, 216, 224, 0.2);
+.page {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 64px 32px 72px;
 }
 
-.container {
-  width: var(--ifm-container-width);
-  margin: 48px auto;
+.hero {
+  max-width: 720px;
+  margin-bottom: 48px;
 }
 
-.container > main > div:not(:first-of-type),
-.container > main > div:not(:last-of-type) {
-  margin-top: 48px;
+.hero h1 {
+  font-size: 52px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
 }
 
-.card {
-  padding: 56px;
+.hero p {
+  font-size: 19px;
+  line-height: 1.55;
+  margin: 0 0 24px;
+  max-width: 52ch;
 }
 
-.card > div {
-  display: block;
-}
-
-.card-body {
+.actions {
   display: flex;
-  justify-content: space-evenly;
-  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.button {
+  display: inline-flex;
   align-items: center;
-}
-
-.card-body > a {
-  text-decoration: none;
+  padding: 9px 18px;
+  border-radius: var(--cr-radius);
   font-weight: 600;
-  font-size: 16px;
-  line-height: 150%;
-  flex-direction: column;
-  text-align: center;
+  font-size: 15px;
+  border: 1px solid transparent;
+  transition: background-color var(--ifm-transition-fast), border-color var(--ifm-transition-fast);
 }
 
-.step p {
-  color: var(--ifm-heading-color) !important;
+.button:hover {
+  text-decoration: none;
 }
 
-.card-body p {
+.primary {
+  background: var(--ifm-color-primary);
+  color: var(--cr-on-brand);
+}
+
+.primary:hover {
+  background: var(--ifm-color-primary-focus);
+  color: var(--cr-on-brand);
+}
+
+.secondary {
+  border-color: var(--cr-border-strong);
+  color: var(--cr-heading);
+}
+
+.secondary:hover {
+  border-color: var(--cr-accent);
+  color: var(--cr-heading);
+}
+
+.payments {
+  padding: 28px;
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius);
+}
+
+.sectionHead {
+  margin-bottom: 20px;
+}
+
+.sectionHead h2,
+.product h2 {
+  font-size: 28px;
+  margin: 0 0 4px;
+}
+
+.product > p {
   margin: 0;
-  color: var(--ifm-font-color-base);
+  font-size: 16px;
+}
+
+.integrations {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.integration {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-radius: var(--cr-radius);
+  background: var(--cr-surface);
+}
+
+.integration h3 {
+  margin: 0 0 6px;
+  font-size: 19px;
+}
+
+.integration > p {
+  margin: 0 0 16px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.links li + li {
+  margin-top: 8px;
+}
+
+.links a {
+  font-weight: 500;
+  font-size: 15px;
 }
 
 .sdks {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  width: max-content;
+  max-width: 100%;
+  margin: auto 0 0;
+  padding: 16px 0 0;
+  list-style: none;
+}
+
+.sdks a {
   display: flex;
-  flex-direction: column;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 150%;
-  color: var(--psq-card-text-color);
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 12px 6px 10px;
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius);
+  background: var(--cr-bg);
+  color: var(--cr-heading);
+  font-size: 14px;
+  font-weight: 500;
 }
 
-.sdks-container {
-  display: flex;
-  flex-direction: row;
-  column-gap: 64px;
-  row-gap: 32px;
+.sdks a:hover {
+  border-color: var(--cr-accent);
+  color: var(--cr-heading);
+  text-decoration: none;
 }
 
-.sdks-container > div {
-  display: flex;
-  gap: 16px;
-  flex-flow: column wrap;
+.sdks svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
 }
 
-.sdk-column {
-  display: flex;
-  gap: 16px;
-  flex-flow: row wrap;
-  margin-bottom: var(--ifm-leading);
-}
-
-.sdk-column > div {
-  flex: 0 1;
-  white-space: nowrap;
-}
-
-.sdk {
-  border-radius: 8px;
-  height: 44px;
-  padding: 6px 12px 6px 12px;
-}
-
-.sdk * {
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 150%;
-}
-
-.sdk div:first-child {
-  margin-right: 8px;
-}
-
-.sdk .logo-container {
-  width: 32px;
-  height: 32px;
-  margin: 0px !important;
-}
-
-.explore-cards-container {
+.platforms {
+  flex: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
 }
 
-.explore-cards {
-  display: flex;
-  gap: 24px;
-  flex-flow: row wrap;
-}
-
-.explore-cards-image {
+.platforms li {
+  flex: 1 1 0;
+  min-height: 40px;
   max-height: 56px;
 }
 
-.explore-cards > div {
-  flex: 1 1 30%;
+.platforms a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+  color: var(--cr-heading);
+  font-size: 16px;
+  font-weight: 500;
 }
 
-.explore-card > div {
-  place-items: flex-start;
+.platforms a:hover {
+  color: var(--cr-accent);
+  text-decoration: none;
 }
 
-.explore-card > div:first-child {
-  margin-bottom: 10px;
-  place-items: center;
+.platforms svg,
+.platforms img {
+  width: 28px;
+  height: 28px;
+  flex: none;
 }
 
-@media only screen and (max-width: 600px) {
-  .sdk {
-    width: 100% !important;
-  }
+.lifecycle {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
 }
 
-@media only screen and (max-width: 770px) {
-  .card {
-    align-items: flex-start;
-    padding: inherit;
-  }
-
-  .card-body {
-    padding: 24px;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .card-body div {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .card-body a:not(:first-child) {
-    margin-top: 24px;
-  }
+.products {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
 }
 
-@media only screen and (max-width: 800px) {
-  .sdks-container {
-    flex-direction: column;
-  }
-
-  .sdk-column {
-    gap: 16px;
-  }
-
-  .sdk-column > div {
-    flex: 0 0;
-    flex-flow: row nowrap;
-  }
-  .sdk div:has(svg),
-  .sdk div:has(img) {
-    margin: 0px;
-    margin-right: 8px;
-  }
-
-  .sdk svg,
-  .sdk img {
-    height: 32px;
-    width: 32px;
-  }
-
-  .explore-cards > div {
-    flex: 1 1 auto;
-  }
+.product {
+  padding: 28px;
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius);
 }
 
-@media only screen and (min-width: 600px) {
-  .sdk div:has(svg),
-  .sdk div:has(img) {
-    margin-right: 8px;
-  }
+.product > p {
+  margin-bottom: 16px;
 }
 
-@media only screen and (min-width: 1280px) {
-  .container {
-    width: var(--ifm-container-width-xl);
+@media (max-width: 1100px) {
+  .integrations {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .integrations > .integration:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .integrations > .integration:first-child .links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 24px;
+  }
+
+  .integrations > .integration:first-child .links li + li {
+    margin-top: 0;
+  }
+
+}
+
+@media (max-width: 760px) {
+  .page {
+    padding: 40px 16px 48px;
+  }
+
+  .hero h1 {
+    font-size: 38px;
+  }
+
+  .hero p {
+    font-size: 17px;
+  }
+
+  .payments,
+  .product {
+    padding: 20px;
+  }
+
+  .products,
+  .integrations,
+  .lifecycle,
+  .integrations > .integration:first-child .links {
+    grid-template-columns: 1fr;
   }
 }
