@@ -6,7 +6,7 @@ import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
 # Manage Saved Payment Methods
 
-In this guide, we will list, read, update and delete the payment methods you have saved, and attach them to or detach them from a customer. The same operations exist for cards, bank accounts, Apple Pay and Google Pay.
+This guide lists, reads, updates and deletes your saved payment methods, and attaches them to or detaches them from a customer. The same operations exist for cards, bank accounts, Apple Pay and Google Pay.
 
 A saved payment method has an `id` that shows its type: `card_` for a card, `ba_` for a bank account, `appl_` for Apple Pay and `ggl_` for Google Pay. To save one, see [Save Cards](/guides/payment-methods/cards), [Save Bank Accounts](/guides/payment-methods/bank-accounts), [Set Up Apple Pay](/guides/payment-methods/apple-pay) or [Set Up Google Pay](/guides/payment-methods/google-pay).
 
@@ -37,7 +37,7 @@ For the full request and response of each operation, see the [Financial API refe
 
 ## List Saved Payment Methods
 
-List endpoints are paginated with the `page` and `size` query parameters. See [Pagination](/api/pagination).
+List endpoints take the `page` and `size` query parameters. See [Pagination](/api/pagination).
 
 ```shell showLineNumbers title="List all saved payment methods"
 curl 'https://api.publicsquare.com/payment-methods?page=1&size=20' \
@@ -118,8 +118,7 @@ curl 'https://api.publicsquare.com/payment-methods/cards/card_AjkCFKAYiTsjghXWMz
 
 ## Conclusion
 
-Now that we can manage saved payment methods, we may want to use them.
-Follow these guides to learn more:
+To use a saved payment method, follow these guides:
 
 - [Accept Card Payments](/guides/payments/accept-card-payments)
 - [Accept Bank Account Payments](/guides/payments/accept-bank-account-payments)

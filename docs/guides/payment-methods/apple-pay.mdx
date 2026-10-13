@@ -286,7 +286,7 @@ function createApplePaySession() {
   </TabItem>
 </Tabs>
 
-When `requiredShippingContactFields` is set, the shipping address is returned as `event.payment.shippingContact`. We don't store the shipping address on the payment method, pass it along as `shipping_address` when you [create the payment](/guides/payments/accept-apple-pay#create-a-payment). The billing address is already stored on the payment method from the earlier tokenization step, so you don't need to read it again here.
+When `requiredShippingContactFields` is set, the shipping address is returned as `event.payment.shippingContact`. We don't store the shipping address on the payment method. Pass it along as `shipping_address` when you [create the payment](/guides/payments/accept-apple-pay#create-a-payment). The billing address is already stored on the payment method from the earlier tokenization step, so you don't need to read it again here.
 
 ```javascript showLineNumbers title="index.js"
 session.onpaymentauthorized = async (event: any) => {
@@ -513,7 +513,7 @@ You can optionally pass in a `customer_id` to associate with an existing [Create
 
 ## Conclusion
 
-You have collected a customer's Apple Pay payment method. To use it, follow these guides:
+You saved a customer's Apple Pay payment method. To use it, follow these guides:
 
 - [Accept Apple Pay](/guides/payments/accept-apple-pay)
 - [Manage Saved Payment Methods](/guides/payment-methods/manage-saved-payment-methods)

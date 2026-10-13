@@ -200,7 +200,7 @@ Shipping address collection is optional and off by default. Enable it with the `
   </TabItem>
 </Tabs>
 
-When `shippingAddressRequired` is enabled, the shipping address is returned at the root of the `onPaymentDataLoaded` payload as `paymentData.shippingAddress`. We don't store the shipping address on the payment method &mdash; pass it along as `shipping_address` when you [create the payment](/guides/payments/accept-google-pay#create-a-payment). The billing address is already stored on the payment method from the earlier tokenization step, so you don't need to read it again here.
+When `shippingAddressRequired` is enabled, the shipping address is returned at the root of the `onPaymentDataLoaded` payload as `paymentData.shippingAddress`. We don't store the shipping address on the payment method. Pass it along as `shipping_address` when you [create the payment](/guides/payments/accept-google-pay#create-a-payment). The billing address is already stored on the payment method from the earlier tokenization step, so you don't need to read it again here.
 
 ```javascript showLineNumbers title="index.js"
 async function onPaymentAuthorized(paymentData) {
@@ -467,7 +467,7 @@ When you have your official `merchantId`, you can set your `merchantId` in the G
 
 ## Conclusion
 
-You have collected a customer's Google Pay payment method. To use it, follow these guides:
+You saved a customer's Google Pay payment method. To use it, follow these guides:
 
 - [Accept Google Pay](/guides/payments/accept-google-pay)
 - [Manage Saved Payment Methods](/guides/payment-methods/manage-saved-payment-methods)

@@ -13,10 +13,10 @@ import InlineCardErrorsSection from "@site/src/components/docs/_inline-card-erro
 
 # Accept Card Payments
 
-In this guide, we will create a payment with a card from your server. The card is either already saved, or it arrives in the payment request.
+This guide creates a payment with a card from your server. The card is either already saved, or it arrives in the payment request.
 
-- **[Saved card](#pay-with-a-saved-card)**: collect and save the card first with [Save Cards](/guides/payment-methods/cards). Then create the payment with Payment Intents or the Payments API.
-- **[Card details in the request](#pay-with-card-details)**: your servers send the card in the payment request. Your organization must be PCI certified.
+- **[A saved card](#pay-with-a-saved-card)** needs a card you saved first with [Save Cards](/guides/payment-methods/cards). Create the payment with Payment Intents or the Payments API.
+- **[Card details in the request](#pay-with-card-details)** come from your servers in the payment request. Your organization must be PCI certified.
 
 ## Before you start
 
@@ -358,7 +358,7 @@ Given the above example, you should see a payment result similar to:
 
 Send the card details in the same request that creates the payment. You do not need to save the card first. The API saves the card to the customer and returns its `id` for later payments.
 
-<Alert>We recommend [Payment Intents](/concepts/payment-intents) for new integrations. They retry safely and report slow processors by webhook. Payment Intents do not accept `card_details`, so [pay with a saved card](#pay-with-a-saved-card) to create an intent with the card `id`. Use `card_details` with [Create Payment](/api/financial/create-payment) when you want to send the card and charge it in one request.</Alert>
+<Alert>We recommend [Payment Intents](/concepts/payment-intents) for new integrations. They are safe to retry and report slow processors by webhook. Payment Intents do not accept `card_details`, so [pay with a saved card](#pay-with-a-saved-card) to create an intent with the card `id`. Use `card_details` with [Create Payment](/api/financial/create-payment) when you want to send the card and charge it in one request.</Alert>
 
 A restricted key needs the `payment-method:write` or `payment-method:capture` permission, in addition to the permission to create payments.
 
@@ -578,8 +578,7 @@ Store `payment_method.card.id`. For the next payment with this card, send `"paym
 
 ## Conclusion
 
-Following this guide, you have created a payment with a card. Now we may need to manage the payment or view information about it.
-Follow these guides to learn more:
+You created a payment with a card. To manage the payment or view its details, follow these guides:
 
 - [Authorize and Capture Payments](/guides/payments/authorize-and-capture-payments)
 - [Issue a Refund](/guides/refunds/refund-payments)

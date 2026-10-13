@@ -180,7 +180,7 @@ A CVC is optional for a saved card. You can save and charge a card without one. 
 
 <Alert type="warning">A successful `updateCvc()` response is **not** an approved card. It only confirms the CVC was attached to the card — the card issuer doesn't check it until you actually charge the card.</Alert>
 
-`updateCvc()` never contacts the card network — it just attaches the CVC. The CVC is only validated when the next charge on that card goes through [Accept Card Payments](/guides/payments/accept-card-payments) or [Authorize and Capture Payments](/guides/payments/authorize-and-capture-payments) and reaches the issuer. Just like a first-time card charge, a `succeeded` payment status doesn't guarantee the CVC matched — read `cvv2_reply` on the resulting card, or `verification.result.card_security_code` if you ran a [verification](/guides/payments/verify-cards), to see whether the issuer confirmed it. See [Read the Verification Result](/guides/payments/verify-cards#read-the-verification-result) for the full set of values that field can return.
+`updateCvc()` does not contact the card network. It only attaches the CVC. The CVC is only validated when the next charge on that card goes through [Accept Card Payments](/guides/payments/accept-card-payments) or [Authorize and Capture Payments](/guides/payments/authorize-and-capture-payments) and reaches the issuer. Just like a first-time card charge, a `succeeded` payment status doesn't guarantee the CVC matched — read `cvv2_reply` on the resulting card, or `verification.result.card_security_code` if you ran a [verification](/guides/payments/verify-cards), to see whether the issuer confirmed it. See [Read the Verification Result](/guides/payments/verify-cards#read-the-verification-result) for the full set of values that field can return.
 
 ## Security
 
@@ -188,4 +188,4 @@ The CVC goes directly from the customer's browser to Basis Theory. It never reac
 
 ## Conclusion
 
-Following this guide, you've attached a freshly collected CVC to a saved card. Charge the card right after the update using [Accept Card Payments](/guides/payments/accept-card-payments), and check the resulting `cvv2_reply` to confirm the issuer accepted it.
+You attached a new CVC to a saved card. Charge the card right after the update using [Accept Card Payments](/guides/payments/accept-card-payments), and check the resulting `cvv2_reply` to confirm the issuer accepted it.

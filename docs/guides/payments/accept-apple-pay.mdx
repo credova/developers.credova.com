@@ -3,7 +3,7 @@ import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
 # Accept Apple Pay
 
-In this guide, we will create a payment from your server with an Apple Pay payment method. Collect the payment method first with [Set Up Apple Pay](/guides/payment-methods/apple-pay).
+This guide creates a payment from your server with an Apple Pay payment method. Save the payment method first with [Set Up Apple Pay](/guides/payment-methods/apple-pay).
 
 ## Before you start
 
@@ -11,7 +11,7 @@ In this guide, we will create a payment from your server with an Apple Pay payme
 
 ## Process the Payment
 
-Now that you have collected an Apple Pay payment method, use its `id` to create a payment. Your frontend sends the `id` to your backend, as in the `chargePayment` call in [Set Up Apple Pay](/guides/payment-methods/apple-pay#tokenization-and-storing-apple-pay), and your backend makes the call with your [Secret Key](#before-you-start).
+Use the `id` of a saved Apple Pay payment method to create a payment. Your frontend sends the `id` to your backend, as in the `chargePayment` call in [Set Up Apple Pay](/guides/payment-methods/apple-pay#tokenization-and-storing-apple-pay), and your backend makes the call with your [Secret Key](#before-you-start).
 
 For example, given the Apple Pay payment method `appl_Aw3U2eESBnq6DoYEFn8qaSMrA` from the previous step:
 
@@ -200,8 +200,7 @@ Given the above examples, you should see a payment result similar to:
 
 ## Conclusion
 
-Following this guide, you have created a payment with a customer's Apple Pay payment method. Now we may need to manage the payment or view information about the payment.
-Follow these guides to learn more:
+You created a payment with a customer's Apple Pay payment method. To manage the payment or view its details, follow these guides:
 
 - [Issue a Refund](/guides/refunds/refund-payments)
 - [Cancel a Payment](/guides/payments/cancel-payments)
