@@ -1,3 +1,7 @@
+---
+toc_max_heading_level: 4
+---
+
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
@@ -11,17 +15,16 @@ import InlineCardErrorsSection from "@site/src/components/docs/_inline-card-erro
 
 In this guide, we will create a payment with a card from your server. The card is either already saved, or it arrives in the payment request.
 
-- **Saved card**: collect and save the card first with [Save Cards](/guides/payment-methods/cards). Then create the payment with Payment Intents or the Payments API.
-- **Card details in the request**: your servers send the card in the payment request. Your organization must be PCI certified.
+- **[Saved card](#pay-with-a-saved-card)**: collect and save the card first with [Save Cards](/guides/payment-methods/cards). Then create the payment with Payment Intents or the Payments API.
+- **[Card details in the request](#pay-with-card-details)**: your servers send the card in the payment request. Your organization must be PCI certified.
 
 ## Before you start
 
 <BeforeYouStart keys={["secret"]} />
 
-<Tabs className="publicsquare-tabs" groupId="card-source" queryString="card">
-  <TabItem value="saved" label="Saved card" default>
+## Pay with a Saved Card
 
-## Creating a Payment
+### Creating a Payment
 
 Use the `id` of a [saved card](/guides/payment-methods/cards) and create the payment from your server using your `Secret Key`.
 
@@ -32,7 +35,7 @@ You can create card payments using either Payment Intents or the direct Payments
 
 A Payment Intent represents your intent to collect funds from a customer. It tracks the full lifecycle of a charge — creation, confirmation, processing, and the final `succeeded` state — and creates a `Payment` record on success.
 
-### Create a Payment Intent
+#### Create a Payment Intent
 
 Call the [Create Payment Intent](/api/financial/create-payment-intent) endpoint. Including a card at creation time starts the intent in `requires_confirmation` status and it is ready to confirm immediately:
 
@@ -96,7 +99,7 @@ curl 'https://api.publicsquare.com/payment_intents' \
 }
 ```
 
-### Create Without a Payment Method
+#### Create Without a Payment Method
 
 For multi-step checkout flows where the payment method is collected separately, omit the `payment_method` field. The intent starts in `requires_payment_method` status and the amount and other details can still be updated before a card is attached:
 
@@ -145,7 +148,7 @@ curl 'https://api.publicsquare.com/payment_intents/pmt_int_2xNjK7abcdefghij' \
 }'
 ```
 
-### Confirm the Payment Intent
+#### Confirm the Payment Intent
 
 With the intent in `requires_confirmation`, call the [Confirm Payment Intent](/api/financial/confirm-payment-intent) endpoint to submit the charge to the processor:
 
@@ -222,7 +225,7 @@ When the processor takes longer to respond, you will receive a `202` with `statu
 }
 ```
 
-### Handling Declines
+#### Handling Declines
 
 If the card is hard-declined, the intent returns to `requires_confirmation` and the `last_payment_error` field is populated with the decline reason. You can attach a new payment method and re-confirm the same intent — no need to create a new one:
 
@@ -245,7 +248,7 @@ If the card is hard-declined, the intent returns to `requires_confirmation` and 
 
 The direct Payments API provides a synchronous, single-request charge. The response contains the final payment result.
 
-<h3 id="create-a-payment">Create a Payment</h3>
+<h4 id="create-a-payment">Create a Payment</h4>
 
 Use the `id` of the card you collected above. Make a call to the [Create Payment](/api/financial/create-payment) endpoint:
 
@@ -280,7 +283,7 @@ The amount is in cents. `1000` is $10.00.
 
 <Alert type="warning">The IDEMPOTENCY-KEY header can be passed to protect against duplicate payments being processed.</Alert>
 
-<h3 id="payment-response">Payment Response</h3>
+<h4 id="payment-response">Payment Response</h4>
 
 Given the above example, you should see a payment result similar to:
 
@@ -349,28 +352,27 @@ Given the above example, you should see a payment result similar to:
   </TabItem>
 </Tabs>
 
-  </TabItem>
-  <TabItem value="details" label="Card details in the request">
+## Pay with Card Details
 
-<Alert type="warning">Your servers receive and send cardholder data in this flow, so your organization must be PCI certified. If you are unsure, please [contact support](/support). To keep card data out of your servers, [save the card with Credova Elements](/guides/payment-methods/cards) and use the Saved card tab.</Alert>
+<Alert type="warning">Your servers receive and send cardholder data in this flow, so your organization must be PCI certified. If you are unsure, please [contact support](/support). To keep card data out of your servers, [save the card with Credova Elements](/guides/payment-methods/cards) and [pay with a saved card](#pay-with-a-saved-card).</Alert>
 
 Send the card details in the same request that creates the payment. You do not need to save the card first. The API saves the card to the customer and returns its `id` for later payments.
 
-<Alert>We recommend [Payment Intents](/concepts/payment-intents) for new integrations. They retry safely and report slow processors by webhook. Payment Intents do not accept `card_details`, so use the Saved card tab to create an intent with the card `id`. Use `card_details` with [Create Payment](/api/financial/create-payment) when you want to send the card and charge it in one request.</Alert>
+<Alert>We recommend [Payment Intents](/concepts/payment-intents) for new integrations. They retry safely and report slow processors by webhook. Payment Intents do not accept `card_details`, so [pay with a saved card](#pay-with-a-saved-card) to create an intent with the card `id`. Use `card_details` with [Create Payment](/api/financial/create-payment) when you want to send the card and charge it in one request.</Alert>
 
 A restricted key needs the `payment-method:write` or `payment-method:capture` permission, in addition to the permission to create payments.
 
 To send a payout with card details, see [Send Card Payouts](/guides/payouts/process-card-payouts).
 
-## Send Card Details
+### Send Card Details
 
 <InlineCardDetailsSection />
 
-## Process a Payment
+### Process a Payment
 
 A payment with `card_details` also needs `device_information.ip_address`, the IP address of the customer's device.
 
-### Create a Payment with Card Details
+#### Create a Payment with Card Details
 
 ```shell showLineNumbers title="Create a Payment with Card Details"
 curl 'https://secure.payments.credova.com/payments' \
@@ -414,7 +416,7 @@ curl 'https://secure.payments.credova.com/payments' \
 
 To test, send the same request to `https://secure.payments.sbx.credova.com` with your test mode `Secret Key` and a [test card](/guides/testing#cards).
 
-### Create with Existing Customer
+#### Create with Existing Customer
 
 If you [created a customer](/api/accounts/create-customer), pass its ID as `customer.id`:
 
@@ -453,7 +455,7 @@ curl 'https://secure.payments.credova.com/payments' \
 }'
 ```
 
-### Verify a Card
+#### Verify a Card
 
 To check a card without charging it, send a [verification payment](/guides/payments/verify-cards) with `card_details`. Set `amount` to `0`, `capture` to `false` and `verification.type`:
 
@@ -497,7 +499,7 @@ curl 'https://secure.payments.credova.com/payments' \
 }'
 ```
 
-### Payment Response with Card Details
+#### Payment Response with Card Details
 
 The response is the same as for a payment with a saved card. `payment_method.card` describes the card that the request saved:
 
@@ -564,18 +566,15 @@ The response is the same as for a payment with a saved card. `payment_method.car
 }
 ```
 
-Store `payment_method.card.id`. For the next payment with this card, send `"payment_method": { "card": "<card id>" }` to `https://api.publicsquare.com/payments`, as in [Accept Card Payments](/guides/payments/accept-card-payments?card=saved). A saved card is a token, so this request does not need the secure hostname.
+Store `payment_method.card.id`. For the next payment with this card, send `"payment_method": { "card": "<card id>" }` to `https://api.publicsquare.com/payments`, as in [Accept Card Payments](#pay-with-a-saved-card). A saved card is a token, so this request does not need the secure hostname.
 
-## Retries
+### Retries
 
 <InlineCardRetriesSection />
 
-## Errors
+### Errors
 
 <InlineCardErrorsSection />
-
-  </TabItem>
-</Tabs>
 
 ## Conclusion
 

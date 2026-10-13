@@ -1,5 +1,6 @@
 ---
 sidebar_label: Bank Accounts
+toc_max_heading_level: 4
 ---
 
 import Tabs from "@theme/Tabs";
@@ -13,8 +14,8 @@ import ConfigureElementsSection from "@site/src/components/docs/_configure-eleme
 
 A saved bank account has an `id` that starts with `ba_`. You use it to create ACH payments and payouts. Save a bank account in one of two ways:
 
-- **Credova Elements** captures the bank account in your web app, by manual entry or instant verification. Account numbers never touch your servers.
-- **The Direct API** sends the bank account from your servers.
+- **[Credova Elements](#save-a-bank-account-with-credova-elements)** captures the bank account in your web app, by manual entry or instant verification. Account numbers never touch your servers.
+- **[The Direct API](#save-a-bank-account-from-your-servers)** sends the bank account from your servers.
 
 ## Before you start
 
@@ -34,14 +35,7 @@ Your account needs the setting before manual bank account creation or instant ba
 
 The `payment-methods:bank-accounts:manual-creation` setting also lets you send bank account details when you [process an ACH payment](/guides/payments/accept-bank-account-payments#create-with-bank-account-details) or [an ACH payout](/guides/payouts/process-ach-payouts#create-with-bank-account-details). You do not need to create the bank account first.
 
-<Tabs className="publicsquare-tabs" groupId="save-path" queryString="path">
-  <TabItem value="elements" label="Credova Elements" default>
-
-## Configuring Credova Elements
-
-<ConfigureElementsSection />
-
-## Collect the Bank Account
+## Save a Bank Account with Credova Elements
 
 Credova Elements gives you two ways to collect a bank account:
 
@@ -51,6 +45,10 @@ Credova Elements gives you two ways to collect a bank account:
 With either option, you create a `bank account` that holds the non-sensitive information about the bank account. You can safely store the bank account's `id` value in your database to link it with the appropriate payment or customer association.
 
 When you create the bank account, you can optionally pass in a `customer_id` to associate with an existing [Created Customer](/api/accounts/create-customer) and `billing_details` to remove the requirement to pass them when [Creating a Payment](/api/financial/create-payment).
+
+### Configuring Credova Elements
+
+<ConfigureElementsSection />
 
 ### Manual Entry
 
@@ -425,14 +423,13 @@ If more than 30 days have passed since the account was verified, you must re-ver
 
 <Alert type="warning">Bank accounts with MFA enabled do not support nightly balance refresh.</Alert>
 
-  </TabItem>
-  <TabItem value="api" label="Direct API">
+## Save a Bank Account from Your Servers
 
-<Alert type="warning">Your servers receive and send bank account numbers in this flow. To keep them off your servers, use the Credova Elements tab.</Alert>
+<Alert type="warning">Your servers receive and send bank account numbers in this flow. To keep them off your servers, use [Credova Elements](#save-a-bank-account-with-credova-elements).</Alert>
 
 A restricted key needs the `payment-method:write` or `payment-method:capture` permission. Your account also needs the `payment-methods:bank-accounts:manual-creation` account setting from [Request Account Setting Access](#request-account-setting-access).
 
-## Save a Bank Account
+### Save a Bank Account
 
 Send the bank account in a `POST` request to [Create Bank Account](/api/financial/create-bank-account):
 
@@ -465,7 +462,7 @@ The request body accepts these fields:
 
 Send `account_holder_name` and `account_holder_type`. Some processors require them.
 
-## Bank Account Response
+### Bank Account Response
 
 The created `bank_account` object contains the non-sensitive information about the bank account:
 
@@ -488,9 +485,6 @@ The created `bank_account` object contains the non-sensitive information about t
 Store the bank account's `id` in your database to use it in later payments and payouts.
 
 You do not have to save the bank account first. You can also [send the bank account details with the payment](/guides/payments/accept-bank-account-payments#create-with-bank-account-details).
-
-  </TabItem>
-</Tabs>
 
 ## Conclusion
 

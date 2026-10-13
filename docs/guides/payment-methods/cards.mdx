@@ -13,21 +13,20 @@ import ConfigureElementsSection from "@site/src/components/docs/_configure-eleme
 
 A saved card has an `id` that starts with `card_`. You use it to create payments and payouts, and to charge the customer later. Save a card in one of two ways:
 
-- **Credova Elements** captures the card in your web app. Card data never touches your servers, so you avoid PCI requirements.
-- **The Direct API** posts the card from your servers. Your organization must be PCI certified.
+- **[Credova Elements](#save-a-card-with-credova-elements)** captures the card in your web app. Card data never touches your servers, so you avoid PCI requirements.
+- **[The Direct API](#save-a-card-from-your-servers)** posts the card from your servers. Your organization must be PCI certified.
 
 ## Before you start
 
 <BeforeYouStart keys={["publishable"]} />
 
-<Tabs className="publicsquare-tabs" groupId="save-path" queryString="path">
-  <TabItem value="elements" label="Credova Elements" default>
+## Save a Card with Credova Elements
 
-## Configuring Credova Elements
+### Configuring Credova Elements
 
 <ConfigureElementsSection />
 
-## Adding Card Elements
+### Adding Card Elements
 
 Once installed and configured, add the Card Elements to your application.
 
@@ -143,7 +142,7 @@ export default function App() {
   </TabItem>
 </Tabs>
 
-## Storing Cards
+### Storing Cards
 
 Now that you are capturing cardholder data in your web application, it is time to store the card in your account.
 
@@ -229,7 +228,7 @@ export default function App() {
   </TabItem>
   <TabItem value="shell" label="cURL">
 
-To save a card from your servers, use the [Direct API tab](/guides/payment-methods/cards?path=api). It posts the card to `https://collect.publicsquare.com` with your `Publishable Key` and needs a PCI-certified organization. To save a card without a CVC, see [Saving a card without a CVC](/guides/payment-methods/cards?path=api#saving-a-card-without-a-cvc).
+To save a card from your servers, use the [Save a Card from Your Servers](#save-a-card-from-your-servers). It posts the card to `https://collect.publicsquare.com` with your `Publishable Key` and needs a PCI-certified organization. To save a card without a CVC, see [Saving a card without a CVC](#saving-a-card-without-a-cvc).
 
   </TabItem>
 </Tabs>
@@ -261,12 +260,11 @@ To charge a stored card later without the customer present, see [Card on File an
 
 You can optionally pass in a `customer_id` to associate with an existing [Created Customer](/api/accounts/create-customer) and `billing_details` to remove the requirement to pass them when [Creating a Payment](/api/financial/create-payment).
 
-  </TabItem>
-  <TabItem value="api" label="Direct API">
+## Save a Card from Your Servers
 
-<Alert type="warning">Accepting or transmitting cardholder data requires the merchant to be PCI certified. If you are unsure, please [contact support](/support). To keep card data out of your servers, use the Credova Elements tab.</Alert>
+<Alert type="warning">Accepting or transmitting cardholder data requires the merchant to be PCI certified. If you are unsure, please [contact support](/support). To keep card data out of your servers, use [Credova Elements](#save-a-card-with-credova-elements).</Alert>
 
-## Save a Card
+### Save a Card
 
 Send the card in a `POST` request to `https://collect.publicsquare.com`:
 
@@ -299,7 +297,7 @@ The request body accepts these fields:
 | `customer_id` | No | ID of an existing customer to associate with the card. |
 | `billing_details` | No | Billing address for the card. |
 
-## Saving a card without a CVC
+### Saving a card without a CVC
 
 The `cvc` field is optional. Leave it out when you save a card that you will charge later without the customer present, for example a card on file or a card that you move from another vault.
 
@@ -321,7 +319,7 @@ curl -L 'https://collect.publicsquare.com' \
 
 ```
 
-## Test Mode
+### Test Mode
 
 <Alert>To test card collection in test mode, use the `https://collect-test.publicsquare.com` endpoint instead of `https://collect.publicsquare.com`, along with your **test mode** `Publishable Key`. This lets you exercise the collect card flow without submitting live cardholder data. See [Testing](/guides/testing#test-environment) for every test hostname.</Alert>
 
@@ -342,7 +340,7 @@ curl -L 'https://collect-test.publicsquare.com' \
 
 ```
 
-## Card Response
+### Card Response
 
 The created `card` object contains the non-sensitive information about the card, including the `bin`:
 
@@ -370,9 +368,6 @@ You can safely store the card's `id` value in your database to link it with the 
 To charge a stored card later without the customer present, see [Card on File and Recurring Payments](/guides/payments/card-on-file-and-recurring-payments).
 
 You can optionally pass in a `customer_id` to associate with an existing [Created Customer](/api/accounts/create-customer) and `billing_details` to remove the requirement to pass them when [Creating a Payment](/api/financial/create-payment).
-
-  </TabItem>
-</Tabs>
 
 ## Conclusion
 

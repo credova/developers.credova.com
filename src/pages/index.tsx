@@ -40,8 +40,8 @@ const paymentMethods: Integration[] = [
     name: "Direct API",
     description: "Save payment methods by calling the API from your own servers. Your organization must be PCI certified.",
     links: [
-      { label: "Save a card", to: "/guides/payment-methods/cards?path=api" },
-      { label: "Save a bank account", to: "/guides/payment-methods/bank-accounts?path=api" },
+      { label: "Save a card", to: "/guides/payment-methods/cards#save-a-card-from-your-servers" },
+      { label: "Save a bank account", to: "/guides/payment-methods/bank-accounts#save-a-bank-account-from-your-servers" },
       { label: "Manage saved payment methods", to: "/guides/payment-methods/manage-saved-payment-methods" },
     ],
   },

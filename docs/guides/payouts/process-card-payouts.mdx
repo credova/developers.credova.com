@@ -1,5 +1,6 @@
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
+---
+toc_max_heading_level: 4
+---
 
 import { Alert } from "@site/src/components/shared/Alert";
 import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
@@ -9,18 +10,17 @@ import InlineCardErrorsSection from "@site/src/components/docs/_inline-card-erro
 
 # Send Card Payouts
 
-This guide sends a payout to a card. The card is either already saved, or it arrives in the payout request.
+This guide sends a payout to a card. The card is either [already saved](#send-to-a-saved-card), or it [arrives in the payout request](#send-with-card-details).
 
 ## Before you start
 
 <BeforeYouStart keys={["secret"]} />
 
-<Tabs className="publicsquare-tabs" groupId="card-source" queryString="card">
-  <TabItem value="saved" label="Saved card" default>
+## Send to a Saved Card
 
-You need a saved card for this tab. Save one with [Save Cards](/guides/payment-methods/cards). You get a card `id` that starts with `card_`.
+You need a saved card. Save one with [Save Cards](/guides/payment-methods/cards). You get a card `id` that starts with `card_`.
 
-## Process the Payout
+### Process the Payout
 
 We will use a saved card to create a new payout.
 
@@ -42,7 +42,7 @@ For example, given this saved card:
 }
 ```
 
-### Create a Payout
+#### Create a Payout
 
 We need to make a call to [Create Payout](/api/financial/create-payout) endpoint:
 
@@ -77,7 +77,7 @@ curl 'https://api.publicsquare.com/payouts' \
 
 <Alert type="warning">The IDEMPOTENCY-KEY header can be passed to protect against duplicate payouts being processed.</Alert>
 
-### Create with Existing Customer
+#### Create with Existing Customer
 
 If you [created a customer](/api/accounts/create-customer), then you can pass its ID as `customer.id` when processing the payout:
 
@@ -106,7 +106,7 @@ curl 'https://api.publicsquare.com/payouts' \
 }'
 ```
 
-### Create with Customer's Payment Method
+#### Create with Customer's Payment Method
 
 If you [attached the card to a customer](/api/financial/attach-card-to-customer), then you can omit the `customer` section when processing the payout:
 
@@ -132,7 +132,7 @@ curl 'https://api.publicsquare.com/payouts' \
 }'
 ```
 
-### Create with Payment Method's Billing Details
+#### Create with Payment Method's Billing Details
 
 If you supplied the `billing_details` or [updated the card](/api/financial/update-card), then you can omit the `billing_details` section when processing the payout:
 
@@ -151,7 +151,7 @@ curl 'https://api.publicsquare.com/payouts' \
 }'
 ```
 
-## Payout Response
+### Payout Response
 
 Given the card payout examples, you should see a payout result similar to:
 
@@ -211,10 +211,9 @@ Given the card payout examples, you should see a payout result similar to:
 }
 ```
 
-  </TabItem>
-  <TabItem value="details" label="Card details in the request">
+## Send with Card Details
 
-<Alert type="warning">Your servers receive and send cardholder data in this flow, so your organization must be PCI certified. If you are unsure, please [contact support](/support). To keep card data out of your servers, [save the card with Credova Elements](/guides/payment-methods/cards) and use the Saved card tab.</Alert>
+<Alert type="warning">Your servers receive and send cardholder data in this flow, so your organization must be PCI certified. If you are unsure, please [contact support](/support). To keep card data out of your servers, [save the card with Credova Elements](/guides/payment-methods/cards) and [send to a saved card](#send-to-a-saved-card).</Alert>
 
 Send the card details in the same request that creates the payout. You do not need to save the card first. The API saves the card to the customer and returns its `id` for later payouts.
 
@@ -222,15 +221,15 @@ A restricted key needs the `payment-method:write` or `payment-method:capture` pe
 
 To create a payment with card details, see [Accept Card Payments](/guides/payments/accept-card-payments).
 
-## Send Card Details
+### Send Card Details
 
 <InlineCardDetailsSection />
 
-## Process a Payout
+### Process a Payout
 
 A payout with `card_details` does not need `device_information`.
 
-### Create a Payout
+#### Create a Payout
 
 ```shell showLineNumbers title="Create a Payout with Card Details"
 curl 'https://secure.payments.credova.com/payouts' \
@@ -271,7 +270,7 @@ curl 'https://secure.payments.credova.com/payouts' \
 
 To test, send the same request to `https://secure.payments.sbx.credova.com` with your test mode `Secret Key` and a [test card](/guides/testing#cards).
 
-### Create with Existing Customer
+#### Create with Existing Customer
 
 If you [created a customer](/api/accounts/create-customer), pass its ID as `customer.id`:
 
@@ -307,7 +306,7 @@ curl 'https://secure.payments.credova.com/payouts' \
 }'
 ```
 
-### Payout Response
+#### Payout Response
 
 The response is the same as for a payout with a saved card. `payment_method.card` describes the card that the request saved:
 
@@ -372,16 +371,13 @@ The response is the same as for a payout with a saved card. `payment_method.card
 
 Store `payment_method.card.id`. For the next payout with this card, send `"payment_method": { "card": "<card id>" }` to `https://api.publicsquare.com/payouts`, as in [Send Card Payouts](/guides/payouts/process-card-payouts). A saved card is a token, so this request does not need the secure hostname.
 
-## Retries
+### Retries
 
 <InlineCardRetriesSection />
 
-## Errors
+### Errors
 
 <InlineCardErrorsSection />
-
-  </TabItem>
-</Tabs>
 
 ## Conclusion
 
