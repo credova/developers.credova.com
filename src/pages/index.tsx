@@ -26,10 +26,10 @@ const integrations: Integration[] = [
     name: "Credova Elements",
     description: "Customers pay in your web app, and card data never reaches your servers.",
     links: [
-      { label: "Accept card payments", to: "/guides/payments/elements/accept-card-payments" },
-      { label: "Accept bank account payments", to: "/guides/payments/elements/accept-bank-account-payments" },
-      { label: "Accept Apple Pay", to: "/guides/payments/elements/accept-apple-pay" },
-      { label: "Accept Google Pay", to: "/guides/payments/elements/accept-google-pay" },
+      { label: "Accept card payments", to: "/guides/payments/accept-card-payments" },
+      { label: "Accept bank account payments", to: "/guides/payments/accept-bank-account-payments" },
+      { label: "Accept Apple Pay", to: "/guides/payments/accept-apple-pay" },
+      { label: "Accept Google Pay", to: "/guides/payments/accept-google-pay" },
     ],
     sdks: [
       { label: "JavaScript", to: "/sdks/web/javascript", Logo: JavaScriptLogo },
@@ -40,9 +40,9 @@ const integrations: Integration[] = [
     name: "Direct API",
     description: "Create and manage payments by calling the API from your own servers.",
     links: [
-      { label: "Create a payment with card details", to: "/guides/payments/direct-api/payment-with-card-details" },
-      { label: "Save a card", to: "/guides/payments/direct-api/save-cards" },
-      { label: "Save a bank account", to: "/guides/payments/direct-api/save-bank-accounts" },
+      { label: "Create a payment with card details", to: "/guides/payments/accept-card-payments?card=details" },
+      { label: "Save a card", to: "/guides/payment-methods/cards" },
+      { label: "Save a bank account", to: "/guides/payment-methods/bank-accounts" },
       { label: "Payment Intents", to: "/concepts/payment-intents" },
       { label: "Payments API reference", to: "/api/financial/payments" },
     ],
@@ -73,7 +73,7 @@ const products = [
     description: "Send money to cards and bank accounts.",
     links: [
       { label: "Send card payouts", to: "/guides/payouts/process-card-payouts" },
-      { label: "Send a payout with card details", to: "/guides/payouts/direct-api/payout-with-card-details" },
+      { label: "Send a payout with card details", to: "/guides/payouts/process-card-payouts?card=details" },
       { label: "Send bank account payouts", to: "/guides/payouts/process-ach-payouts" },
       { label: "Cancel a payout", to: "/guides/payouts/cancel-payouts" },
     ],

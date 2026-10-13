@@ -1,3 +1,7 @@
+---
+sidebar_label: Bank Accounts
+---
+
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
@@ -5,9 +9,12 @@ import { Alert } from "@site/src/components/shared/Alert";
 import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
 
-# Accept Bank Account Payments
+# Save Bank Accounts
 
-In this guide, we will set up Credova Elements SDKs to capture bank accounts in a frontend application, securely authorize and store the bank account data while avoiding PCI requirements, and then process an ACH payment with the collected bank account.
+A saved bank account has an `id` that starts with `ba_`. You use it to create ACH payments and payouts. Save a bank account in one of two ways:
+
+- **Credova Elements** captures the bank account in your web app, by manual entry or instant verification. Account numbers never touch your servers.
+- **The Direct API** sends the bank account from your servers.
 
 ## Before you start
 
@@ -25,7 +32,10 @@ Alternatively, you can request access via the [API](/api/accounts/request-accoun
 
 Your account needs the setting before manual bank account creation or instant bank account verification works.
 
-The `payment-methods:bank-accounts:manual-creation` setting also lets you send bank account details when you [process an ACH payment](#create-with-bank-account-details) or [an ACH payout](/guides/payouts/process-ach-payouts#create-with-bank-account-details). You do not need to create the bank account first.
+The `payment-methods:bank-accounts:manual-creation` setting also lets you send bank account details when you [process an ACH payment](/guides/payments/accept-bank-account-payments#create-with-bank-account-details) or [an ACH payout](/guides/payouts/process-ach-payouts#create-with-bank-account-details). You do not need to create the bank account first.
+
+<Tabs className="publicsquare-tabs" groupId="save-path" queryString="path">
+  <TabItem value="elements" label="Credova Elements" default>
 
 ## Configuring Credova Elements
 
@@ -415,280 +425,76 @@ If more than 30 days have passed since the account was verified, you must re-ver
 
 <Alert type="warning">Bank accounts with MFA enabled do not support nightly balance refresh.</Alert>
 
-## Process the Payment
+  </TabItem>
+  <TabItem value="api" label="Direct API">
 
-We will need to use the information from the previously [manually collected bank account](#manual-entry) or [collected verified bank account](#instant-verification) to create a new payment.
+<Alert type="warning">Your servers receive and send bank account numbers in this flow. To keep them off your servers, use the Credova Elements tab.</Alert>
 
-Use the `id` of the collected bank account, such as `ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ`, as the `bank_account` value in the payment.
+A restricted key needs the `payment-method:write` or `payment-method:capture` permission. Your account also needs the `payment-methods:bank-accounts:manual-creation` account setting from [Request Account Setting Access](#request-account-setting-access).
 
-### Create a Payment
+## Save a Bank Account
 
-We need to make a call to [Create Payment](/api/financial/create-payment) endpoint:
+Send the bank account in a `POST` request to [Create Bank Account](/api/financial/create-bank-account):
 
-```shell showLineNumbers title="Create a Payment"
-curl 'https://api.publicsquare.com/payments' \
+```shell showLineNumbers title="Save a Bank Account"
+curl 'https://api.publicsquare.com/payment-methods/bank-accounts' \
 -X 'POST' \
 -H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
 -H 'Content-Type: application/json' \
 -d '{
-  "amount": 1000,
-  "currency": "USD",
-  "payment_method": {
-    "bank_account": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
-  },
-  "customer": {
-    "first_name": "John",
-    "last_name": "Smith",
-    "email": "john.smith@email.com"
-  },
-  "billing_details": {
-    "address_line_1": "111 Test St.",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  }
+  "account_holder_name": "John Doe",
+  "account_holder_type": "individual",
+  "account_type": "checking",
+  "routing_number": "110000000",
+  "account_number": "000123456789",
+  "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
 }'
 ```
 
-<Alert>The amount is provided in cents. 1000 is the equivalent of $10.00</Alert>
+The request body accepts these fields:
 
-<Alert type="warning">The IDEMPOTENCY-KEY header can be passed to protect against duplicate payments being processed.</Alert>
+| Field | Description |
+|-------|-------------|
+| `account_holder_name` | Name on the bank account. |
+| `account_holder_type` | `individual` or `company`. |
+| `account_type` | `checking` or `savings`. |
+| `routing_number` | Routing number. |
+| `account_number` | Account number. |
+| `customer_id` | ID of an existing customer to associate with the bank account. |
+| `billing_details` | Billing address for the bank account. |
 
-### Create with Bank Account Details
+Send `account_holder_name` and `account_holder_type`. Some processors require them.
 
-If you have not saved the bank account yet, you can send its details with the payment. The API saves the bank account and charges it in the same request, so you do not need to call [Create Bank Account](/api/financial/create-bank-account) first.
+## Bank Account Response
 
-Before you use `bank_account_details`:
+The created `bank_account` object contains the non-sensitive information about the bank account:
 
-- Your account must have the `payment-methods:bank-accounts:manual-creation` account setting. See [Request Account Setting Access](#request-account-setting-access).
-- A restricted API key must have the `payment-method:write` permission in addition to `payment:write`. Secret keys have all permissions.
-
-```shell showLineNumbers title="Create a Payment with Bank Account Details"
-curl 'https://api.publicsquare.com/payments' \
--X 'POST' \
--H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
--H 'Content-Type: application/json' \
--d '{
-  "amount": 1000,
-  "currency": "USD",
-  "payment_method": {
-    "bank_account_details": {
-      "account_holder_name": "John Doe",
-      "account_holder_type": "individual",
-      "account_type": "checking",
-      "routing_number": "110000000",
-      "account_number": "000123456789"
-    }
-  },
-  "customer": {
-    "first_name": "John",
-    "last_name": "Smith",
-    "email": "john.smith@email.com"
-  },
-  "billing_details": {
-    "address_line_1": "111 Test St.",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  }
-}'
-```
-
-- `bank_account_details` accepts the same fields as [Create Bank Account](/api/financial/create-bank-account).
-- Include `account_holder_name` and `account_holder_type`. Some processors require them.
-- You cannot combine `bank_account_details` with `bank_account`, `card`, `apple_pay`, or `google_pay`.
-- If you omit the top-level `customer` or `billing_details`, the payment uses the `customer_id` and `billing_details` inside `bank_account_details`.
-- The response returns the saved bank account in `payment_method.bank_account`. Use its `id` as `bank_account` for later payments.
-- [Payment intents](/concepts/payment-intents) accept `bank_account_details` when you create the intent. An update request with `bank_account_details` returns a 400.
-
-<Alert type="warning">
-  Send an `IDEMPOTENCY-KEY` with each request. If a request fails and you retry it with the same key, the payment uses the bank account that the first
-  request saved. A retry with the same key and different bank account details returns a 400. Use a new key when you change the bank account details.
-</Alert>
-
-```json showLineNumbers title="Retry with different bank account details"
+```json showLineNumbers title="bank-account.json"
 {
-  "title": "Error",
-  "status": 400,
-  "detail": "'bank_account_details' differs from the request first sent with this IDEMPOTENCY-KEY."
-}
-```
-
-### Create with Existing Customer
-
-If you [created a customer](/api/accounts/create-customer), then you can pass its ID as `customer.id` when processing the payment:
-
-```shell showLineNumbers title="Create a Payment with Customer"
-curl 'https://api.publicsquare.com/payments' \
--X 'POST' \
--H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
--H 'Content-Type: application/json' \
--d '{
-  "amount": 1000,
-  "currency": "USD",
-  "payment_method": {
-    "bank_account": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
-  },
-  "customer": {
-    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
-  },
-  "billing_details": {
-    "address_line_1": "111 Test St.",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  }
-}'
-```
-
-### Create with Customer's Payment Method
-
-If you [attached the bank account to a customer](/api/financial/attach-bank-account-to-customer), then you can omit the `customer` section when processing the payment:
-
-```shell showLineNumbers title="Create a Payment with Payment Method"
-curl 'https://api.publicsquare.com/payments' \
--X 'POST' \
--H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
--H 'Content-Type: application/json' \
--d '{
-  "amount": 1000,
-  "currency": "USD",
-  "payment_method": {
-    "bank_account": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
-  },
-  "billing_details": {
-    "address_line_1": "111 Test St.",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  }
-}'
-```
-
-### Create with Payment Method's Billing Details
-
-If you supplied the `billing_details` or [updated the bank account](/api/financial/update-bank-account), then you can omit the `billing_details` section when processing the payment:
-
-```shell showLineNumbers title="Create a Payment with Payment Method"
-curl 'https://api.publicsquare.com/payments' \
--X 'POST' \
--H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
--H 'Content-Type: application/json' \
--d '{
-  "amount": 1000,
-  "currency": "USD",
-  "payment_method": {
-    "bank_account": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
-  }
-}'
-```
-
-## Payment Response
-
-Given the above examples, you should see a payment result similar to:
-
-```json showLineNumbers
-{
-  "id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+  "id": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
   "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
-  "environment": "test",
-  "status": "pending",
-  "transaction_id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
-  "amount": 1000,
-  "amount_capturable": 0,
-  "amount_charged": 1000,
-  "amount_refunded": 0,
-  "refunded": false,
-  "currency": "USD",
-  "payment_method": {
-    "bank_account": {
-      "id": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
-      "account_holder_name": "John Doe",
-      "account_holder_type": "individual",
-      "account_type": "individual",
-      "routing_number": "123456789",
-      "account_number_last4": "1011"
-    }
-  },
-  "customer": {
-    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
-    "first_name": "John",
-    "last_name": "Smith",
-    "email": "john.smith@email.com",
-  },
-  "billing_details": {
-    "address_line_1": "111 Test St.",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  },
-  "shipping_address": {
-    "address_line_1": "111 Colorado Ave.",
-    "address_line_2": "Apt 403",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  },
-  "fraud_decision": {
-    "decision": "accept"
-  },
-  "transaction": {
-    "id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
-    "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
-    "environment": "test",
-    "status": "pending",
-    "amount": 1000,
-    "fee_amount": 0,
-    "net_amount": 1000,
-    "currency": "USD",
-    "type_id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
-    "type": "payment",
-    "processor": "nuvei",
-    "processor_id": "7110000000010554769",
-    "created_at": "2024-06-30T01:02:29.212Z",
-    "modified_at": "2024-06-30T01:02:29.212Z"
-  },
+  "environment": "production",
+  "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
   "created_at": "2024-06-30T01:02:29.212Z",
-  "modified_at": "2024-06-30T01:02:29.212Z"
+  "modified_at": "2024-06-30T01:02:29.212Z",
+  "account_holder_name": "John Doe",
+  "account_holder_type": "individual",
+  "account_type": "checking",
+  "routing_number": "110000000",
+  "account_number_last4": "6789"
 }
 ```
 
-## Payment Status
+Store the bank account's `id` in your database to use it in later payments and payouts.
 
-ACH payments do not settle instantly. A new ACH payment has the `pending` status. When the bank transfer settles, the payment moves to `succeeded`.
-Subscribe to the [`payment:update` webhook](/concepts/webhooks) to receive each status change.
+You do not have to save the bank account first. You can also [send the bank account details with the payment](/guides/payments/accept-bank-account-payments#create-with-bank-account-details).
 
-If the bank rejects the debit, the payment moves to `declined`. The `declined_reason` field contains the ACH return code and its description:
-
-```json showLineNumbers title="Declined ACH payment"
-{
-  "id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
-  "status": "declined",
-  "declined_reason": "R02 - Account Closed"
-}
-```
-
-Some return codes also change the bank account's `status` to `closed` or `invalid`. A new payment with that bank account returns a 400 with
-`bank account has 'closed' status.` See [Bank Accounts](/concepts/bank-accounts#statuses), and collect a new bank account from the customer.
-
-You can [refund](/guides/refunds/refund-payments) an ACH payment after it reaches `succeeded`.
+  </TabItem>
+</Tabs>
 
 ## Conclusion
 
-Following this guide, you have successfully collected a customer's bank account and processed an ACH payment with it. Now we may need to manage the payment or view information about the payment.
-Follow these guides to learn more:
+You have saved a customer's bank account. To use it, follow these guides:
 
-- [Issue a Refund](/guides/refunds/refund-payments)
-- [Cancel a Payment](/guides/payments/cancel-payments)
-- [Search and View Transactions](/guides/transactions/search-and-view-transactions)
+- [Accept Bank Account Payments](/guides/payments/accept-bank-account-payments)
+- [Send Bank Account Payouts](/guides/payouts/process-ach-payouts)

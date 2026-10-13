@@ -23,32 +23,38 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: "category",
+      label: "Payment Methods",
+      collapsed: false,
+      customProps: {
+        icon: "/img/icons/payment-methods.svg",
+      },
+      items: [
+        "guides/payment-methods/cards",
+        "guides/payment-methods/bank-accounts",
+        "guides/payment-methods/apple-pay",
+        "guides/payment-methods/google-pay",
+        "guides/payment-methods/recollect-cvc",
+        "guides/payment-methods/manage-saved-payment-methods",
+      ],
+    },
+    {
+      type: "category",
       label: "Payments",
       collapsed: false,
       customProps: {
         icon: "/img/icons/credit-card.svg",
       },
       items: [
+        "guides/payments/accept-card-payments",
+        "guides/payments/accept-bank-account-payments",
+        "guides/payments/accept-apple-pay",
+        "guides/payments/accept-google-pay",
         {
           type: "category",
-          label: "Credova Elements",
+          label: "3D Secure",
           items: [
-            "guides/payments/elements/accept-card-payments",
-            "guides/payments/elements/accept-bank-account-payments",
-            "guides/payments/elements/accept-apple-pay",
-            "guides/payments/elements/accept-google-pay",
             "guides/payments/process-3ds-iframe-payments",
             "guides/payments/process-3ds-redirect-payments",
-            "guides/payment-methods/recollect-cvc"
-          ],
-        },
-        {
-          type: "category",
-          label: "Direct API",
-          items: [
-            "guides/payments/direct-api/payment-with-card-details",
-            "guides/payments/direct-api/save-cards",
-            "guides/payments/direct-api/save-bank-accounts",
           ],
         },
         {type: "link", label: "eCommerce Plugins", href: "/plugins"},
@@ -81,11 +87,10 @@ const sidebars: SidebarsConfig = {
       items: [
         "guides/payouts/process-card-payouts",
         "guides/payouts/process-ach-payouts",
-        "guides/payouts/cancel-payouts",
         {
           type: "category",
-          label: "Direct API",
-          items: ["guides/payouts/direct-api/payout-with-card-details"],
+          label: "After the Payout",
+          items: ["guides/payouts/cancel-payouts"],
         },
       ],
     },

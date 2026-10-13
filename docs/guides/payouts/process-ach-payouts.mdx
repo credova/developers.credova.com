@@ -5,7 +5,7 @@ import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
 This guide sends a payout to a bank account over the ACH network or real-time payment rails.
 
-You need a saved bank account for this guide. Save one from your web app with [Accept Bank Account Payments](/guides/payments/elements/accept-bank-account-payments), or from your servers with [Save Bank Accounts](/guides/payments/direct-api/save-bank-accounts). Either way you get a bank account `id` that starts with `ba_`.
+You need a saved bank account for this guide. Save one with [Save Bank Accounts](/guides/payment-methods/bank-accounts), from your web app or from your servers. Either way you get a bank account `id` that starts with `ba_`.
 
 You can also skip saving the bank account and send its details in the payout request. See [Create with Bank Account Details](#create-with-bank-account-details).
 
@@ -23,7 +23,7 @@ Payouts made to a bank account travel over the ACH network and support three spe
 
 ## Process the Payout
 
-We will use a saved bank account to create a new payout. A verified bank account is the more reliable choice if you plan to send an `instant` payout. See [Instant Verification](/guides/payments/elements/accept-bank-account-payments#instant-verification).
+We will use a saved bank account to create a new payout. A verified bank account is the more reliable choice if you plan to send an `instant` payout. See [Instant Verification](/guides/payment-methods/bank-accounts#instant-verification).
 
 For example, given this saved bank account:
 
@@ -102,7 +102,7 @@ If you have not saved the bank account yet, you can send its details with the pa
 
 Before you use `bank_account_details`:
 
-- Your account must have the `payment-methods:bank-accounts:manual-creation` account setting. See [Request Account Setting Access](/guides/payments/elements/accept-bank-account-payments#request-account-setting-access).
+- Your account must have the `payment-methods:bank-accounts:manual-creation` account setting. See [Request Account Setting Access](/guides/payment-methods/bank-accounts#request-account-setting-access).
 - A restricted API key must have the `payment-method:write` permission in addition to `payout:write`. Secret keys have all permissions.
 
 ```shell showLineNumbers title="Create a Payout with Bank Account Details"

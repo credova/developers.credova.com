@@ -3,260 +3,27 @@ import TabItem from "@theme/TabItem";
 
 import { Alert } from "@site/src/components/shared/Alert";
 import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
-import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
+import InlineCardDetailsSection from "@site/src/components/docs/_inline-card-details-section.mdx";
+import InlineCardRetriesSection from "@site/src/components/docs/_inline-card-retries-section.mdx";
+import InlineCardErrorsSection from "@site/src/components/docs/_inline-card-errors-section.mdx";
 
 # Accept Card Payments
 
-In this guide, we will set up Credova Elements SDKs to capture cards in a frontend application and securely store the cardholder data while avoiding PCI requirements. Then we will use the stored card to create a payment from your server.
+In this guide, we will create a payment with a card from your server. The card is either already saved, or it arrives in the payment request.
 
-<Alert>PCI-certified merchants that send cards from their servers should see [Save Cards](/guides/payments/direct-api/save-cards) and [Create a Payment with Card Details](/guides/payments/direct-api/payment-with-card-details).</Alert>
+- **Saved card**: collect and save the card first with [Save Cards](/guides/payment-methods/cards). Then create the payment with Payment Intents or the Payments API.
+- **Card details in the request**: your servers send the card in the payment request. Your organization must be PCI certified.
 
 ## Before you start
 
-<BeforeYouStart keys={["publishable", "secret"]} />
+<BeforeYouStart keys={["secret"]} />
 
-## Configuring Credova Elements
-
-<ConfigureElementsSection />
-
-## Adding Card Elements
-
-Once installed and configured, add the Card Elements to your application.
-
-<Tabs className="publicsquare-tabs" queryString="sdk">
-  <TabItem value="javascript" label="JavaScript">
-    ```html showLineNumbers title="index.html"
-    <input
-      type="text"
-      id="cardholderName"
-      placeholder="Cardholder name"
-      style={{ display: 'flex', width: '100%' }}
-    />
-
-    <div id="cardNumber"></div>
-
-    <div style="display: flex;">
-      <div id="cardExpirationDate" style="width: 100%;"></div>
-      <div id="cardVerificationCode" style="width: 100%;"></div>
-    </div>
-    ```
-
-    ```javascript showLineNumbers title="index.js"
-    import { PublicSquare } from '@publicsquare/elements-js';
-
-    let publicsquare;
-    let cardNumberElement;
-    let cardExpirationDateElement;
-    let cardVerificationCodeElement;
-
-    async function init() {
-      publicsquare = await new PublicSquare().init('<PUBLISHABLE_API_KEY>');
-
-      //highlight-start
-      // Creates Elements instances
-      cardNumberElement = publicsquare.createCardNumberElement();
-      cardNumberElement.mount('#cardNumber');
-
-      cardExpirationDateElement = publicsquare.createCardExpirationDateElement();
-      cardExpirationDateElement.mount('#cardExpirationDate');
-
-      cardVerificationCodeElement = publicsquare.createCardVerificationCodeElement();
-      cardVerificationCodeElement.mount('#cardVerificationCode');
-      //highlight-end
-    }
-
-    init();
-    ```
-  </TabItem>
-
-  <TabItem value="react" label="React">
-
-```jsx showLineNumbers title="App.jsx"
-import React, { useRef, useState } from 'react';
-import {
-  PublicSquareProvider,
-  // highlight-start
-  CardNumberElement,
-  CardExpirationDateElement,
-  CardVerificationCodeElement,
-  //highlight-end
-  usePublicSquare,
-} from '@publicsquare/elements-react';
-
-export default function App() {
-  const { publicsquare } = usePublicSquare();
-  // highlight-start
-  // Refs to get access to the Elements instance
-  const cardholderNameRef = useRef(null);
-  const cardNumberRef = useRef(null);
-  const cardExpirationRef = useRef(null);
-  const cardVerificationRef = useRef(null);
-  // highlight-end
-
-  return (
-    <PublicSquareProvider apiKey={apiKey}>
-      <input
-        type="text"
-        id="cardholderName"
-        placeholder="Cardholder name"
-        ref={cardholderNameRef}
-        style={{ display: 'flex', width: '100%' }}
-      />
-
-      // highlight-start
-      <CardNumberElement
-        id="cardNumber"
-        ref={cardNumberRef}
-      />
-      // highlight-end
-      <div style={{ display: 'flex' }}>
-        <div style={{ width: '100%' }}>
-          // highlight-start
-          <CardExpirationDateElement
-            id="cardExpirationDate"
-            ref={cardExpirationRef}
-          />
-          // highlight-end
-        </div>
-        <div style={{ width: '100%' }}>
-          // highlight-start
-          <CardVerificationCodeElement
-            id="cardVerificationCode"
-            ref={cardVerificationRef}
-            cardBrand={cardBrand}
-          />
-          // highlight-end
-        </div>
-      </div>
-    </PublicSquareProvider>
-  );
-}
-```
-  </TabItem>
-</Tabs>
-
-
-## Storing Cards
-
-Now that you are capturing cardholder data in your web application, it is time to store the card in your account.
-
-To do this, we will call the `create card` method from the SDK, passing the Card Elements as data points in the payload.
-
-Add a submit function along with a button to trigger it:
-
-<Tabs className="publicsquare-tabs" queryString="sdk">
-  <TabItem value="javascript" label="JavaScript">
-
-```html showLineNumbers title="index.html"
-<!-- Form from above -->
-// highlight-next-line
-<button id="submit">Submit</button>
-```
-
-```javascript showLineNumbers title="index.js"
-async function init () {
-  ...
-  //highlight-next-line
-  document.getElementById("submit").addEventListener("click", submit);
-}
-
-// highlight-start
-async function submit (e: FormEvent<HTMLFormElement>,) {
-  try {
-    const formData = new FormData(e.currentTarget)
-
-    const card = await publicsquare.cards.create({
-      cardholder_name: formData.cardholderName,
-      card: {
-        number: cardNumberElement,
-        expirationMonth: cardExpirationDateElement.month(),
-        expirationYear: cardExpirationDateElement.year(),
-        cvc: cardVerificationCodeElement,
-      }
-    });
-    // store card.id in your database
-  } catch (error) {
-    console.error(error);
-  }
-}
-// highlight-end
-
-init();
-```
-  </TabItem>
-  <TabItem value="react" label="React">
-
-```jsx showLineNumbers title="App.jsx"
-export default function App() {
-  // highlight-start
-  const submit = async () => {
-    try {
-      const card = await publicsquare.cards.create({
-        // This can be any string text from the dom
-        cardholder_name: cardholderNameRef.current.el.value,
-        card: {
-          // cardNumberRef.current is the CardNumberElement instance that will be decrypted within the secure
-          // iFrame on the DOM so that the client never sees the card information.
-          number: cardNumberRef.current,
-          expirationMonth: cardExpirationRef.current.month(),
-          expirationYear: cardExpirationRef.current.year(),
-          cvc: cardVerificationRef.current,
-        }
-      });
-      // store card.id in your database
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  // highlight-end
-
-  return (
-    <PublicSquareProvider apiKey={apiKey}>
-      ...
-      // highlight-next-line
-      <button onClick={submit}>Submit</button>
-    </PublicSquareProvider>
-  );
-}
-```
-  </TabItem>
-  <TabItem value="shell" label="cURL">
-
-To save a card from your servers, follow [Save Cards](/guides/payments/direct-api/save-cards). It posts the card to `https://collect.publicsquare.com` with your `Publishable Key` and needs a PCI-certified organization. To save a card without a CVC, see [Saving a card without a CVC](/guides/payments/direct-api/save-cards#saving-a-card-without-a-cvc).
-
-  </TabItem>
-</Tabs>
-
-The created `card` object contains the non-sensitive information about the card, including the `bin`:
-
-```json showLineNumbers title="card.json"
-{
-  "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
-  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
-  "environment": "test",
-  "cardholder_name": "John Smith",
-  "last4": "4242",
-  "bin": "424242",
-  "exp_month": "12",
-  "exp_year": "2030",
-  "brand": "visa",
-  "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL",
-  "created_at": "2024-06-30T01:02:29.212Z",
-  "modified_at": "2024-06-30T01:02:29.212Z"
-}
-```
-
-<Alert>Displaying the card's first 6 digits (`bin`) alongside the last 4 (`last4`) is PCI compliant per PCI DSS Requirement 3.3.</Alert>
-
-You can safely store the card's `id` value in your database to link it with the appropriate payment or customer association.
-
-To charge a stored card later without the customer present, see [Card on File and Recurring Payments](/guides/payments/card-on-file-and-recurring-payments).
-
-You can optionally pass in a `customer_id` to associate with an existing [Created Customer](/api/accounts/create-customer) and `billing_details` to remove the requirement to pass them when [Creating a Payment](/api/financial/create-payment).
+<Tabs className="publicsquare-tabs" groupId="card-source" queryString="card">
+  <TabItem value="saved" label="Saved card" default>
 
 ## Creating a Payment
 
-Now that you have a card, create the payment from your server using your `Secret Key`.
+Use the `id` of a [saved card](/guides/payment-methods/cards) and create the payment from your server using your `Secret Key`.
 
 You can create card payments using either Payment Intents or the direct Payments API. Both approaches result in a `Payment` object. We recommend Payment Intents for new integrations. They keep state across the whole lifecycle, report slow outcomes by webhook and retry safely.
 
@@ -582,9 +349,237 @@ Given the above example, you should see a payment result similar to:
   </TabItem>
 </Tabs>
 
+  </TabItem>
+  <TabItem value="details" label="Card details in the request">
+
+<Alert type="warning">Your servers receive and send cardholder data in this flow, so your organization must be PCI certified. If you are unsure, please [contact support](/support). To keep card data out of your servers, [save the card with Credova Elements](/guides/payment-methods/cards) and use the Saved card tab.</Alert>
+
+Send the card details in the same request that creates the payment. You do not need to save the card first. The API saves the card to the customer and returns its `id` for later payments.
+
+<Alert>We recommend [Payment Intents](/concepts/payment-intents) for new integrations. They retry safely and report slow processors by webhook. Payment Intents do not accept `card_details`, so use the Saved card tab to create an intent with the card `id`. Use `card_details` with [Create Payment](/api/financial/create-payment) when you want to send the card and charge it in one request.</Alert>
+
+A restricted key needs the `payment-method:write` or `payment-method:capture` permission, in addition to the permission to create payments.
+
+To send a payout with card details, see [Send Card Payouts](/guides/payouts/process-card-payouts).
+
+## Send Card Details
+
+<InlineCardDetailsSection />
+
+## Process a Payment
+
+A payment with `card_details` also needs `device_information.ip_address`, the IP address of the customer's device.
+
+### Create a Payment with Card Details
+
+```shell showLineNumbers title="Create a Payment with Card Details"
+curl 'https://secure.payments.credova.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    // highlight-start
+    "card_details": {
+      "cardholder_name": "John Smith",
+      "number": "4242424242424242",
+      "expiration_month": 12,
+      "expiration_year": 2030,
+      "cvc": "123"
+    }
+    // highlight-end
+  },
+  "customer": {
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "device_information": {
+    "ip_address": "203.0.113.10"
+  }
+}'
+```
+
+<Alert>The amount is provided in cents. 1000 is the equivalent of $10.00</Alert>
+
+To test, send the same request to `https://secure.payments.sbx.credova.com` with your test mode `Secret Key` and a [test card](/guides/testing#cards).
+
+### Create with Existing Customer
+
+If you [created a customer](/api/accounts/create-customer), pass its ID as `customer.id`:
+
+```shell showLineNumbers title="Create a Payment with Customer"
+curl 'https://secure.payments.credova.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "card_details": {
+      "cardholder_name": "John Smith",
+      "number": "4242424242424242",
+      "expiration_month": 12,
+      "expiration_year": 2030,
+      "cvc": "123"
+    }
+  },
+  "customer": {
+    // highlight-next-line
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "device_information": {
+    "ip_address": "203.0.113.10"
+  }
+}'
+```
+
+### Verify a Card
+
+To check a card without charging it, send a [verification payment](/guides/payments/verify-cards) with `card_details`. Set `amount` to `0`, `capture` to `false` and `verification.type`:
+
+```shell showLineNumbers title="Verify a Card with Card Details"
+curl 'https://secure.payments.credova.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 5f0c1f3e-2f5b-4d7e-9b7e-0b8d1c6f4a21' \
+-H 'Content-Type: application/json' \
+-d '{
+  // highlight-start
+  "amount": 0,
+  "capture": false,
+  "verification": {
+    "type": "add_card"
+  },
+  // highlight-end
+  "currency": "USD",
+  "payment_method": {
+    "card_details": {
+      "cardholder_name": "John Smith",
+      "number": "4242424242424242",
+      "expiration_month": 12,
+      "expiration_year": 2030,
+      "cvc": "123"
+    }
+  },
+  "customer": {
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "device_information": {
+    "ip_address": "203.0.113.10"
+  }
+}'
+```
+
+### Payment Response with Card Details
+
+The response is the same as for a payment with a saved card. `payment_method.card` describes the card that the request saved:
+
+```json showLineNumbers title="Payment Response"
+{
+  "id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "succeeded",
+  "transaction_id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
+  "amount": 1000,
+  "amount_capturable": 0,
+  "amount_charged": 1000,
+  "amount_refunded": 0,
+  "refunded": false,
+  "currency": "USD",
+  "payment_method": {
+    "card": {
+      // highlight-next-line
+      "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
+      "cardholder_name": "John Smith",
+      "last4": "4242",
+      "bin": "424242",
+      "exp_month": "12",
+      "exp_year": "2030",
+      "brand": "visa",
+      "avs_code": "Y",
+      "cvv2_reply": "M",
+      "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL"
+    }
+  },
+  "customer": {
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "transaction": {
+    "id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
+    "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+    "environment": "test",
+    "status": "succeeded",
+    "amount": 1000,
+    "fee_amount": 0,
+    "net_amount": 1000,
+    "currency": "USD",
+    "type_id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+    "type": "payment",
+    "processor": "nuvei",
+    "processor_id": "7110000000010554769",
+    "created_at": "2024-06-30T01:02:29.212Z",
+    "modified_at": "2024-06-30T01:02:29.212Z"
+  },
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z"
+}
+```
+
+Store `payment_method.card.id`. For the next payment with this card, send `"payment_method": { "card": "<card id>" }` to `https://api.publicsquare.com/payments`, as in [Accept Card Payments](/guides/payments/accept-card-payments?card=saved). A saved card is a token, so this request does not need the secure hostname.
+
+## Retries
+
+<InlineCardRetriesSection />
+
+## Errors
+
+<InlineCardErrorsSection />
+
+  </TabItem>
+</Tabs>
+
 ## Conclusion
 
-Following this guide, you have collected a customer's card and created a payment with it. Now we may need to manage the payment or view information about it.
+Following this guide, you have created a payment with a card. Now we may need to manage the payment or view information about it.
 Follow these guides to learn more:
 
 - [Authorize and Capture Payments](/guides/payments/authorize-and-capture-payments)

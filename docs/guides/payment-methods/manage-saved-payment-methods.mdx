@@ -1,0 +1,127 @@
+---
+sidebar_label: Manage Saved Payment Methods
+---
+
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
+
+# Manage Saved Payment Methods
+
+In this guide, we will list, read, update and delete the payment methods you have saved, and attach them to or detach them from a customer. The same operations exist for cards, bank accounts, Apple Pay and Google Pay.
+
+A saved payment method has an `id` that shows its type: `card_` for a card, `ba_` for a bank account, `appl_` for Apple Pay and `ggl_` for Google Pay. To save one, see [Save Cards](/guides/payment-methods/cards), [Save Bank Accounts](/guides/payment-methods/bank-accounts), [Set Up Apple Pay](/guides/payment-methods/apple-pay) or [Set Up Google Pay](/guides/payment-methods/google-pay).
+
+## Before you start
+
+<BeforeYouStart keys={["secret"]} />
+
+All requests go to `https://api.publicsquare.com` and send your `Secret Key` in the `X-API-KEY` header.
+
+## Operations
+
+| Action | Cards | Bank accounts | Apple Pay | Google Pay |
+|--------|-------|---------------|-----------|------------|
+| List | `GET /payment-methods/cards` | `GET /payment-methods/bank-accounts` | `GET /payment-methods/apple-pay` | `GET /payment-methods/google-pay` |
+| Update | `PUT /payment-methods/cards/{id}` | `PUT /payment-methods/bank-accounts/{id}` | `PUT /payment-methods/apple-pay/{id}` | `PUT /payment-methods/google-pay/{id}` |
+| Attach to a customer | `PUT /payment-methods/cards/{id}/attach` | `PUT /payment-methods/bank-accounts/{id}/attach` | `PUT /payment-methods/apple-pay/{id}/attach` | `PUT /payment-methods/google-pay/{id}/attach` |
+| Detach from a customer | `PUT /payment-methods/cards/{id}/detach` | `PUT /payment-methods/bank-accounts/{id}/detach` | `PUT /payment-methods/apple-pay/{id}/detach` | `PUT /payment-methods/google-pay/{id}/detach` |
+| Delete | `DELETE /payment-methods/cards/{id}` | `DELETE /payment-methods/bank-accounts/{id}` | `DELETE /payment-methods/apple-pay/{id}` | `DELETE /payment-methods/google-pay/{id}` |
+
+Two endpoints work across all four types:
+
+- `GET /payment-methods` lists every saved payment method.
+- `GET /payment-methods/{id}` returns one payment method of any type.
+
+Cards and bank accounts also have a typed read, `GET /payment-methods/cards/{id}` and `GET /payment-methods/bank-accounts/{id}`. To list the payment methods of one customer, call `GET /customers/{customerId}/payment-methods`. Each type also has its own customer route, for example `GET /customers/{customerId}/payment-methods/cards`.
+
+For the full request and response of each operation, see the [Financial API reference](/api/financial/get-all-payment-methods).
+
+## List Saved Payment Methods
+
+List endpoints are paginated with the `page` and `size` query parameters. See [Pagination](/api/pagination).
+
+```shell showLineNumbers title="List all saved payment methods"
+curl 'https://api.publicsquare.com/payment-methods?page=1&size=20' \
+-H 'X-API-KEY: <SECRET_API_KEY>'
+```
+
+To list one type, call its own endpoint, for example [Get All Cards](/api/financial/get-all-cards):
+
+```shell showLineNumbers title="List saved cards"
+curl 'https://api.publicsquare.com/payment-methods/cards?page=1&size=20' \
+-H 'X-API-KEY: <SECRET_API_KEY>'
+```
+
+To read one payment method of any type, call [Get Payment Method by ID](/api/financial/get-payment-method-by-id):
+
+```shell showLineNumbers title="Get a payment method"
+curl 'https://api.publicsquare.com/payment-methods/card_AjkCFKAYiTsjghXWMzoXFPMxj' \
+-H 'X-API-KEY: <SECRET_API_KEY>'
+```
+
+## Update a Saved Payment Method
+
+An update changes the customer and the billing details of the payment method. It does not change the card number, the bank account number or the wallet token. Send only the fields you want to change to [Update Card](/api/financial/update-card):
+
+```shell showLineNumbers title="Update the billing details of a card"
+curl 'https://api.publicsquare.com/payment-methods/cards/card_AjkCFKAYiTsjghXWMzoXFPMxj' \
+-X 'PUT' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'Content-Type: application/json' \
+-d '{
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+[Update Bank Account](/api/financial/update-bank-account) also accepts `account_holder_name`, `account_holder_type` and `account_type`.
+
+To change the CVC of a saved card, see [Recollect a CVC for a Saved Card](/guides/payment-methods/recollect-cvc).
+
+## Attach and Detach a Customer
+
+Attach a payment method to a customer to use it in payments and payouts for that customer. Send the customer `id` in `customer_id` to [Attach Card to Customer](/api/financial/attach-card-to-customer):
+
+```shell showLineNumbers title="Attach a card to a customer"
+curl 'https://api.publicsquare.com/payment-methods/cards/card_AjkCFKAYiTsjghXWMzoXFPMxj/attach' \
+-X 'PUT' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'Content-Type: application/json' \
+-d '{
+  "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+}'
+```
+
+[Detach Card from Customer](/api/financial/detach-card-from-customer) takes no request body:
+
+```shell showLineNumbers title="Detach a card from its customer"
+curl 'https://api.publicsquare.com/payment-methods/cards/card_AjkCFKAYiTsjghXWMzoXFPMxj/detach' \
+-X 'PUT' \
+-H 'X-API-KEY: <SECRET_API_KEY>'
+```
+
+The attach and detach endpoints for bank accounts, Apple Pay and Google Pay work the same way.
+
+## Delete a Saved Payment Method
+
+Call [Delete Card](/api/financial/delete-card) with the `id` of the payment method:
+
+```shell showLineNumbers title="Delete a card"
+curl 'https://api.publicsquare.com/payment-methods/cards/card_AjkCFKAYiTsjghXWMzoXFPMxj' \
+-X 'DELETE' \
+-H 'X-API-KEY: <SECRET_API_KEY>'
+```
+
+## Conclusion
+
+Now that we can manage saved payment methods, we may want to use them.
+Follow these guides to learn more:
+
+- [Accept Card Payments](/guides/payments/accept-card-payments)
+- [Accept Bank Account Payments](/guides/payments/accept-bank-account-payments)
+- [Send Card Payouts](/guides/payouts/process-card-payouts)
+- [Send Bank Account Payouts](/guides/payouts/process-ach-payouts)

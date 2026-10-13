@@ -1,3 +1,7 @@
+---
+sidebar_label: Apple Pay
+---
+
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
@@ -5,9 +9,9 @@ import { Alert } from "@site/src/components/shared/Alert";
 import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
 
-# Accept Apple Pay
+# Set Up Apple Pay
 
-In this guide, we will set up Credova Elements SDKs to capture Apple Pay in a frontend application and securely authorize and store the Apple Pay data while avoiding PCI requirements. Then we will create a payment with the collected Apple Pay payment method.
+In this guide, we will set up Credova Elements SDKs to capture Apple Pay in a frontend application and securely authorize and store the Apple Pay data while avoiding PCI requirements. To charge the collected Apple Pay payment method, see [Accept Apple Pay](/guides/payments/accept-apple-pay).
 
 ## Before you start
 
@@ -282,7 +286,7 @@ function createApplePaySession() {
   </TabItem>
 </Tabs>
 
-When `requiredShippingContactFields` is set, the shipping address is returned as `event.payment.shippingContact`. We don't store the shipping address on the payment method, pass it along as `shipping_address` when you [create the payment](#create-a-payment). The billing address is already stored on the payment method from the earlier tokenization step, so you don't need to read it again here.
+When `requiredShippingContactFields` is set, the shipping address is returned as `event.payment.shippingContact`. We don't store the shipping address on the payment method, pass it along as `shipping_address` when you [create the payment](/guides/payments/accept-apple-pay#create-a-payment). The billing address is already stored on the payment method from the earlier tokenization step, so you don't need to read it again here.
 
 ```javascript showLineNumbers title="index.js"
 session.onpaymentauthorized = async (event: any) => {
@@ -507,200 +511,9 @@ You can optionally pass in a `customer_id` to associate with an existing [Create
 
 <Alert type="warning">Set `requiredBillingContactFields: ['postalAddress', 'phone']` on the Apple Pay create session is required when creating an Apple Pay payment method. Requests without it will fail validation.</Alert>
 
-## Process the Payment
-
-Now that you have collected an Apple Pay payment method, use its `id` to create a payment. Your frontend sends the `id` to your backend, as in the `chargePayment` call above, and your backend makes the call with your [Secret Key](#before-you-start).
-
-For example, given the Apple Pay payment method `appl_Aw3U2eESBnq6DoYEFn8qaSMrA` from the previous step:
-
-### Create a Payment
-
-We need to make a call to [Create Payment](/api/financial/create-payment) endpoint:
-
-```shell showLineNumbers title="Create a Payment"
-curl 'https://api.publicsquare.com/payments' \
--X 'POST' \
--H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
--H 'Content-Type: application/json' \
--d '{
-  "amount": 1000,
-  "currency": "USD",
-  "payment_method": {
-    "apple_pay": "appl_Aw3U2eESBnq6DoYEFn8qaSMrA"
-  },
-  "customer": {
-    "first_name": "John",
-    "last_name": "Smith",
-    "email": "john.smith@email.com"
-  },
-  "billing_details": {
-    "address_line_1": "111 Test St.",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  }
-}'
-```
-
-<Alert>The amount is provided in cents. 1000 is the equivalent of $10.00</Alert>
-
-<Alert type="warning">The IDEMPOTENCY-KEY header can be passed to protect against duplicate payments being processed.</Alert>
-
-### Create with Existing Customer
-
-If you [created a customer](/api/accounts/create-customer), then you can pass its ID as `customer.id` when processing the payment:
-
-```shell showLineNumbers title="Create a Payment with Customer"
-curl 'https://api.publicsquare.com/payments' \
--X 'POST' \
--H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
--H 'Content-Type: application/json' \
--d '{
-  "amount": 1000,
-  "currency": "USD",
-  "payment_method": {
-    "apple_pay": "appl_Aw3U2eESBnq6DoYEFn8qaSMrA"
-  },
-  "customer": {
-    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
-  },
-  "billing_details": {
-    "address_line_1": "111 Test St.",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  }
-}'
-```
-
-### Create with Customer's Payment Method
-
-If you [attached the Apple Pay payment method to a customer](/api/financial/attach-apple-pay-to-customer), then you can omit the `customer` section when processing the payment:
-
-```shell showLineNumbers title="Create a Payment with Payment Method"
-curl 'https://api.publicsquare.com/payments' \
--X 'POST' \
--H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
--H 'Content-Type: application/json' \
--d '{
-  "amount": 1000,
-  "currency": "USD",
-  "payment_method": {
-    "apple_pay": "appl_Aw3U2eESBnq6DoYEFn8qaSMrA"
-  },
-  "billing_details": {
-    "address_line_1": "111 Test St.",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  }
-}'
-```
-
-### Create with Payment Method's Billing Details
-
-If you supplied the `billing_details` or [updated the Apple Pay payment method](/api/financial/update-apple-pay-payment-method), then you can omit the `billing_details` section when processing the payment:
-
-```shell showLineNumbers title="Create a Payment with Payment Method"
-curl 'https://api.publicsquare.com/payments' \
--X 'POST' \
--H 'X-API-KEY: <SECRET_API_KEY>' \
--H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
--H 'Content-Type: application/json' \
--d '{
-  "amount": 1000,
-  "currency": "USD",
-  "payment_method": {
-    "apple_pay": "appl_Aw3U2eESBnq6DoYEFn8qaSMrA"
-  }
-}'
-```
-
-## Payment Response
-
-Given the above examples, you should see a payment result similar to:
-
-```json showLineNumbers
-{
-  "id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
-  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
-  "environment": "test",
-  "status": "succeeded",
-  "transaction_id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
-  "amount": 1000,
-  "amount_capturable": 0,
-  "amount_charged": 1000,
-  "amount_refunded": 0,
-  "refunded": false,
-  "currency": "USD",
-  "payment_method": {
-    "apple_pay": {
-      "id": "appl_Aw3U2eESBnq6DoYEFn8qaSMrA",
-      "token_type": "dpan",
-      "last4": "4242",
-      "exp_month": "12",
-      "exp_year": "2025",
-      "brand": "visa",
-      "avs_code": "Y",
-      "cvv2_reply": "M"
-    }
-  },
-  "customer": {
-    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
-    "first_name": "John",
-    "last_name": "Smith",
-    "email": "john.smith@email.com",
-  },
-  "billing_details": {
-    "address_line_1": "111 Test St.",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  },
-  "shipping_address": {
-    "address_line_1": "111 Colorado Ave.",
-    "address_line_2": "Apt 403",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  },
-  "fraud_decision": {
-    "decision": "accept"
-  },
-  "transaction": {
-    "id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
-    "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
-    "environment": "test",
-    "status": "succeeded",
-    "amount": 1000,
-    "fee_amount": 0,
-    "net_amount": 1000,
-    "currency": "USD",
-    "type_id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
-    "type": "payment",
-    "processor": "nuvei",
-    "processor_id": "7110000000010554769",
-    "created_at": "2024-06-30T01:02:29.212Z",
-    "modified_at": "2024-06-30T01:02:29.212Z"
-  },
-  "created_at": "2024-06-30T01:02:29.212Z",
-  "modified_at": "2024-06-30T01:02:29.212Z"
-}
-```
-
 ## Conclusion
 
-Following this guide, you have successfully collected a customer's Apple Pay and created a payment with it. Now we may need to manage the payment or view information about the payment.
-Follow these guides to learn more:
+You have collected a customer's Apple Pay payment method. To use it, follow these guides:
 
-- [Issue a Refund](/guides/refunds/refund-payments)
-- [Cancel a Payment](/guides/payments/cancel-payments)
-- [Search and View Transactions](/guides/transactions/search-and-view-transactions)
+- [Accept Apple Pay](/guides/payments/accept-apple-pay)
+- [Manage Saved Payment Methods](/guides/payment-methods/manage-saved-payment-methods)
