@@ -1,3 +1,10 @@
+# [1.63.0](https://github.com/credova/developers.credova.com/compare/v1.62.0...v1.63.0) (2026-10-13)
+
+
+### Features
+
+* **docs:** redesign and regroup the developer docs [sc-89873] ([#26](https://github.com/credova/developers.credova.com/issues/26)) ([f4d2310](https://github.com/credova/developers.credova.com/commit/f4d23103c093b1b07f9d9d393c9fe2f0df3bd3b3))
+
 # [1.62.0](https://github.com/credova/developers.credova.com/compare/v1.61.0...v1.62.0) (2026-10-09)
 
 
