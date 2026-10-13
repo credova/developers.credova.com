@@ -210,13 +210,10 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
-  margin-top: 16px;
 }
 
-.products {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+.payments + .payments,
+.payments + .product {
   margin-top: 16px;
 }
 
@@ -269,7 +266,6 @@
     padding: 20px;
   }
 
-  .products,
   .integrations,
   .lifecycle,
   .integrations > .integration:first-child .links {

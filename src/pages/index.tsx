@@ -21,15 +21,15 @@ type Integration = {
   platforms?: boolean;
 };
 
-const integrations: Integration[] = [
+const paymentMethods: Integration[] = [
   {
     name: "Credova Elements",
-    description: "Customers pay in your web app, and card data never reaches your servers.",
+    description: "Customers enter payment details in your web app, and card data never reaches your servers.",
     links: [
-      { label: "Accept card payments", to: "/guides/payments/accept-card-payments" },
-      { label: "Accept bank account payments", to: "/guides/payments/accept-bank-account-payments" },
-      { label: "Accept Apple Pay", to: "/guides/payments/accept-apple-pay" },
-      { label: "Accept Google Pay", to: "/guides/payments/accept-google-pay" },
+      { label: "Save cards", to: "/guides/payment-methods/cards" },
+      { label: "Save bank accounts", to: "/guides/payment-methods/bank-accounts" },
+      { label: "Set up Apple Pay", to: "/guides/payment-methods/apple-pay" },
+      { label: "Set up Google Pay", to: "/guides/payment-methods/google-pay" },
     ],
     sdks: [
       { label: "JavaScript", to: "/sdks/web/javascript", Logo: JavaScriptLogo },
@@ -38,13 +38,11 @@ const integrations: Integration[] = [
   },
   {
     name: "Direct API",
-    description: "Create and manage payments by calling the API from your own servers.",
+    description: "Save payment methods by calling the API from your own servers. Your organization must be PCI certified.",
     links: [
-      { label: "Create a payment with card details", to: "/guides/payments/accept-card-payments?card=details" },
-      { label: "Save a card", to: "/guides/payment-methods/cards" },
-      { label: "Save a bank account", to: "/guides/payment-methods/bank-accounts" },
-      { label: "Payment Intents", to: "/concepts/payment-intents" },
-      { label: "Payments API reference", to: "/api/financial/payments" },
+      { label: "Save a card", to: "/guides/payment-methods/cards?path=api" },
+      { label: "Save a bank account", to: "/guides/payment-methods/bank-accounts?path=api" },
+      { label: "Manage saved payment methods", to: "/guides/payment-methods/manage-saved-payment-methods" },
     ],
   },
   {
@@ -54,40 +52,92 @@ const integrations: Integration[] = [
   },
 ];
 
-const paymentOptions: LinkItem[] = [
-  { label: "Authorize now, capture later", to: "/guides/payments/authorize-and-capture-payments" },
-  { label: "Verify the card first", to: "/guides/payments/verify-cards" },
-  { label: "Add 3D Secure with Elements", to: "/concepts/3d-secure" },
-];
-
-const afterPayment: LinkItem[] = [
-  { label: "Cancel", to: "/guides/payments/cancel-payments" },
-  { label: "Refund", to: "/guides/refunds/refund-payments" },
-  { label: "Transactions and settlements", to: "/guides/transactions/search-and-view-transactions" },
-  { label: "Webhooks", to: "/concepts/webhooks" },
-];
-
-const products = [
+const payments: Integration[] = [
   {
-    name: "Payouts",
-    description: "Send money to cards and bank accounts.",
+    name: "Accept payments",
+    description: "Pay with a saved payment method, or send the card or bank account details in the request.",
+    links: [
+      { label: "Accept card payments", to: "/guides/payments/accept-card-payments" },
+      { label: "Accept bank account payments", to: "/guides/payments/accept-bank-account-payments" },
+      { label: "Accept Apple Pay", to: "/guides/payments/accept-apple-pay" },
+      { label: "Accept Google Pay", to: "/guides/payments/accept-google-pay" },
+    ],
+  },
+  {
+    name: "Payment options",
+    description: "Choose these when you create the payment.",
+    links: [
+      { label: "Authorize now, capture later", to: "/guides/payments/authorize-and-capture-payments" },
+      { label: "Verify the card first", to: "/guides/payments/verify-cards" },
+      { label: "Charge a card on file", to: "/guides/payments/card-on-file-and-recurring-payments" },
+      { label: "Add 3D Secure", to: "/concepts/3d-secure" },
+    ],
+  },
+  {
+    name: "After the payment",
+    description: "Act on a payment that already exists.",
+    links: [
+      { label: "Cancel", to: "/guides/payments/cancel-payments" },
+      { label: "Refund", to: "/guides/refunds/refund-payments" },
+      { label: "Transactions and settlements", to: "/guides/transactions/search-and-view-transactions" },
+      { label: "Webhooks", to: "/concepts/webhooks" },
+    ],
+  },
+];
+
+const payouts: Integration[] = [
+  {
+    name: "Send payouts",
+    description: "Send money to a saved card or bank account.",
     links: [
       { label: "Send card payouts", to: "/guides/payouts/process-card-payouts" },
-      { label: "Send a payout with card details", to: "/guides/payouts/process-card-payouts?card=details" },
       { label: "Send bank account payouts", to: "/guides/payouts/process-ach-payouts" },
-      { label: "Cancel a payout", to: "/guides/payouts/cancel-payouts" },
     ],
   },
   {
-    name: "Marketplaces",
-    description: "Onboard sellers and move funds to and from them.",
+    name: "After the payout",
+    description: "Act on a payout that already exists.",
     links: [
-      { label: "Onboard sellers", to: "/guides/marketplaces/onboard-sellers" },
-      { label: "Transfer funds to sellers", to: "/guides/marketplaces/transfer-funds-to-sellers" },
-      { label: "Transfer funds from sellers", to: "/guides/marketplaces/transfer-funds-from-sellers" },
+      { label: "Cancel a payout", to: "/guides/payouts/cancel-payouts" },
+      { label: "Transactions and settlements", to: "/guides/transactions/search-and-view-transactions" },
+      { label: "Webhooks", to: "/concepts/webhooks" },
     ],
   },
 ];
+
+const marketplaces = {
+  name: "Marketplaces",
+  description: "Onboard sellers and move funds to and from them.",
+  links: [
+    { label: "Onboard sellers", to: "/guides/marketplaces/onboard-sellers" },
+    { label: "Transfer funds to sellers", to: "/guides/marketplaces/transfer-funds-to-sellers" },
+    { label: "Transfer funds from sellers", to: "/guides/marketplaces/transfer-funds-from-sellers" },
+  ],
+};
+
+const Cards = ({ items }: { items: Integration[] }) => (
+  <>
+    {items.map((item) => (
+      <article className={styles.integration} key={item.name}>
+        <h3>{item.name}</h3>
+        <p>{item.description}</p>
+        {item.platforms ? <Platforms /> : <LinkList links={item.links ?? []} />}
+        {item.sdks && (
+          <ul className={styles.sdks} aria-label="Elements SDKs">
+            {item.sdks.map(({ label, to, Logo }) => (
+              <li key={to}>
+                <Link to={to}>
+                  <Logo aria-hidden="true" />
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </article>
+    ))}
+  </>
+);
 
 const LinkList = ({ links }: { links: LinkItem[] }) => (
   <ul className={styles.links}>
@@ -154,54 +204,38 @@ export default function Home() {
             </div>
           </header>
 
+          <section className={styles.payments} aria-labelledby="payment-methods">
+            <div className={styles.sectionHead}>
+              <h2 id="payment-methods">Payment methods</h2>
+            </div>
+            <div className={styles.integrations}>
+              <Cards items={paymentMethods} />
+            </div>
+          </section>
+
           <section className={styles.payments} aria-labelledby="payments">
             <div className={styles.sectionHead}>
               <h2 id="payments">Payments</h2>
             </div>
             <div className={styles.integrations}>
-              {integrations.map((integration) => (
-                <article className={styles.integration} key={integration.name}>
-                  <h3>{integration.name}</h3>
-                  <p>{integration.description}</p>
-                  {integration.platforms ? <Platforms /> : <LinkList links={integration.links} />}
-                  {integration.sdks && (
-                    <ul className={styles.sdks} aria-label="Elements SDKs">
-                      {integration.sdks.map(({ label, to, Logo }) => (
-                        <li key={to}>
-                          <Link to={to}>
-                            <Logo aria-hidden="true" />
-                            {label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </article>
-              ))}
-            </div>
-            <div className={styles.lifecycle}>
-              <article className={styles.integration}>
-                <h3>Payment options</h3>
-                <p>Choose these when you create the payment.</p>
-                <LinkList links={paymentOptions} />
-              </article>
-              <article className={styles.integration}>
-                <h3>After the payment</h3>
-                <p>Act on a payment that already exists.</p>
-                <LinkList links={afterPayment} />
-              </article>
+              <Cards items={payments} />
             </div>
           </section>
 
-          <div className={styles.products}>
-            {products.map((product) => (
-              <section className={styles.product} key={product.name} aria-labelledby={product.name.toLowerCase()}>
-                <h2 id={product.name.toLowerCase()}>{product.name}</h2>
-                <p>{product.description}</p>
-                <LinkList links={product.links} />
-              </section>
-            ))}
-          </div>
+          <section className={styles.payments} aria-labelledby="payouts">
+            <div className={styles.sectionHead}>
+              <h2 id="payouts">Payouts</h2>
+            </div>
+            <div className={styles.lifecycle}>
+              <Cards items={payouts} />
+            </div>
+          </section>
+
+          <section className={styles.product} aria-labelledby="marketplaces">
+            <h2 id="marketplaces">{marketplaces.name}</h2>
+            <p>{marketplaces.description}</p>
+            <LinkList links={marketplaces.links} />
+          </section>
         </main>
 
       </div>
