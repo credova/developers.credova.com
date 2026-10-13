@@ -1,6 +1,6 @@
 ---
 title: Getting Started
-description: Set up your Credova account and API keys, then choose how you integrate.
+description: Set up your Credova account and API keys, then save a payment method, take a payment or send a payout.
 sidebar_label: Getting Started
 ---
 
@@ -8,7 +8,7 @@ import { AuthButtons } from "@site/src/components/docs/AuthButtons";
 
 # Getting Started
 
-Credova provides APIs, SDKs and eCommerce plugins to accept payments, send payouts and manage transactions. Complete these steps once, then follow the guide for your integration path.
+Credova provides APIs, SDKs and eCommerce plugins to accept payments, send payouts and manage transactions. Complete these steps once, then follow the guides for what you build.
 
 ## Create an account
 
@@ -29,21 +29,35 @@ Each account has `Test` and `Production` keys. Use your `Test` keys while you bu
 
 ## Choose what you build
 
+Every payment and payout starts from a payment method. Save the method first, then use it to take a payment or to send money out.
+
+### Payment Methods
+
+Save a card, a bank account, Apple Pay or Google Pay. A saved payment method has an `id` that you use in payments and payouts.
+
+| Payment method | How you collect it | Start with |
+|----------------|--------------------|------------|
+| Card | In your web app with Credova Elements, or from your servers with the Direct API. | [Save Cards](/guides/payment-methods/cards) |
+| Bank account | In your web app with manual entry or instant verification, or from your servers with the Direct API. | [Save Bank Accounts](/guides/payment-methods/bank-accounts) |
+| Apple Pay | In your web app with Credova Elements. | [Set Up Apple Pay](/guides/payment-methods/apple-pay) |
+| Google Pay | In your web app with Credova Elements. | [Set Up Google Pay](/guides/payment-methods/google-pay) |
+
+Credova Elements keeps card and bank account data off your servers. The Direct API sends it from your servers, so your organization must be PCI certified. On Shopify, WooCommerce, Magento or BigCommerce, the [eCommerce plugin](/plugins) collects the payment method for you.
+
+After you save a payment method, you can [update the CVC](/guides/payment-methods/recollect-cvc) of a card or [manage your saved payment methods](/guides/payment-methods/manage-saved-payment-methods).
+
 ### Payments
 
-Pick how your customers enter their payment details.
+Create a payment with a saved payment method. Cards and bank accounts can also arrive in the payment request, so you do not have to save them first.
 
-| Integration | Choose it when | Card data on your servers | Start with |
-|-------------|----------------|---------------------------|------------|
-| Credova Elements | Customers pay in your web app. | No. Credova Elements collects it. | [Accept Card Payments](/guides/payments/accept-card-payments) |
-| Direct API | Your organization is PCI certified and your servers already have the card. | Yes | [Create a Payment with Card Details](/guides/payments/accept-card-payments?card=details) |
-| eCommerce plugins | You sell on Shopify, WooCommerce, Magento or BigCommerce. | No. The plugin collects it. | [eCommerce Plugins](/plugins) |
+| Pay with | Start with |
+|----------|------------|
+| Card | [Accept Card Payments](/guides/payments/accept-card-payments) |
+| Bank account | [Accept Bank Account Payments](/guides/payments/accept-bank-account-payments) |
+| Apple Pay | [Accept Apple Pay](/guides/payments/accept-apple-pay) |
+| Google Pay | [Accept Google Pay](/guides/payments/accept-google-pay) |
 
-Credova Elements also accepts [bank accounts](/guides/payments/accept-bank-account-payments), [Apple Pay](/guides/payments/accept-apple-pay) and [Google Pay](/guides/payments/accept-google-pay).
-
-The Direct API can also [save a card](/guides/payment-methods/cards?path=api) or [save a bank account](/guides/payment-methods/bank-accounts?path=api) for later payments.
-
-Every integration creates the same payment, so the same options and follow-up guides apply. When you create the payment, you can [authorize now and capture later](/guides/payments/authorize-and-capture-payments), [verify the card first](/guides/payments/verify-cards), or add [3D Secure](/concepts/3d-secure) with Credova Elements.
+Every payment method creates the same payment, so the same options and follow-up guides apply. When you create the payment, you can [authorize now and capture later](/guides/payments/authorize-and-capture-payments), [verify the card first](/guides/payments/verify-cards), [charge a card on file](/guides/payments/card-on-file-and-recurring-payments), or add 3D Secure with an [iframe](/guides/payments/process-3ds-iframe-payments) or a [redirect](/guides/payments/process-3ds-redirect-payments).
 
 After the payment:
 
@@ -54,7 +68,18 @@ After the payment:
 
 ### Payouts
 
-Send money to cards and bank accounts. Start with [Send Card Payouts](/guides/payouts/process-card-payouts) or [Send Bank Account Payouts](/guides/payouts/process-ach-payouts), and [cancel a payout](/guides/payouts/cancel-payouts) before it settles. If your organization is PCI certified, you can also send the card details in the payout request with [Send a Payout with Card Details](/guides/payouts/process-card-payouts?card=details).
+Send money to a saved card or bank account. Save the payment method first with [Save Cards](/guides/payment-methods/cards) or [Save Bank Accounts](/guides/payment-methods/bank-accounts). A bank account can also arrive in the payout request, and so can a card if your organization is PCI certified.
+
+| Pay out to | Start with |
+|------------|------------|
+| Card | [Send Card Payouts](/guides/payouts/process-card-payouts) |
+| Bank account | [Send Bank Account Payouts](/guides/payouts/process-ach-payouts). Choose standard, same-day or instant. |
+
+After the payout:
+
+- [Cancel Payouts](/guides/payouts/cancel-payouts)
+- [Transactions and Settlements](/guides/transactions/search-and-view-transactions)
+- [Webhooks](/concepts/webhooks)
 
 ### Marketplaces
 
