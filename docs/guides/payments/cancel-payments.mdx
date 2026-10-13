@@ -1,5 +1,8 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
 import { Alert } from "@site/src/components/shared/Alert";
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
 # Cancel Payments
 
@@ -7,17 +10,16 @@ There may be scenarios in which you need to cancel a payment, such as a customer
 
 Both Payment Intents and the direct Payments API support cancellation. A `succeeded` payment cannot be canceled — use the [refund](/guides/refunds/refund-payments) flow instead.
 
-## Getting Started
+## Before you start
 
-<GettingStartedSection />
+<BeforeYouStart keys={["secret"]} />
 
-### Get your Secret Key
+## Cancel a Payment
 
-Next you will need your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Secret Key` and copy the value.
+Cancel with either Payment Intents or the direct Payments API. Select the tab for the API you use.
 
-<Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
-
-## Payment Intents
+<Tabs className="publicsquare-tabs" groupId="api-style" queryString="api">
+  <TabItem value="payment-intents" label="Payment Intents" default>
 
 A Payment Intent can be canceled from any non-terminal status: `requires_payment_method`, `requires_confirmation`, or `requires_capture`. It cannot be canceled once it has `succeeded`.
 
@@ -77,9 +79,8 @@ If a confirm is currently in progress, cancellation will be rejected until the c
 }
 ```
 
-<Alert>If the intent has already `succeeded`, cancel is not available. Follow the [Issue a Refund](/guides/refunds/refund-payments) guide instead.</Alert>
-
-## Legacy
+  </TabItem>
+  <TabItem value="legacy" label="Legacy">
 
 The direct Payments API offers the ability to cancel a payment before it is settled or captured.
 
@@ -108,7 +109,7 @@ curl 'https://api.publicsquare.com/payments/cancel' \
 }'
 ```
 
-### Payment Response
+<h3 id="payment-response">Payment Response</h3>
 
 Given the above example, you should see a cancelled payment result similar to:
 
@@ -141,7 +142,7 @@ Given the above example, you should see a cancelled payment result similar to:
 }
 ```
 
-### Handling Cancellation Failures
+<h3 id="handling-cancellation-failures">Handling Cancellation Failures</h3>
 
 If a payment cannot be cancelled because the payment has already been settled, an error response will be returned:
 
@@ -155,7 +156,7 @@ If a payment cannot be cancelled because the payment has already been settled, a
 
 If payment cancellation fails, you can follow the [refund payment](/guides/refunds/refund-payments) guide.
 
-### Cancelling a Specific Capture
+<h3 id="cancelling-a-specific-capture">Cancelling a Specific Capture</h3>
 
 If a payment has [multiple partial captures](/guides/payments/authorize-and-capture-payments#multiple-partial-captures), pass `payment_capture_id` to cancel one capture instead of the whole payment.
 
@@ -197,6 +198,9 @@ Voiding a capture that has already settled is rejected. Use a [refund](/guides/r
 ```
 
 A `payment_capture_id` that does not exist on the payment returns a `404`.
+
+  </TabItem>
+</Tabs>
 
 ## Conclusion
 

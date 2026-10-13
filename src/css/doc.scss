@@ -15,3 +15,72 @@
 .table-of-contents li {
   margin: var(--ifm-toc-padding-vertical) 0 var(--ifm-toc-padding-vertical) var(--ifm-toc-padding-horizontal)
 }
+
+[class*="docMainContainer"] > .container {
+  display: flex;
+  flex-direction: column;
+
+  > .row {
+    flex: 1 0 auto;
+  }
+}
+
+.col:has(> [class*="docItemContainer"]) {
+  display: flex;
+  flex-direction: column;
+}
+
+[class*="docItemContainer"] {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+
+  > article {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+
+    > .row:last-child {
+      margin-top: auto;
+    }
+  }
+}
+
+[class*="copyPageButton"] {
+  background: var(--cr-surface) !important;
+  border: 1px solid var(--cr-border) !important;
+  border-radius: var(--cr-radius) !important;
+  color: var(--cr-text) !important;
+}
+
+[class*="copyPageButton"]:hover {
+  border-color: var(--cr-accent) !important;
+  color: var(--cr-heading) !important;
+}
+
+[class*="copyPageText"],
+[class*="copyPageContainer"] {
+  color: inherit !important;
+  border-color: var(--cr-border) !important;
+}
+
+[class*="copyPageDropdown"],
+[class*="copyPageMenu"] {
+  background: var(--cr-bg) !important;
+  border: 1px solid var(--cr-border) !important;
+  border-radius: var(--cr-radius) !important;
+  color: var(--cr-text) !important;
+}
+
+[class*="copyPageDropdown"] button,
+[class*="copyPageMenu"] button,
+[class*="copyPageItem"] {
+  color: var(--cr-text) !important;
+}
+
+[class*="copyPageDropdown"] button:hover,
+[class*="copyPageMenu"] button:hover,
+[class*="copyPageItem"]:hover {
+  background: var(--cr-surface) !important;
+  color: var(--cr-heading) !important;
+}

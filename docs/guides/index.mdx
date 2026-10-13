@@ -1,158 +1,98 @@
 ---
 title: Getting Started
-description: Credova provides APIs, SDKs, and e-commerce plugins to make capturing cards and managing payments fast and simple.
-hide_title: true
+description: Set up your Credova account and API keys, then save a payment method, take a payment or send a payout.
 sidebar_label: Getting Started
-hide_table_of_contents: true
 ---
 
-import { Intro } from "@site/src/components/shared/Intro";
 import { AuthButtons } from "@site/src/components/docs/AuthButtons";
-import { Card } from "@site/src/components/shared/Card";
-import ApplePayImage from "@site/static/img/icons/apple-pay-brands-gradient.svg";
-import CollectCardsImage from "@site/static/img/icons/hand-holding-card-gradient.svg";
-import CollectBankAccountsImage from "@site/static/img/icons/hand-holding-bank-gradient.svg";
-import CollectVerifiedBankAccountsImage from "@site/static/img/icons/light-building-columns-circle-check-full-gradient.svg";
-import GooglePayImage from "@site/static/img/icons/google-pay-brands-gradient.svg";
-import ProcessCardPaymentsImage from "@site/static/img/icons/process-card-gradient.svg";
-import ProcessAchPaymentsImage from "@site/static/img/icons/process-bank-gradient.svg";
-import ProcessCardPayoutsImage from "@site/static/img/icons/light-credit-card-circle-arrow-right-gradient.svg";
-import ProcessAchPayoutsImage from "@site/static/img/icons/light-building-columns-circle-arrow-right-gradient.svg";
-import RefundPaymentsImage from "@site/static/img/icons/light-receipt-rotate-left-gradient.svg";
-import SearchTransactionsImage from "@site/static/img/icons/magnifying-glass-dollar-gradient.svg";
-import TransactionsImage from "@site/static/img/icons/money-bill-transfer-gradient.svg";
-import FraudDetailsImage from "@site/static/img/icons/shield-check-gradient.svg";
-import ApiKeysImage from "@site/static/img/icons/key-gradient.svg";
-import WebhooksImage from "@site/static/img/icons/webhook-gradient.svg";
-import AccountsImage from "@site/static/img/icons/file-invoice-dollar-gradient.svg";
-import OnboardingImage from "@site/static/img/icons/handshake-light-gradient.svg";
 
-<Intro
-  title="Getting Started"
-  caption="Credova provides APIs, SDKs, and e-commerce plugins to make capturing cards and managing payments fast and simple."
-  img="/img/icons/rocket-gradient.svg"
-/>
+# Getting Started
 
-### 1. Set up your Account
+Credova provides APIs, SDKs and eCommerce plugins to accept payments, send payouts and manage transactions. Complete these steps once, then follow the guides for what you build.
 
-Head over to the [Credova Portal](https://portal.publicsquare.com).
+## Create an account
+
+Create an account in the Credova Portal, or sign in to an existing account.
 
 <AuthButtons />
 
-### 2. Start Building
+## Get your API keys
 
-Jump into action with a step-by-step guide tailored to your use case.
+Open [API keys](https://portal.publicsquare.com/developers/api-keys) in the Portal and click `Reveal` to copy a key.
 
-<Card.TwoColumnLayout>
-  <Card
-    href="/guides/payment-methods/collect-cards"
-    heading="Collect Cards"
-    img={<div className="card-img-container"><CollectCardsImage /></div>}
-  >Collect credit/debit cards in your web application.</Card>
+| Key | Where you use it | Keep it secret |
+|-----|------------------|----------------|
+| `Publishable Key` | In the browser, to load Credova Elements. | No |
+| `Secret Key` | On your server, to call the Credova API. | Yes |
 
-  <Card
-    href="/guides/payment-methods/collect-bank-accounts"
-    heading="Collect Bank Accounts Manually"
-    img={<div className="card-img-container"><CollectBankAccountsImage /></div>}
-  >Manually collect bank accounts manually in your web application.</Card>
+Each account has `Test` and `Production` keys. Use your `Test` keys while you build, because they never move money. To limit what a key can do, create a restricted key. See [API Keys](/concepts/api-keys) for permissions.
 
-  <Card
-    href="/guides/payment-methods/collect-verified-bank-accounts"
-    heading="Collect Verified Bank Accounts"
-    img={<div className="card-img-container"><CollectVerifiedBankAccountsImage /></div>}
-  >Collect verified bank accounts in your web application.</Card>
+## Choose what you build
 
-  <Card
-    href="/guides/payment-methods/collect-apple-pay"
-    heading="Collect Apple Pay"
-    img={<div className="card-img-container"><ApplePayImage /></div>}
-  >Collect Apple Pay in your web application.</Card>
+Every payment and payout starts from a payment method. Save the method first, then use it to take a payment or to send money out.
 
-  <Card
-    href="/guides/payment-methods/collect-google-pay"
-    heading="Collect Google Pay"
-    img={<div className="card-img-container"><GooglePayImage /></div>}
-  >Collect Google Pay in your web application.</Card>
+### Payment Methods
 
-  <Card
-    href="/guides/payments/process-card-payments"
-    heading="Process Card Payments"
-    img={<div className="card-img-container"><ProcessCardPaymentsImage /></div>}
-  >Process card payments.</Card>
+Save a card, a bank account, Apple Pay or Google Pay. A saved payment method has an `id` that you use in payments and payouts.
 
-  <Card
-    href="/guides/payments/process-ach-payments"
-    heading="Process ACH Payments"
-    img={<div className="card-img-container"><ProcessAchPaymentsImage /></div>}
-  >Process ACH payments.</Card>
+| Payment method | How you save it | Start with |
+|----------------|--------------------|------------|
+| Card | In your web app with Credova Elements, or from your servers with the Direct API. | [Save Cards](/guides/payment-methods/cards) |
+| Bank account | In your web app with manual entry or instant verification, or from your servers with the Direct API. | [Save Bank Accounts](/guides/payment-methods/bank-accounts) |
+| Apple Pay | In your web app with Credova Elements. | [Set Up Apple Pay](/guides/payment-methods/apple-pay) |
+| Google Pay | In your web app with Credova Elements. | [Set Up Google Pay](/guides/payment-methods/google-pay) |
 
-  <Card
-    href="/guides/payouts/process-card-payouts"
-    heading="Process Card Payouts"
-    img={<div className="card-img-container"><ProcessCardPayoutsImage /></div>}
-  >Process card payouts.</Card>
+Credova Elements keeps card and bank account data off your servers. The Direct API sends it from your servers, so your organization must be PCI certified. On Shopify, WooCommerce, Magento or BigCommerce, the [eCommerce plugin](/plugins) collects the payment method for you.
 
-  <Card
-    href="/guides/payouts/process-ach-payouts"
-    heading="Process ACH Payouts"
-    img={<div className="card-img-container"><ProcessAchPayoutsImage /></div>}
-  >Process ACH payouts.</Card>
+After you save a payment method, you can [update the CVC](/guides/payment-methods/recollect-cvc) of a card or [manage your saved payment methods](/guides/payment-methods/manage-saved-payment-methods).
 
-  <Card
-    href="/guides/refunds/refund-payments"
-    heading="Refund Payments"
-    img={<div className="card-img-container"><RefundPaymentsImage /></div>}
-  >Issue refunds to your customers.</Card>
+### Payments
 
-  <Card
-    heading="Search and View Transactions"
-    href="/guides/transactions/search-and-view-transactions"
-    img={<div className="card-img-container"><SearchTransactionsImage /></div>}
-  >Search and view transactions in your account.</Card>
-</Card.TwoColumnLayout>
+Create a payment with a saved payment method. Cards and bank accounts can also arrive in the payment request, so you do not have to save them first.
 
-Explore the Guides menu for more developer-centric guides.
+| Pay with | Start with |
+|----------|------------|
+| Card | [Accept Card Payments](/guides/payments/accept-card-payments) |
+| Bank account | [Accept Bank Account Payments](/guides/payments/accept-bank-account-payments) |
+| Apple Pay | [Accept Apple Pay](/guides/payments/accept-apple-pay) |
+| Google Pay | [Accept Google Pay](/guides/payments/accept-google-pay) |
 
-### 3. Go Live
+Every payment method creates the same payment, so the same options and follow-up guides apply. When you create the payment, you can [authorize now and capture later](/guides/payments/authorize-and-capture-payments), [verify the card first](/guides/payments/verify-cards), [charge a card on file](/guides/payments/card-on-file-and-recurring-payments), or add 3D Secure with an [iframe](/guides/payments/process-3ds-iframe-payments) or a [redirect](/guides/payments/process-3ds-redirect-payments).
 
-[View our interactive checklist](/guides/production-checklist) to ensure you are following the best recommended practices and go live without overthinking it.
+After the payment:
 
-## Learn More
+- [Cancel Payments](/guides/payments/cancel-payments)
+- [Refund Payments](/guides/refunds/refund-payments)
+- [Transactions and Settlements](/guides/transactions/search-and-view-transactions)
+- [Webhooks](/concepts/webhooks)
 
-<Card.TwoColumnLayout>
-  <Card
-    href="/concepts/transactions"
-    heading="Transactions"
-    img={<div className="card-img-container"><TransactionsImage /></div>}
-  >Learn about transactions types and statuses.</Card>
+### Payouts
 
-  <Card
-    href="/concepts/fraud-details-and-prevention"
-    heading="Fraud Details and Prevention"
-    img={<div className="card-img-container"><FraudDetailsImage /></div>}
-  >Discover how to reduce fraud and chargebacks.</Card>
+Send money to a saved card or bank account. Save the payment method first with [Save Cards](/guides/payment-methods/cards) or [Save Bank Accounts](/guides/payment-methods/bank-accounts). A bank account can also arrive in the payout request, and so can a card if your organization is PCI certified.
 
-  <Card
-    href="/concepts/api-keys"
-    heading="API Keys"
-    img={<div className="card-img-container"><ApiKeysImage /></div>}
-  >Learn how to access the Credova API.</Card>
+| Pay out to | Start with |
+|------------|------------|
+| Card | [Send Card Payouts](/guides/payouts/process-card-payouts) |
+| Bank account | [Send Bank Account Payouts](/guides/payouts/process-ach-payouts). Choose standard, same-day or instant. |
 
-  <Card
-    href="/concepts/webhooks"
-    heading="Webhooks"
-    img={<div className="card-img-container"><WebhooksImage /></div>}
-  >Receive notifications for events about your account.</Card>
+After the payout:
 
-  <Card
-    href="/concepts/accounts"
-    heading="Accounts"
-    img={<div className="card-img-container"><AccountsImage /></div>}
-  >Configure your account for your business use-cases.</Card>
+- [Cancel Payouts](/guides/payouts/cancel-payouts)
+- [Transactions and Settlements](/guides/transactions/search-and-view-transactions)
+- [Webhooks](/concepts/webhooks)
 
-  <Card
-    href="/concepts/onboarding"
-    heading="Onboarding"
-    img={<div className="card-img-container"><OnboardingImage /></div>}
-  >Learn how to onboard to our platform.</Card>
-</Card.TwoColumnLayout>
+### Marketplaces
+
+Onboard sellers and move funds to and from them. Start with [Onboard Sellers](/guides/marketplaces/onboard-sellers).
+
+## Go live
+
+[Test your integration](/guides/testing) with test cards, then work through the [production checklist](/guides/production-checklist). Replace your `Test` keys with `Production` keys when you go live.
+
+## Learn more
+
+- [Transactions](/concepts/transactions): transaction types and statuses.
+- [Payment Intents](/concepts/payment-intents): the lifecycle of a payment.
+- [Webhooks](/concepts/webhooks): notifications for events in your account.
+- [Fraud Details and Prevention](/concepts/fraud-details-and-prevention): how to reduce fraud and chargebacks.
+- [Accounts](/concepts/accounts) and [Onboarding](/concepts/onboarding): configure your account for your business.

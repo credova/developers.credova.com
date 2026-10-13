@@ -1,52 +1,19 @@
 import { Alert } from "@site/src/components/shared/Alert";
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
-# Process Google Pay Payments
+# Accept Google Pay
 
-Now that you have completed the [Collect Google Pay](/guides/payment-methods/collect-google-pay) guide, let's process an Google Pay payment with the newly collected Google Pay payment method.
+This guide creates a payment from your server with a Google Pay payment method. Save the payment method first with [Set Up Google Pay](/guides/payment-methods/google-pay).
 
-## Getting Started
+## Before you start
 
-<GettingStartedSection />
-
-### Get your Secret Key
-
-Next you will need your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Secret Key` and copy the value.
-
-<Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
+<BeforeYouStart keys={["secret"]} />
 
 ## Process the Payment
 
-We will need to use the information from the [previously collected Google Pay payment method](/guides/payment-methods/collect-google-pay) to create a new payment.
+Use the `id` of a saved Google Pay payment method to create a payment. Your frontend sends the `id` to your backend, as in the `chargePayment` call in [Set Up Google Pay](/guides/payment-methods/google-pay#tokenization-and-storing-google-pay), and your backend makes the call with your [Secret Key](#before-you-start).
 
-For example, given you have a previously collected Google Pay:
-
-```json showLineNumbers title=google-pay.json
-{
-  // highlight-next-line
-  "id": "ggl_Aw3U2eESBnq6DoYEFn8qaSMrA",
-  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
-  "environment": "test",
-  "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
-  "token_type": "card",
-  "last4": "4242",
-  "exp_month": "12",
-  "exp_year": "2025",
-  "fingerprint": "6Bh4Dnq4jrTte3Rp4k9u6HheqSXvhTEDi4qv5M4bNrbH",
-  "brand": "visa",
-  "billing_details": {
-    "address_line_1": "111 Colorado Ave.",
-    "address_line_2": "Apt 403",
-    "city": "Des Moines",
-    "state": "IA",
-    "postal_code": "51111",
-    "country": "US"
-  },
-  "expires_at": "2024-06-31T01:02:29.212Z",
-  "created_at": "2024-06-30T01:02:29.212Z",
-  "modified_at": "2024-06-30T01:02:29.212Z"
-}
-```
+For example, given the Google Pay payment method `ggl_Aw3U2eESBnq6DoYEFn8qaSMrA` from the previous step:
 
 ### Create a Payment
 
@@ -85,7 +52,7 @@ curl 'https://api.publicsquare.com/payments' \
 
 ### Create with Existing Customer
 
-If you [created a customer](/api/accounts/create-customer), then you can pass the `customer_id` when processing the payment:
+If you [created a customer](/api/accounts/create-customer), then you can pass its ID as `customer.id` when processing the payment:
 
 ```shell showLineNumbers title="Create a Payment with Customer"
 curl 'https://api.publicsquare.com/payments' \
@@ -100,7 +67,7 @@ curl 'https://api.publicsquare.com/payments' \
     "google_pay": "ggl_Aw3U2eESBnq6DoYEFn8qaSMrA"
   },
   "customer": {
-    "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
   },
   "billing_details": {
     "address_line_1": "111 Test St.",
@@ -234,8 +201,7 @@ Given the above examples, you should see a payment result similar to:
 
 ## Conclusion
 
-Now that we have seen how to process payments with a collected Google Pay payment method, we may need to manage the payment or view information about the payment.
-Follow these guides to learn more:
+You created a payment with a customer's Google Pay payment method. To manage the payment or view its details, follow these guides:
 
 - [Issue a Refund](/guides/refunds/refund-payments)
 - [Cancel a Payment](/guides/payments/cancel-payments)

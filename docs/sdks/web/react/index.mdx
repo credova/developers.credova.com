@@ -9,6 +9,7 @@ import TabItem from "@theme/TabItem";
 import { Alert, Alerts } from "@site/src/components/shared/Alert";
 import { GithubCard } from "@site/src/components/sdks/GithubCard";
 import { SDK } from "@site/src/components/types";
+import { LatestVersion } from "@site/src/components/docs/LatestVersion";
 
 # React Elements SDK
 
@@ -18,8 +19,6 @@ import { SDK } from "@site/src/components/types";
   organization="credova"
   repository="elements"
 />
-
-###
 
 PublicSquare React Elements is a [package](https://www.npmjs.com/package/@publicsquare/elements-react) designed to allow you to easily integrate PublicSquare JS SDK and Elements features in your React solution.
 
@@ -33,7 +32,7 @@ This SDK requires the use of a Publishable API Key. [Go to your Developers secti
 
 ## Installation
 
-<Tabs className="publicsquare-tabs">
+<Tabs className="publicsquare-tabs" groupId="package-manager">
   <TabItem value="npm" label="npm">
 
 ```shell showLineNumbers
@@ -48,29 +47,27 @@ yarn add @publicsquare/elements-react
 ```
 
   </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```shell showLineNumbers
+pnpm add @publicsquare/elements-react
+```
+
+  </TabItem>
+  <TabItem value="bun" label="bun">
+
+```shell showLineNumbers
+bun add @publicsquare/elements-react
+```
+
+  </TabItem>
 </Tabs>
 
 <Alert>You don't need to install <code>@publicsquare/elements-js</code> separately when using our React package. Types are available via the <code>@publicsquare/elements-react/types</code> module.</Alert>
 
 ## Versions
 
-`@publicsquare/elements-react` wraps `@publicsquare/elements-js` and is versioned in lockstep — each release of the React SDK pins the exact same version of the underlying JavaScript SDK, so the same production sandbox testing requirements apply.
-
-Recommended version: **1.16.1**.
-
-If you're testing against a production sandbox (test-mode transactions using a production account), you need to be on **1.16.1** specifically — older versions will not work for this scenario.
-
-<Alert type={Alerts.WARNING}>1.16.1 is the current fix, not the start of a version range. There is no confirmed compatibility beyond 1.16.1 yet — this section will be updated as new versions are released, rather than assumed to extend automatically.</Alert>
-
-### Version compatibility
-
-| Version   | Test mode against staging | Test mode against production                                                                                         |
-| --------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| < 1.16.0  | Works                       | Not supported                                                                                                            |
-| 1.16.0    | Works                       | Works, but requires an additional configuration parameter to route correctly. Not recommended — upgrade to 1.16.1 instead. |
-| 1.16.1    | Works                       | Works automatically, no extra configuration needed                                                                      |
-
-Starting in 1.16.1, Elements automatically detects your environment by inspecting your Publishable Key and routes accordingly. No additional setup is required beyond using the correct key for your environment.
+`@publicsquare/elements-react` wraps `@publicsquare/elements-js` and uses the same version number. Install the latest version unless you need to pin one. The current release is <LatestVersion pkg="@publicsquare/elements-react" />. See the [JavaScript Elements SDK](/sdks/web/javascript#version-compatibility) page for compatibility and the [changelog](/sdks/web/changelog) for release notes.
 
 <Alert type={Alerts.NEUTRAL}>The CDN distribution described in the <a href="/sdks/web/javascript">JavaScript Elements SDK</a> docs applies only to <code>@publicsquare/elements-js</code>. There is no separate CDN build for <code>@publicsquare/elements-react</code> — install it via npm or yarn.</Alert>
 
@@ -82,13 +79,38 @@ Check your installed version:
 npm list @publicsquare/elements-react
 ```
 
-Upgrade to the confirmed fix version:
+To pin a version, replace `<version>` with a release number such as `1.16.1`:
+
+<Tabs className="publicsquare-tabs" groupId="package-manager">
+  <TabItem value="npm" label="npm">
 
 ```shell showLineNumbers
-npm install --save @publicsquare/elements-react@1.16.1
+npm install --save @publicsquare/elements-react@<version>
 ```
 
-<Alert type={Alerts.INFO}>Install the specific version above rather than <code>@latest</code> — 1.16.1 is the confirmed fix, not necessarily the newest published version. Always confirm the actual latest version before installing it.</Alert>
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+
+```shell showLineNumbers
+yarn add @publicsquare/elements-react@<version>
+```
+
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+
+```shell showLineNumbers
+pnpm add @publicsquare/elements-react@<version>
+```
+
+  </TabItem>
+  <TabItem value="bun" label="bun">
+
+```shell showLineNumbers
+bun add @publicsquare/elements-react@<version>
+```
+
+  </TabItem>
+</Tabs>
 
 See the [GitHub Releases page](https://github.com/credova/elements/releases) for the full version history and changelog.
 

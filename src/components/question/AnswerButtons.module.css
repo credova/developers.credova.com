@@ -1,45 +1,39 @@
 .buttons {
-  padding: 4px;
-  border-radius: 8px;
-  background: linear-gradient(0deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.08) 100%);
-  border: 1px solid #CFD3E8;
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--cr-radius);
+  background: var(--cr-surface);
+  border: 1px solid var(--cr-border);
 }
 
 .buttons button {
   background-color: transparent;
   border: none;
   padding: 4px 12px;
-  line-height: 24px;
+  line-height: 22px;
   cursor: pointer;
   border-radius: 4px;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--ifm-heading-color);
+  color: var(--cr-text);
+}
+
+.buttons button:hover {
+  color: var(--cr-heading);
 }
 
 .buttons button.right {
-  background: #0098B3;
-  color: #FFF;
+  background: var(--cr-accent);
+  color: var(--cr-on-brand);
 }
 
 .buttons button.wrong {
-  background-color: #FF9364;
-  color: #FFF;
+  background-color: var(--cr-warning);
+  color: var(--cr-on-brand);
 }
 
 .buttons button.na {
-  background-color: #777;
-  color: #FFF;
-}
-
-[data-theme="dark"] .buttons {
-  border: none;
-  box-shadow: 0px 8px 10px 0px rgba(4, 6, 17, 0.20), 0px 0px 0px 1px rgba(255, 255, 255, 0.10) inset;
-}
-
-[data-theme="dark"] .buttons button.right {
-    color: rgba(0, 0, 0, 0.87);
-}
-
-[data-theme="dark"] .buttons button.na {
-  background-color: rgba(255, 255, 255, 0.16);
+  background-color: var(--cr-surface-strong);
+  color: var(--cr-heading);
 }

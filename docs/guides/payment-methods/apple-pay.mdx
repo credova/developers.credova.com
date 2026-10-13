@@ -1,24 +1,21 @@
+---
+sidebar_label: Apple Pay
+---
+
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
 import { Alert } from "@site/src/components/shared/Alert";
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
 
-# Collect Apple Pay
+# Set Up Apple Pay
 
-In this guide, we will set up Credova Elements SDKs to capture Apple Pay in a frontend application and securely authorize and store the Apple Pay data while avoiding PCI requirements.
+In this guide, we will set up Credova Elements SDKs to capture Apple Pay in a frontend application and securely authorize and store the Apple Pay data while avoiding PCI requirements. To charge the collected Apple Pay payment method, see [Accept Apple Pay](/guides/payments/accept-apple-pay).
 
-## Getting Started
+## Before you start
 
-<GettingStartedSection />
-
-### Get your Publishable Key
-
-Next you will need your `Publishable Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Publishable Key` and copy the value.
-
-<Alert>Save the Publishable Key as it will be used in the next steps of this guide.</Alert>
-
+<BeforeYouStart keys={["publishable", "secret"]} />
 
 ### Domain Verification
 
@@ -27,9 +24,7 @@ Domain verification is a key step in getting Apple Pay up and running on your si
 1. Serve the domain association file on your server at `https://<YOUR_DOMAIN>/.well-known/apple-developer-merchantid-domain-association` by proxying that path to the [domain association endpoint](#retrieve-the-domain-association-file) and returning the response as-is.
 2. Add the public domain to your tenant using the [merchant portal](https://portal.publicsquare.com/settings/apple-pay) or the [API](/api/financial/register-apple-pay-domain)
 
-<Alert>
-  Apple requires the website to be served via HTTPS, which can be tricky during the development phase. Tunneling may represent a good option to preview local projects through a working HTTPS connection. [Cloudflare tunnel](https://developers.cloudflare.com/pages/how-to/preview-with-cloudflare-tunnel/) may be worth checking out.
-</Alert>
+Apple requires your website to use HTTPS. For local development, use a tunnel to get an HTTPS URL. [Cloudflare tunnel](https://developers.cloudflare.com/pages/how-to/preview-with-cloudflare-tunnel/) is one option.
 
 #### Retrieve the domain association file
 
@@ -37,7 +32,7 @@ The API serves the Apple-issued domain association file for your account, so you
 
 `GET https://api.publicsquare.com/.well-known/apple-developer-merchantid-domain-association`
 
-**Authentication**: Requires an API key with the `payment-method:capture` permission, sent in the `X-API-KEY` header. Your [Publishable Key](#get-your-publishable-key) already has this permission, so no additional key is needed.
+**Authentication**: Requires an API key with the `payment-method:capture` permission, sent in the `X-API-KEY` header. Your [Publishable Key](#before-you-start) already has this permission, so no additional key is needed.
 
 ```shell showLineNumbers title="Retrieve the domain association file"
 curl "https://api.publicsquare.com/.well-known/apple-developer-merchantid-domain-association" \
@@ -49,11 +44,9 @@ The returned file is processor-specific: the API automatically returns the domai
 | Status | Description |
 | --- | --- |
 | `200` | Returns the domain association file contents (`Content-Type: text/plain`) for your account's default processor. |
-| `404` | No domain association file is configured for your account's default processor. Contact support if you believe this is unexpected. |
+| `404` | No domain association file is configured for your account's default processor. [Contact support](/support) if you believe this is unexpected. |
 
-<Alert>
-  Proxy this request rather than caching a static copy of the file. If your account's default processor ever changes, the file this endpoint returns updates automatically, so proxying keeps the file Apple verifies against always current.
-</Alert>
+Proxy this request. Do not cache a static copy of the file. If your account's default processor changes, the endpoint returns the new file.
 
 ## Configuring Credova Elements
 
@@ -234,10 +227,9 @@ The `validateMerchant` function calls Public Square to initiate the Apple Pay se
 
 <Alert>This behavior requires Credova Elements SDKs v1.15.2 or later.</Alert>
 
-Apple Pay should always collect a billing address and phone number from the customer &mdash; this is required to create the payment method. 
+Apple Pay should always collect a billing address and phone number from the customer &mdash; this is required to create the payment method.
 
-Set `requiredBillingContactFields: ['postalAddress', 'phone']` on the Apple Pay payment request passed to `ApplePaySession`, as shown in the [Configure Apple Pay](#configure-apple-pay) step above.  
-When the customer authorizes the payment, Apple returns this information as `event.payment.billingContact`, and is automatically stored as the payment method's billing_details when you create the payment method. 
+Set `requiredBillingContactFields: ['postalAddress', 'phone']` on the Apple Pay payment request passed to `ApplePaySession`, as shown in the [Configure Apple Pay](#configure-apple-pay) step above. When the customer authorizes the payment, Apple returns this information as `event.payment.billingContact`, and is automatically stored as the payment method's billing_details when you create the payment method.
 
 Apple Pay collects the billing address in its FULL format, meaning customers see and enter a complete street address (not just a postal code), along with a billing phone number, and is stored on the payment method.
 
@@ -294,8 +286,7 @@ function createApplePaySession() {
   </TabItem>
 </Tabs>
 
-When `requiredShippingContactFields` is set, the shipping address is returned as `event.payment.shippingContact`. 
-We don't store the shipping address on the payment method, pass it along as `shipping_address` when you [create the payment](/guides/payments/process-apple-pay-payments). The billing address is already stored on the payment method from the earlier tokenization step, so you don't need to read it again here.
+When `requiredShippingContactFields` is set, the shipping address is returned as `event.payment.shippingContact`. We don't store the shipping address on the payment method. Pass it along as `shipping_address` when you [create the payment](/guides/payments/accept-apple-pay#create-a-payment). The billing address is already stored on the payment method from the earlier tokenization step, so you don't need to read it again here.
 
 ```javascript showLineNumbers title="index.js"
 session.onpaymentauthorized = async (event: any) => {
@@ -490,6 +481,7 @@ The created `Apple Pay` object contains the non-sensitive information about the 
 
 ```json showLineNumbers title=apple-pay.json
 {
+  // highlight-next-line
   "id": "appl_Aw3U2eESBnq6DoYEFn8qaSMrA",
   "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
   "environment": "test",
@@ -521,4 +513,7 @@ You can optionally pass in a `customer_id` to associate with an existing [Create
 
 ## Conclusion
 
-Following this guide, you have successfully collected a customer's Apple Pay. To use this Apple Pay payment method, proceed with the [Process Apple Pay Payments](/guides/payments/process-apple-pay-payments) guide.
+You saved a customer's Apple Pay payment method. To use it, follow these guides:
+
+- [Accept Apple Pay](/guides/payments/accept-apple-pay)
+- [Manage Saved Payment Methods](/guides/payment-methods/manage-saved-payment-methods)

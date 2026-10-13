@@ -29,7 +29,7 @@ If you have not yet created an account, [schedule a demo](https://payments.publi
 
 This document outlines the steps to install, configure, and test the PublicSquare Payments Shopify app. It includes details on accessing the PublicSquare Payments Portal, retrieving API keys, and enabling the payment provider in Shopify.
 
-## Step 1: Install the PublicSquare Payments App
+### Install the PublicSquare Payments App
 
 1. Go to PublicSquare Payments on Shopify - https://apps.shopify.com/publicsquare-pay
 2. Click “Install” on the app page.
@@ -38,7 +38,7 @@ This document outlines the steps to install, configure, and test the PublicSquar
 5. Once logged in, you’ll be redirected to your Shopify admin panel.
 6. On the Install App window in Shopify, click “Install” to finalize the setup.
 
-## Step 2: Configure the App
+### Configure the App
 
 <Image img={AppDashboardImage} alt="App Dashboard" />
 
@@ -46,7 +46,7 @@ This document outlines the steps to install, configure, and test the PublicSquar
 2. Copy and paste your `Publishable Key` and `Secret Key` from the PublicSquare Portal developers page into the `Publishable Key` and `Secret Key` fields.
 3. Click on the "Update Keys" button to save your API keys.
 
-## Step 3: Enable the Payment Provider
+### Enable the Payment Provider
 
 <Image img={PaymentMethodSettingsImage} alt="Payment Method Settings" />
 
@@ -54,7 +54,7 @@ This document outlines the steps to install, configure, and test the PublicSquar
 2. (Optional) Enable test mode to test the payment method before going live.
 3. Click on the "Activate" button to activate the payment method.
 
-## Step 4: Test the Payment Method
+## Test the Payment Method
 
 1. Navigate to the frontend of your Shopify test store.
 2. Add a product to the cart.
@@ -68,15 +68,9 @@ This document outlines the steps to install, configure, and test the PublicSquar
 
 5. Ensure the order is successfully processed.
 
-<Alert>
-**Test cards for PublicSquare Payments**
+<Alert>For more test cards, including declines, see [Testing](/guides/testing#cards).</Alert>
 
-Available test cards: https://developers.publicsquare.com/api/testing#cards
-
-Use the test card details provided in the PublicSquare Developers docs to simulate succeeded and failed transactions.
-</Alert>
-
-## Step 5: Test Refunds
+## Test Refunds
 
 1.	**Log in** to Shopify Admin and navigate to **Orders**.
 2.	**Select the order** to refund.

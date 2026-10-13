@@ -1,51 +1,48 @@
 .button {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  border: none;
-  padding: 8px 18px 8px 18px !important;
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05), 0px 1px 2px rgba(0, 0, 0, 0.04);
-  border-radius: var(--ifm-global-radius);
+  padding: 8px 16px !important;
+  border-radius: var(--cr-radius);
   font-weight: 600;
   font-size: 14px;
-  line-height: 24px;
-  transition: all var(--ifm-transition-slow);
+  line-height: 22px;
+  transition: background-color var(--ifm-transition-fast), border-color var(--ifm-transition-fast);
 }
 
 .primary {
   background: var(--ifm-color-primary);
   border: 1px solid var(--ifm-color-primary);
-  color: var(--psq-primary-button-color);
+  color: var(--cr-on-brand);
 }
 
 .primary svg path {
-  fill: var(--psq-primary-button-color);
+  fill: var(--cr-on-brand);
 }
 
 .primary.button:hover {
   background: var(--ifm-color-primary-focus);
-  border: 1px solid var(--ifm-color-primary-focus);
+  border-color: var(--ifm-color-primary-focus);
+  color: var(--cr-on-brand);
 }
 
 .secondary {
   background: transparent;
-  color: var(--ifm-color-primary);
-  padding: 4px 12px 4px 12px;
-  border: 1px solid var(--ifm-color-primary);
+  color: var(--cr-heading);
+  border: 1px solid var(--cr-border-strong);
 }
 
 .secondary.button:hover {
-  color: var(--ifm-color-primary-focus);
-  border: 1px solid var(--ifm-color-primary-focus);
+  color: var(--cr-heading);
+  border-color: var(--cr-accent);
 }
 
 .secondary svg path {
-  fill: var(--ifm-color-primary);
+  fill: var(--cr-heading);
 }
 
 .button:hover {
   cursor: pointer;
   text-decoration: none !important;
-  color: var(--psq-primary-button-color-focus);
 }
 
 .button svg {

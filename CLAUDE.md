@@ -28,7 +28,7 @@ mise run release        # Install deps and run semantic-release
 - `docs/` — All documentation content (MDX files)
   - `guides/` — How-to guides for payments, payouts, refunds, marketplaces
   - `concepts/` — Conceptual docs (accounts, API keys, webhooks, disputes)
-  - `api/` — Auto-generated OpenAPI docs (do not edit manually)
+  - `api/` — API reference. `api/accounts/` and `api/financial/` are generated from OpenAPI (do not edit manually); the other `api/*.mdx` pages are hand-written
   - `plugins/` — eCommerce plugin docs (Shopify, WooCommerce, Magento, BigCommerce)
   - `sdks/` — SDK docs (JavaScript Elements, React Elements)
 - `src/` — Custom React components, SCSS styles, theme overrides
@@ -42,7 +42,7 @@ API docs are auto-generated from live OpenAPI specs:
 - Accounts API: `https://api.publicsquare.com/swagger/accounts/swagger.yaml`
 - Financial API: `https://api.publicsquare.com/swagger/financial/swagger.yaml`
 
-Run `bun run regenerate-docs` after upstream API changes. Never manually edit files under `docs/api/`.
+Run `bun run regenerate-docs` after upstream API changes. Never manually edit files under `docs/api/accounts/` or `docs/api/financial/`; `regenerate-docs` overwrites them. The other pages under `docs/api/` (errors, IP addresses, pagination, and so on) are hand-written.
 
 ## Tech Stack
 

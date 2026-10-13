@@ -1,30 +1,34 @@
 :root {
-  --docusaurus-highlighted-code-line-bg: #dee6ed;
-}
-
-/* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme="dark"] {
-  --docusaurus-highlighted-code-line-bg: #383b4c;
+  --docusaurus-highlighted-code-line-bg: var(--cr-surface-strong);
 }
 
 .theme-code-block {
   box-shadow: none !important;
-  border: 1px solid var(--psq-tabs-border-color);
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius);
+  background-color: var(--cr-surface);
 
-  div:first-child:not(:only-child) {
-    // code title
-    background-color: var(--psq-code-title-background-color);
-    border-bottom: 1px solid var(--psq-tabs-border-color);
+  > div[class*="codeBlockTitle"] {
+    background-color: var(--cr-surface);
+    border-bottom: 1px solid var(--cr-border);
+    color: var(--cr-heading);
+    font-family: var(--ifm-font-family-monospace);
+    font-size: 13px;
+    font-weight: 500;
     padding-top: 8px;
-    font-size: 14px;
     padding-bottom: 8px;
   }
 
   & pre {
     background-color: transparent !important;
+    font-size: 14px;
+    line-height: 1.6;
   }
+
   & code {
-    border-radius: var(--ifm-global-radius);
+    border: none;
+    background: none;
+    border-radius: 0;
   }
 }
 
@@ -34,4 +38,9 @@
 
 .theme-code-block-highlighted-line .codeLineNumber_Tfdd {
   background-color: var(--docusaurus-highlighted-code-line-bg);
+}
+
+[class*="codeLineNumber"] {
+  color: var(--cr-muted) !important;
+  opacity: 0.6;
 }

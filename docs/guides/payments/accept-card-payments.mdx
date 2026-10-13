@@ -1,0 +1,586 @@
+---
+toc_max_heading_level: 4
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import { Alert } from "@site/src/components/shared/Alert";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
+import InlineCardDetailsSection from "@site/src/components/docs/_inline-card-details-section.mdx";
+import InlineCardRetriesSection from "@site/src/components/docs/_inline-card-retries-section.mdx";
+import InlineCardErrorsSection from "@site/src/components/docs/_inline-card-errors-section.mdx";
+
+# Accept Card Payments
+
+This guide creates a payment with a card from your server. The card is either already saved, or it arrives in the payment request.
+
+- **[A saved card](#pay-with-a-saved-card)** needs a card you saved first with [Save Cards](/guides/payment-methods/cards). Create the payment with Payment Intents or the Payments API.
+- **[Card details in the request](#pay-with-card-details)** come from your servers in the payment request. Your organization must be PCI certified.
+
+## Before you start
+
+<BeforeYouStart keys={["secret"]} />
+
+## Pay with a Saved Card
+
+### Creating a Payment
+
+Use the `id` of a [saved card](/guides/payment-methods/cards) and create the payment from your server using your `Secret Key`.
+
+You can create card payments using either Payment Intents or the direct Payments API. Both approaches result in a `Payment` object. We recommend Payment Intents for new integrations. They keep state across the whole lifecycle, report slow outcomes by webhook and retry safely.
+
+<Tabs className="publicsquare-tabs" groupId="api-style" queryString="api">
+  <TabItem value="payment-intents" label="Payment Intents" default>
+
+A Payment Intent represents your intent to collect funds from a customer. It tracks the full lifecycle of a charge — creation, confirmation, processing, and the final `succeeded` state — and creates a `Payment` record on success.
+
+#### Create a Payment Intent
+
+Call the [Create Payment Intent](/api/financial/create-payment-intent) endpoint. Including a card at creation time starts the intent in `requires_confirmation` status and it is ready to confirm immediately:
+
+```shell showLineNumbers title="Create a Payment Intent"
+curl 'https://api.publicsquare.com/payment_intents' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "capture_method": "automatic",
+  "payment_method": {
+    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
+  },
+  "customer": {
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+<Alert>The amount is provided in cents. 1000 is the equivalent of $10.00</Alert>
+
+<Alert type="warning">The IDEMPOTENCY-KEY header can be passed to protect against duplicate payment intents being created.</Alert>
+
+```json showLineNumbers title="Create Response"
+{
+  // highlight-next-line
+  "id": "pmt_int_2xNjK7abcdefghij",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "requires_confirmation",
+  "amount": 1000,
+  "currency": "USD",
+  "capture_method": "automatic",
+  "payment_method": {
+    "card": {
+      "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
+      "last_four": "4242",
+      "bin": "424242",
+      "brand": "visa",
+      "exp_month": "12",
+      "exp_year": "2025"
+    }
+  },
+  "payment_id": null,
+  "expires_date": "2026-04-16T14:22:10Z",
+  "created_date": "2026-04-15T14:22:10Z",
+  "modified_date": "2026-04-15T14:22:10Z"
+}
+```
+
+#### Create Without a Payment Method
+
+For multi-step checkout flows where the payment method is collected separately, omit the `payment_method` field. The intent starts in `requires_payment_method` status and the amount and other details can still be updated before a card is attached:
+
+```shell showLineNumbers title="Create a Payment Intent without a Payment Method"
+curl 'https://api.publicsquare.com/payment_intents' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "capture_method": "automatic"
+}'
+```
+
+```json showLineNumbers title="Create Response"
+{
+  "id": "pmt_int_2xNjK7abcdefghij",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "requires_payment_method",
+  "amount": 1000,
+  "currency": "USD",
+  "capture_method": "automatic",
+  "payment_method": null,
+  "payment_id": null,
+  "expires_date": "2026-04-16T14:22:10Z",
+  "created_date": "2026-04-15T14:22:10Z",
+  "modified_date": "2026-04-15T14:22:10Z"
+}
+```
+
+Once you have a card, call the [Update Payment Intent](/api/financial/update-payment-intent) endpoint to attach it. The intent will transition to `requires_confirmation`:
+
+```shell showLineNumbers title="Attach a Payment Method"
+curl 'https://api.publicsquare.com/payment_intents/pmt_int_2xNjK7abcdefghij' \
+-X 'PUT' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'Content-Type: application/json' \
+-d '{
+  "payment_method": {
+    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
+  }
+}'
+```
+
+#### Confirm the Payment Intent
+
+With the intent in `requires_confirmation`, call the [Confirm Payment Intent](/api/financial/confirm-payment-intent) endpoint to submit the charge to the processor:
+
+```shell showLineNumbers title="Confirm a Payment Intent"
+curl 'https://api.publicsquare.com/payment_intents/pmt_int_2xNjK7abcdefghij/confirm' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 3a9f1b72-cc4e-4f92-b7d3-1e5a9c8d2041' \
+-H 'Content-Type: application/json'
+```
+
+When the processor responds quickly, you will receive a `200` with `status: succeeded` and a populated `payment_id`:
+
+```json showLineNumbers title="Confirm Response — Succeeded (200)"
+{
+  "id": "pmt_int_2xNjK7abcdefghij",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "succeeded",
+  "amount": 1000,
+  "currency": "USD",
+  // highlight-next-line
+  "payment_id": "pmt_5mBpT2ghiklmnopq",
+  "next_action": null,
+  "expires_date": null,
+  "succeeded_date": "2026-04-15T14:22:45Z",
+  "created_date": "2026-04-15T14:22:10Z",
+  "modified_date": "2026-04-15T14:22:45Z"
+}
+```
+
+When the processor takes longer to respond, you will receive a `202` with `status: processing`:
+
+```json showLineNumbers title="Confirm Response — Processing (202)"
+{
+  "id": "pmt_int_2xNjK7abcdefghij",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "processing",
+  "amount": 1000,
+  "currency": "USD",
+  "payment_id": null,
+  "expires_date": "2026-04-15T14:52:10Z",
+  "created_date": "2026-04-15T14:22:10Z",
+  "modified_date": "2026-04-15T14:22:35Z"
+}
+```
+
+<Alert type="warning">When you receive a `202`, subscribe to the `payment_intent:update` webhook event. The final outcome is in `entity.status` on the Payment Intent in the notification payload. See the [Webhooks](/concepts/webhooks) guide for setup instructions.</Alert>
+
+```json showLineNumbers title="Webhook event: payment_intent:update"
+{
+  "id": "evnt_5jxWRFNLCAWeegrkCAG3a9DGc",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "production",
+  "event_type": "payment_intent:update",
+  "entity_type": "PaymentIntent",
+  "entity_id": "pmt_int_2xNjK7abcdefghij",
+  "entity": {
+    "id": "pmt_int_2xNjK7abcdefghij",
+    // highlight-next-line
+    "status": "succeeded",
+    "amount": 1000,
+    "currency": "USD",
+    // highlight-next-line
+    "payment_id": "pmt_5mBpT2ghiklmnopq",
+    "succeeded_date": "2026-04-15T14:22:45Z",
+    "created_date": "2026-04-15T14:22:10Z",
+    "modified_date": "2026-04-15T14:22:45Z"
+  },
+  "created_at": "2026-04-15T14:22:45Z"
+}
+```
+
+#### Handling Declines
+
+If the card is hard-declined, the intent returns to `requires_confirmation` and the `last_payment_error` field is populated with the decline reason. You can attach a new payment method and re-confirm the same intent — no need to create a new one:
+
+```json showLineNumbers title="Declined Payment Intent"
+{
+  "id": "pmt_int_2xNjK7abcdefghij",
+  // highlight-next-line
+  "status": "requires_confirmation",
+  // highlight-next-line
+  "last_payment_error": {
+    "code": "card_declined",
+    "message": "Your card was declined."
+  },
+  ...
+}
+```
+
+  </TabItem>
+  <TabItem value="legacy" label="Legacy">
+
+The direct Payments API provides a synchronous, single-request charge. The response contains the final payment result.
+
+<h4 id="create-a-payment">Create a Payment</h4>
+
+Use the `id` of the card you collected above. Make a call to the [Create Payment](/api/financial/create-payment) endpoint:
+
+```shell showLineNumbers title="Create a Payment"
+curl 'https://api.publicsquare.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "card": "card_AjkCFKAYiTsjghXWMzoXFPMxj"
+  },
+  "customer": {
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  }
+}'
+```
+
+The amount is in cents. `1000` is $10.00.
+
+<Alert type="warning">The IDEMPOTENCY-KEY header can be passed to protect against duplicate payments being processed.</Alert>
+
+<h4 id="payment-response">Payment Response</h4>
+
+Given the above example, you should see a payment result similar to:
+
+```json showLineNumbers title="Payment Response"
+{
+  "id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "succeeded",
+  "transaction_id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
+  "amount": 1000,
+  "amount_capturable": 0,
+  "amount_charged": 1000,
+  "amount_refunded": 0,
+  "refunded": false,
+  "currency": "USD",
+  "payment_method": {
+    "card": {
+      "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
+      "cardholder_name": "John Smith",
+      "last4": "4242",
+      "bin": "424242",
+      "exp_month": "12",
+      "exp_year": "2025",
+      "brand": "visa",
+      "avs_code": "Y",
+      "cvv2_reply": "M",
+      "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL"
+    }
+  },
+  "customer": {
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "transaction": {
+    "id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
+    "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+    "environment": "test",
+    "status": "succeeded",
+    "amount": 1000,
+    "fee_amount": 0,
+    "net_amount": 1000,
+    "currency": "USD",
+    "type_id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+    "type": "payment",
+    "processor": "nuvei",
+    "processor_id": "7110000000010554769",
+    "created_at": "2024-06-30T01:02:29.212Z",
+    "modified_at": "2024-06-30T01:02:29.212Z"
+  },
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z"
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Pay with Card Details
+
+<Alert type="warning">Your servers receive and send cardholder data in this flow, so your organization must be PCI certified. If you are unsure, please [contact support](/support). To keep card data out of your servers, [save the card with Credova Elements](/guides/payment-methods/cards) and [pay with a saved card](#pay-with-a-saved-card).</Alert>
+
+Send the card details in the same request that creates the payment. You do not need to save the card first. The API saves the card to the customer and returns its `id` for later payments.
+
+<Alert>We recommend [Payment Intents](/concepts/payment-intents) for new integrations. They are safe to retry and report slow processors by webhook. Payment Intents do not accept `card_details`, so [pay with a saved card](#pay-with-a-saved-card) to create an intent with the card `id`. Use `card_details` with [Create Payment](/api/financial/create-payment) when you want to send the card and charge it in one request.</Alert>
+
+A restricted key needs the `payment-method:write` or `payment-method:capture` permission, in addition to the permission to create payments.
+
+To send a payout with card details, see [Send Card Payouts](/guides/payouts/process-card-payouts).
+
+### Send Card Details
+
+<InlineCardDetailsSection />
+
+### Process a Payment
+
+A payment with `card_details` also needs `device_information.ip_address`, the IP address of the customer's device.
+
+#### Create a Payment with Card Details
+
+```shell showLineNumbers title="Create a Payment with Card Details"
+curl 'https://secure.payments.credova.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    // highlight-start
+    "card_details": {
+      "cardholder_name": "John Smith",
+      "number": "4242424242424242",
+      "expiration_month": 12,
+      "expiration_year": 2030,
+      "cvc": "123"
+    }
+    // highlight-end
+  },
+  "customer": {
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "device_information": {
+    "ip_address": "203.0.113.10"
+  }
+}'
+```
+
+<Alert>The amount is provided in cents. 1000 is the equivalent of $10.00</Alert>
+
+To test, send the same request to `https://secure.payments.sbx.credova.com` with your test mode `Secret Key` and a [test card](/guides/testing#cards).
+
+#### Create with Existing Customer
+
+If you [created a customer](/api/accounts/create-customer), pass its ID as `customer.id`:
+
+```shell showLineNumbers title="Create a Payment with Customer"
+curl 'https://secure.payments.credova.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 09ec2c87-7fb8-44ca-bb18-5c71a76974da' \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 1000,
+  "currency": "USD",
+  "payment_method": {
+    "card_details": {
+      "cardholder_name": "John Smith",
+      "number": "4242424242424242",
+      "expiration_month": 12,
+      "expiration_year": 2030,
+      "cvc": "123"
+    }
+  },
+  "customer": {
+    // highlight-next-line
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "device_information": {
+    "ip_address": "203.0.113.10"
+  }
+}'
+```
+
+#### Verify a Card
+
+To check a card without charging it, send a [verification payment](/guides/payments/verify-cards) with `card_details`. Set `amount` to `0`, `capture` to `false` and `verification.type`:
+
+```shell showLineNumbers title="Verify a Card with Card Details"
+curl 'https://secure.payments.credova.com/payments' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'IDEMPOTENCY-KEY: 5f0c1f3e-2f5b-4d7e-9b7e-0b8d1c6f4a21' \
+-H 'Content-Type: application/json' \
+-d '{
+  // highlight-start
+  "amount": 0,
+  "capture": false,
+  "verification": {
+    "type": "add_card"
+  },
+  // highlight-end
+  "currency": "USD",
+  "payment_method": {
+    "card_details": {
+      "cardholder_name": "John Smith",
+      "number": "4242424242424242",
+      "expiration_month": 12,
+      "expiration_year": 2030,
+      "cvc": "123"
+    }
+  },
+  "customer": {
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "device_information": {
+    "ip_address": "203.0.113.10"
+  }
+}'
+```
+
+#### Payment Response with Card Details
+
+The response is the same as for a payment with a saved card. `payment_method.card` describes the card that the request saved:
+
+```json showLineNumbers title="Payment Response"
+{
+  "id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  // highlight-next-line
+  "status": "succeeded",
+  "transaction_id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
+  "amount": 1000,
+  "amount_capturable": 0,
+  "amount_charged": 1000,
+  "amount_refunded": 0,
+  "refunded": false,
+  "currency": "USD",
+  "payment_method": {
+    "card": {
+      // highlight-next-line
+      "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
+      "cardholder_name": "John Smith",
+      "last4": "4242",
+      "bin": "424242",
+      "exp_month": "12",
+      "exp_year": "2030",
+      "brand": "visa",
+      "avs_code": "Y",
+      "cvv2_reply": "M",
+      "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL"
+    }
+  },
+  "customer": {
+    "id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@email.com"
+  },
+  "billing_details": {
+    "address_line_1": "111 Test St.",
+    "city": "Des Moines",
+    "state": "IA",
+    "postal_code": "51111",
+    "country": "US"
+  },
+  "transaction": {
+    "id": "trx_95rvMJvAVeG68W4NtLdfkN3LG",
+    "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+    "environment": "test",
+    "status": "succeeded",
+    "amount": 1000,
+    "fee_amount": 0,
+    "net_amount": 1000,
+    "currency": "USD",
+    "type_id": "pmt_2YKewBonG4tgk12MheY3PiHDy",
+    "type": "payment",
+    "processor": "nuvei",
+    "processor_id": "7110000000010554769",
+    "created_at": "2024-06-30T01:02:29.212Z",
+    "modified_at": "2024-06-30T01:02:29.212Z"
+  },
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z"
+}
+```
+
+Store `payment_method.card.id`. For the next payment with this card, send `"payment_method": { "card": "<card id>" }` to `https://api.publicsquare.com/payments`, as in [Accept Card Payments](#pay-with-a-saved-card). A saved card is a token, so this request does not need the secure hostname.
+
+### Retries
+
+<InlineCardRetriesSection />
+
+### Errors
+
+<InlineCardErrorsSection />
+
+## Conclusion
+
+You created a payment with a card. To manage the payment or view its details, follow these guides:
+
+- [Authorize and Capture Payments](/guides/payments/authorize-and-capture-payments)
+- [Issue a Refund](/guides/refunds/refund-payments)
+- [Cancel a Payment](/guides/payments/cancel-payments)
+- [Search and View Transactions](/guides/transactions/search-and-view-transactions)

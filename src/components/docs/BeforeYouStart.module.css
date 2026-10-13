@@ -1,0 +1,52 @@
+.container {
+  margin: 0 0 var(--ifm-leading);
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius);
+  background: var(--cr-surface);
+}
+
+.rows {
+  margin: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(150px, 30%) 1fr;
+  gap: 16px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--cr-border);
+}
+
+.row dt {
+  margin: 0;
+  font-weight: 600;
+  color: var(--ifm-heading-color);
+}
+
+.row dd {
+  margin: 0;
+}
+
+.note {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--cr-border);
+}
+
+.note > :last-child {
+  margin-bottom: 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  padding: 12px 20px;
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}

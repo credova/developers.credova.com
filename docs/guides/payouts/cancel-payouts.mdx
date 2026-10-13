@@ -1,5 +1,5 @@
 import { Alert } from "@site/src/components/shared/Alert";
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 
 # Cancel Payouts
 
@@ -7,21 +7,15 @@ There may be scenarios in which you need to cancel a payout, such as paying a cu
 
 Credova API offers the ability to cancel a payout before it is settled.
 
-## Getting Started
+## Before you start
 
-<GettingStartedSection />
-
-### Get your Secret Key
-
-Next you will need your `Secret Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Secret Key` and copy the value.
-
-<Alert>Save the Secret Key as it will be used in the next steps of this guide.</Alert>
+<BeforeYouStart keys={["secret"]} />
 
 ## Cancel the Payout
 
 In order to cancel a payout, we will need the ID of a recently created payout. Assuming you have a payout similar to:
 
-```json showLineNumbers title="Authorized Payment"
+```json showLineNumbers title="Payout"
 {
   // highlight-next-line
   "id": "pyt_24NFPd3jSZFTxiaH9UwjuqNdP",
@@ -34,7 +28,7 @@ In order to cancel a payout, we will need the ID of a recently created payout. A
 
 We need to make a call to [Cancel Payout](/api/financial/cancels-a-payout) endpoint:
 
-```shell showLineNumbers title="Create a Payment"
+```shell showLineNumbers title="Cancel a Payout"
 curl 'https://api.publicsquare.com/payouts/cancel' \
 -X 'POST' \
 -H 'X-API-KEY: <SECRET_API_KEY>' \
@@ -87,10 +81,9 @@ If a payout cannot be cancelled because the payout has already been settled, an 
 
 ## Conclusion
 
-This guide showed you how to cancel a payout.
-
+Now that we have seen how to cancel a payout, we may need to view information about it or send another payout.
 Follow these guides to learn more:
 
-- [Process Card Payouts](/guides/payouts/process-card-payouts)
-- [Process ACH Payouts](/guides/payouts/process-ach-payouts)
+- [Send Card Payouts](/guides/payouts/process-card-payouts)
+- [Send Bank Account Payouts](/guides/payouts/process-ach-payouts)
 - [Search and View Transactions](/guides/transactions/search-and-view-transactions)

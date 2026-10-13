@@ -1,31 +1,32 @@
+---
+sidebar_label: Cards
+---
+
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
 import { Alert } from "@site/src/components/shared/Alert";
-import GettingStartedSection from "@site/src/components/docs/_getting-started-section.mdx";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
 import ConfigureElementsSection from "@site/src/components/docs/_configure-elements-section.mdx";
 
-# Collect Cards
+# Save Cards
 
-In this guide, we will set up Credova Elements SDKs to capture cards in a frontend application and securely authorize and store the cardholder data while avoiding PCI requirements.
+A saved card has an `id` that starts with `card_`. You use it to create payments and payouts, and to charge the customer later. Save a card in one of two ways:
 
-## Getting Started
+- **[Credova Elements](#save-a-card-with-credova-elements)** captures the card in your web app. Card data never touches your servers, so you avoid PCI requirements.
+- **[The Direct API](#save-a-card-from-your-servers)** posts the card from your servers. Your organization must be PCI certified.
 
-<GettingStartedSection />
+## Before you start
 
-### Get your Publishable Key
+<BeforeYouStart keys={["publishable"]} />
 
-Next you will need your `Publishable Key`. [Go to your Developers section](https://portal.publicsquare.com/developers/api-keys) and click `Reveal` for your `Publishable Key` and copy the value.
+## Save a Card with Credova Elements
 
-<Alert>Save the Publishable Key as it will be used in the next steps of this guide.</Alert>
-
-<Alert type="warning">If your organization is PCI certified to be able to accept or transmit secure cardholder data, you may [follow our guide](/guides/payment-methods/collect-cards?sdk=shell#storing-cards) for collecting and storing cardholder data.</Alert>
-
-## Configuring Credova Elements
+### Configuring Credova Elements
 
 <ConfigureElementsSection />
 
-## Adding Card Elements
+### Adding Card Elements
 
 Once installed and configured, add the Card Elements to your application.
 
@@ -67,7 +68,7 @@ Once installed and configured, add the Card Elements to your application.
       cardExpirationDateElement.mount('#cardExpirationDate');
 
       cardVerificationCodeElement = publicsquare.createCardVerificationCodeElement();
-      cardExpirationDateElement.mount('#cardVerificationCode');
+      cardVerificationCodeElement.mount('#cardVerificationCode');
       //highlight-end
     }
 
@@ -141,8 +142,7 @@ export default function App() {
   </TabItem>
 </Tabs>
 
-
-## Storing Cards
+### Storing Cards
 
 Now that you are capturing cardholder data in your web application, it is time to store the card in your account.
 
@@ -217,7 +217,7 @@ export default function App() {
   // highlight-end
 
   return (
-    <PublicSquareProvider bt={bt}>
+    <PublicSquareProvider apiKey={apiKey}>
       ...
       // highlight-next-line
       <button onClick={submit}>Submit</button>
@@ -228,9 +228,45 @@ export default function App() {
   </TabItem>
   <TabItem value="shell" label="cURL">
 
-<Alert type="warning">Accepting or transmitting cardholder data requires the merchant to be PCI certified. If you are unsure, please [reach out for support](mailto:support@publicsquare.com).</Alert>
+To save a card from your servers, use the [Save a Card from Your Servers](#save-a-card-from-your-servers). It posts the card to `https://collect.publicsquare.com` with your `Publishable Key` and needs a PCI-certified organization. To save a card without a CVC, see [Saving a card without a CVC](#saving-a-card-without-a-cvc).
 
-<Alert>To save the card and create a payment or payout in the same request, see [Process Inline Card Payments](/guides/payments/process-inline-card-payments) and [Process Inline Card Payouts](/guides/payouts/process-inline-card-payouts).</Alert>
+  </TabItem>
+</Tabs>
+
+The created `card` object contains the non-sensitive information about the card, including the `bin`:
+
+```json showLineNumbers title="card.json"
+{
+  "id": "card_AjkCFKAYiTsjghXWMzoXFPMxj",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "test",
+  "cardholder_name": "John Smith",
+  "last4": "4242",
+  "bin": "424242",
+  "exp_month": "12",
+  "exp_year": "2030",
+  "brand": "visa",
+  "fingerprint": "CC2XvyoohnqecEq4r3FtXv6MdCx4TbaW1UUTdCCN5MNL",
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z"
+}
+```
+
+<Alert>Displaying the card's first 6 digits (`bin`) alongside the last 4 (`last4`) is PCI compliant per PCI DSS Requirement 3.3.</Alert>
+
+You can safely store the card's `id` value in your database to link it with the appropriate payment or customer association.
+
+To charge a stored card later without the customer present, see [Card on File and Recurring Payments](/guides/payments/card-on-file-and-recurring-payments).
+
+You can optionally pass in a `customer_id` to associate with an existing [Created Customer](/api/accounts/create-customer) and `billing_details` to remove the requirement to pass them when [Creating a Payment](/api/financial/create-payment).
+
+## Save a Card from Your Servers
+
+<Alert type="warning">Accepting or transmitting cardholder data requires the merchant to be PCI certified. If you are unsure, please [contact support](/support). To keep card data out of your servers, use [Credova Elements](#save-a-card-with-credova-elements).</Alert>
+
+### Save a Card
+
+Send the card in a `POST` request to `https://collect.publicsquare.com`:
 
 ```shell showLineNumbers
 curl -L 'https://collect.publicsquare.com' \
@@ -283,7 +319,9 @@ curl -L 'https://collect.publicsquare.com' \
 
 ```
 
-<Alert>To test card collection in test mode, use the `https://collect-test.publicsquare.com` endpoint instead of `https://collect.publicsquare.com`, along with your **test mode** `Publishable Key`. This lets you exercise the collect card flow without submitting live cardholder data.</Alert>
+### Test Mode
+
+<Alert>To test card collection in test mode, use the `https://collect-test.publicsquare.com` endpoint instead of `https://collect.publicsquare.com`, along with your **test mode** `Publishable Key`. This lets you exercise the collect card flow without submitting live cardholder data. See [Testing](/guides/testing#test-environment) for every test hostname.</Alert>
 
 ```shell showLineNumbers
 curl -L 'https://collect-test.publicsquare.com' \
@@ -301,8 +339,8 @@ curl -L 'https://collect-test.publicsquare.com' \
 }'
 
 ```
-  </TabItem>
-</Tabs>
+
+### Card Response
 
 The created `card` object contains the non-sensitive information about the card, including the `bin`:
 
@@ -333,4 +371,10 @@ You can optionally pass in a `customer_id` to associate with an existing [Create
 
 ## Conclusion
 
-Following this guide, you have successfully collected a customer's credit card. To use this card, proceed with the [Process Card Payments](/guides/payments/process-card-payments) guide.
+You have saved a customer's card. To use it, follow these guides:
+
+- [Accept Card Payments](/guides/payments/accept-card-payments)
+- [Authorize and Capture Payments](/guides/payments/authorize-and-capture-payments)
+- [Card on File and Recurring Payments](/guides/payments/card-on-file-and-recurring-payments)
+- [Send Card Payouts](/guides/payouts/process-card-payouts)
+- [Recollect a CVC for a Saved Card](/guides/payment-methods/recollect-cvc)
