@@ -196,14 +196,14 @@ When the processor takes longer to respond, you will receive a `202` with `statu
 }
 ```
 
-<Alert type="warning">When you receive a `202`, subscribe to the `payment-intents:update` webhook event. The final outcome is in `entity.status` on the Payment Intent in the notification payload. See the [Webhooks](/concepts/webhooks) guide for setup instructions.</Alert>
+<Alert type="warning">When you receive a `202`, subscribe to the `payment_intent:update` webhook event. The final outcome is in `entity.status` on the Payment Intent in the notification payload. See the [Webhooks](/concepts/webhooks) guide for setup instructions.</Alert>
 
-```json showLineNumbers title="Webhook event: payment-intents:update"
+```json showLineNumbers title="Webhook event: payment_intent:update"
 {
   "id": "evnt_5jxWRFNLCAWeegrkCAG3a9DGc",
   "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
   "environment": "production",
-  "event_type": "payment-intents:update",
+  "event_type": "payment_intent:update",
   "entity_type": "PaymentIntent",
   "entity_id": "pmt_int_2xNjK7abcdefghij",
   "entity": {
