@@ -1,6 +1,31 @@
 version: 2
+# Monthly, staggered: 14th JS, 28th actions (4am LA). No Dependabot security updates for bun.
 updates:
-  - package-ecosystem: "npm"
+  - package-ecosystem: "bun"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: cron
+      cronjob: "0 4 14 * *" # 14th, 4am LA
+      timezone: America/Los_Angeles
+    open-pull-requests-limit: 5
+    rebase-strategy: disabled
+    groups:
+      bun-version:
+        applies-to: version-updates
+        patterns: ["*"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: cron
+      cronjob: "0 4 28 * *" # 28th, 4am LA
+      timezone: America/Los_Angeles
+    open-pull-requests-limit: 5
+    rebase-strategy: disabled
+    groups:
+      gha-version:
+        applies-to: version-updates
+        patterns: ["*"]
+      gha-security:
+        applies-to: security-updates
+        patterns: ["*"]
