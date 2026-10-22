@@ -33,7 +33,7 @@ jobs:
           token: ${{ steps.release-token.outputs.token }}
 
       - name: Setup mise
-        uses: jdx/mise-action@v4
+        uses: credova/platform-workflows/actions/setup-mise@master
         with:
           install: true
 
