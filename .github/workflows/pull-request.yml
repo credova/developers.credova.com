@@ -24,3 +24,27 @@ jobs:
       cache: true
       # compliance + security run built-in; the Docusaurus build is validated here.
       test-command: mise run build
+
+  gate:
+    name: Gate
+    needs:
+      - ci
+    if: always()
+    runs-on: warp-ubuntu-2404-x64-2x
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Check job results
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "job results: $RESULTS"
+          for result in $RESULTS; do
+            case "$result" in
+              success | skipped) ;;
+              *)
+                echo "::error::a required job concluded '$result'"
+                exit 1
+                ;;
+            esac
+          done
