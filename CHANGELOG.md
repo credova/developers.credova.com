@@ -1,3 +1,11 @@
+## [1.63.1](https://github.com/credova/developers.credova.com/compare/v1.63.0...v1.63.1) (2026-10-27)
+
+
+### Bug Fixes
+
+* bump actions/checkout from 6 to 7 in the gha-version group ([#33](https://github.com/credova/developers.credova.com/issues/33)) ([b31b3bf](https://github.com/credova/developers.credova.com/commit/b31b3bf5933bca6582902146c870796f6260a131))
+* bump the bun-version group with 7 updates ([#34](https://github.com/credova/developers.credova.com/issues/34)) ([b3b1160](https://github.com/credova/developers.credova.com/commit/b3b11600d10ae97769040eb6bd043b46db332ee3))
+
 # [1.63.0](https://github.com/credova/developers.credova.com/compare/v1.62.0...v1.63.0) (2026-10-13)
 
 
