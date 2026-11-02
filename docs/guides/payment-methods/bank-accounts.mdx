@@ -472,6 +472,7 @@ The created `bank_account` object contains the non-sensitive information about t
   "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
   "environment": "production",
   "customer_id": "cus_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+  "supported_payout_types": ["standard", "same_day", "instant"],
   "created_at": "2024-06-30T01:02:29.212Z",
   "modified_at": "2024-06-30T01:02:29.212Z",
   "account_holder_name": "John Doe",
@@ -483,6 +484,8 @@ The created `bank_account` object contains the non-sensitive information about t
 ```
 
 Store the bank account's `id` in your database to use it in later payments and payouts.
+
+`supported_payout_types` lists the payout types the bank account can receive. See [Check Bank Account Payout Types](/guides/payouts/check-bank-account-payout-types).
 
 You do not have to save the bank account first. You can also [send the bank account details with the payment](/guides/payments/accept-bank-account-payments#create-with-bank-account-details).
 

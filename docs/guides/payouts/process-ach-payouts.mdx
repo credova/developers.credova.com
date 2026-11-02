@@ -21,6 +21,8 @@ Payouts made to a bank account travel over the ACH network and support three spe
 - **`same_day`** — A same-day ACH transfer. Settles the same business day.
 - **`instant`** — Sent over real-time payment rails instead of ACH batch processing, and typically settles within minutes. Requires the `payouts:instant` account setting to be enabled — see [Request Account Setting Access](#request-account-setting-access) below.
 
+To check which payout types a saved bank account can receive before you send the payout, see [Check Bank Account Payout Types](/guides/payouts/check-bank-account-payout-types).
+
 ## Process the Payout
 
 We will use a saved bank account to create a new payout. A verified bank account is the more reliable choice if you plan to send an `instant` payout. See [Instant Verification](/guides/payment-methods/bank-accounts#instant-verification).
@@ -39,6 +41,7 @@ For example, given this saved bank account:
   "account_type": "checking",
   "routing_number": "110000000",
   "account_number_last4": "1011",
+  "supported_payout_types": ["standard", "same_day", "instant"],
   "billing_details": {
     "address_line_1": "111 Colorado Ave.",
     "address_line_2": "Apt 403",

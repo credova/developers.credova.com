@@ -87,6 +87,7 @@ const sidebars: SidebarsConfig = {
       items: [
         "guides/payouts/process-card-payouts",
         "guides/payouts/process-ach-payouts",
+        "guides/payouts/check-bank-account-payout-types",
         {
           type: "category",
           label: "After the Payout",

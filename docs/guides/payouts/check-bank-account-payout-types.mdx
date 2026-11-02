@@ -1,0 +1,143 @@
+import { Alert } from "@site/src/components/shared/Alert";
+import { BeforeYouStart } from "@site/src/components/docs/BeforeYouStart";
+
+# Check Bank Account Payout Types
+
+Before you send a payout to a bank account, you can check which payout types the bank account can receive. For example, you can offer an `instant` payout only when the bank account supports it, before you fund a loan or release money to a customer.
+
+You do not have to start a payout to do this check.
+
+## Before you start
+
+<BeforeYouStart keys={["secret"]} />
+
+## How It Works
+
+When you save a bank account with [Create Bank Account](/api/financial/create-bank-account), Credova checks the bank account with the payment networks. The response includes a `supported_payout_types` list with the payout types that the bank account can receive:
+
+| Value | Payout type |
+|-------|-------------|
+| `standard` | Standard ACH transfer. Settles over the standard multi-day ACH timeline. |
+| `same_day` | Same-day ACH transfer. Settles the same business day. |
+| `instant` | Real-time payment rails. Typically settles within minutes. |
+
+Each value is a valid `payout_type` on [Create Payout](/api/financial/create-payout). See [Payout Types](/guides/payouts/process-ach-payouts#payout-types).
+
+Credova checks the bank account one time, when you save it. [Get Bank Account](/api/financial/get-bank-account-by-id) and [Get All Bank Accounts](/api/financial/get-all-bank-accounts) return the saved result. They do not check the bank account again.
+
+## Save the Bank Account
+
+Send the bank account to [Create Bank Account](/api/financial/create-bank-account). You can also save it from your web app with [Credova Elements](/guides/payment-methods/bank-accounts#save-a-bank-account-with-credova-elements). Both return the same response.
+
+```shell showLineNumbers title="Save a Bank Account"
+curl 'https://api.publicsquare.com/payment-methods/bank-accounts' \
+-X 'POST' \
+-H 'X-API-KEY: <SECRET_API_KEY>' \
+-H 'Content-Type: application/json' \
+-d '{
+  "account_holder_name": "John Doe",
+  "account_holder_type": "individual",
+  "account_type": "checking",
+  "routing_number": "110000000",
+  "account_number": "000123456789"
+}'
+```
+
+Send `account_holder_name` and `account_holder_type`. Credova uses them to check the bank account:
+
+- If `account_holder_type` is `individual` and you do not send a `customer_id`, `account_holder_name` must include a first and last name.
+- If you send a `customer_id`, Credova uses the customer's name.
+- If `account_holder_type` is `company`, Credova uses `account_holder_name` as the business name.
+
+## Read the Supported Payout Types
+
+The response includes `supported_payout_types`:
+
+```json showLineNumbers {6-10} title="bank-account.json"
+{
+  "id": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+  "account_id": "acc_B518niGwGYKzig6vtrRVZGGGV",
+  "environment": "production",
+  "customer_id": null,
+  "supported_payout_types": [
+    "standard",
+    "same_day",
+    "instant"
+  ],
+  "created_at": "2024-06-30T01:02:29.212Z",
+  "modified_at": "2024-06-30T01:02:29.212Z",
+  "status": "pending",
+  "account_holder_name": "John Doe",
+  "account_holder_type": "individual",
+  "account_type": "checking",
+  "routing_number": "110000000",
+  "account_number_last4": "6789"
+}
+```
+
+To read the value later, call [Get Bank Account](/api/financial/get-bank-account-by-id) with the bank account `id`:
+
+```shell showLineNumbers title="Get a Bank Account"
+curl 'https://api.publicsquare.com/payment-methods/bank-accounts/ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ' \
+-X 'GET' \
+-H 'X-API-KEY: <SECRET_API_KEY>'
+```
+
+## Choose a Payout Type
+
+Use the value of `supported_payout_types` to choose the `payout_type` for [Create Payout](/api/financial/create-payout):
+
+| `supported_payout_types` | What to do |
+|--------------------------|------------|
+| Contains `instant` | You can send an `instant` payout. Your account also needs the `payouts:instant` account setting. See [Request Account Setting Access](/guides/payouts/process-ach-payouts#request-account-setting-access). |
+| Contains `same_day` or `standard`, but not `instant` | Send a `same_day` or `standard` payout. |
+| Empty list `[]` | The bank account cannot receive payouts. You can still use it to [accept bank account payments](/guides/payments/accept-bank-account-payments). |
+| `null` | Credova did not check the bank account. Send the payout as usual. |
+
+`supported_payout_types` is `null` when:
+
+- The bank account is in the `test` environment.
+- You saved the bank account before Credova added this check.
+- You sent the bank account as `bank_account_details` in a payment or payout request, instead of with [Create Bank Account](/api/financial/create-bank-account).
+- Your account's payment processor does not report payout types.
+
+<Alert type="warning">A listed payout type does not guarantee that a payout succeeds. The receiving bank can still decline or return the payout. See [Handling Declines](/guides/payouts/process-ach-payouts#handling-declines).</Alert>
+
+## Handling Errors
+
+If Credova cannot save or check the bank account, Create Bank Account returns an error and does not save the bank account.
+
+If `account_holder_name` or `account_holder_type` is missing or not valid, the API returns `400`:
+
+```json showLineNumbers
+{
+  "title": "One or more validation errors occurred.",
+  "status": 400,
+  "errors": {
+    "account_holder_name": [
+      "bank account holder name must include a first and last name."
+    ]
+  }
+}
+```
+
+If your account has not finished onboarding, the API returns `400`:
+
+```json showLineNumbers
+{
+  "title": "Error",
+  "status": 400,
+  "detail": "account has not finished onboarding for bank accounts."
+}
+```
+
+If the payment network rejects the bank account, the API returns `400` with the reason in `detail`. Check the bank account details and try again.
+
+If the API returns `429`, wait and send the request again.
+
+## Conclusion
+
+Now that you know which payout types the bank account supports, send the payout:
+
+- [Send Bank Account Payouts](/guides/payouts/process-ach-payouts)
+- [Cancel Payouts](/guides/payouts/cancel-payouts)
