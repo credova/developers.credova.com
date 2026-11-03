@@ -1,6 +1,6 @@
 {
   "name": "developers-credova-com",
-  "version": "1.63.1",
+  "version": "1.63.2",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",

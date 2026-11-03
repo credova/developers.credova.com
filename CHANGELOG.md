@@ -1,3 +1,5 @@
+## [1.63.2](https://github.com/credova/developers.credova.com/compare/v1.63.1...v1.63.2) (2026-11-03)
+
 ## [1.63.1](https://github.com/credova/developers.credova.com/compare/v1.63.0...v1.63.1) (2026-10-27)
 
 
