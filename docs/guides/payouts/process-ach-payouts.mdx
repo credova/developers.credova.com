@@ -21,6 +21,38 @@ Payouts made to a bank account travel over the ACH network and support three spe
 - **`same_day`** — A same-day ACH transfer. Settles the same business day.
 - **`instant`** — Sent over real-time payment rails instead of ACH batch processing, and typically settles within minutes. Requires the `payouts:instant` account setting to be enabled — see [Request Account Setting Access](#request-account-setting-access) below.
 
+### Check Supported Payout Types
+
+Before you send the payout, you can check which payout types the saved bank account can receive. Read `supported_payout_types` from the bank account. You do not have to start a payout to do this check.
+
+Credova checks the bank account one time, when you save it with [Create Bank Account](/api/financial/create-bank-account) or [Credova Elements](/guides/payment-methods/bank-accounts#save-a-bank-account-with-credova-elements). [Get Bank Account](/api/financial/get-bank-account-by-id) returns the saved result. It does not check the bank account again.
+
+```json showLineNumbers {3} title="bankAccount.json"
+{
+  "id": "ba_7Ay5mcUXAxwrN6wQEQUVEHBCJ",
+  "supported_payout_types": ["standard", "same_day", "instant"],
+  ...
+}
+```
+
+Use the value to choose the `payout_type`:
+
+| `supported_payout_types` | What to do |
+|--------------------------|------------|
+| Contains `instant` | You can send an `instant` payout. Your account also needs the `payouts:instant` account setting. |
+| Contains `same_day` or `standard`, but not `instant` | Send a `same_day` or `standard` payout. |
+| Empty list `[]` | The bank account cannot receive payouts. You can still use it to [accept bank account payments](/guides/payments/accept-bank-account-payments). |
+| `null` | Credova did not check the bank account. Send the payout as usual. |
+
+`supported_payout_types` is `null` when:
+
+- The bank account is in the `test` environment.
+- You saved the bank account before Credova added this check.
+- You sent the bank account as `bank_account_details` in a payment or payout request.
+- Your account's payment processor does not report payout types.
+
+<Alert type="warning">A listed payout type does not guarantee that a payout succeeds. The receiving bank can still decline or return the payout. See [Handling Declines](#handling-declines).</Alert>
+
 ## Process the Payout
 
 We will use a saved bank account to create a new payout. A verified bank account is the more reliable choice if you plan to send an `instant` payout. See [Instant Verification](/guides/payment-methods/bank-accounts#instant-verification).
@@ -39,6 +71,7 @@ For example, given this saved bank account:
   "account_type": "checking",
   "routing_number": "110000000",
   "account_number_last4": "1011",
+  "supported_payout_types": ["standard", "same_day", "instant"],
   "billing_details": {
     "address_line_1": "111 Colorado Ave.",
     "address_line_2": "Apt 403",
